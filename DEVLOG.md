@@ -218,8 +218,8 @@ IPv6 문제 가능성을 제거했지만 그래도 실패 → 확장의 사이�
 
 ### 아직 안 한 것
 
-- [ ] `git init` 및 GitHub 저장소 생성 — **사용자 결정 대기** (공개/비공개)
-- [ ] GitHub Pages 실제 배포 (워크플로 파일은 준비됨)
+- [x] `git init` 및 GitHub 저장소 생성 — 세션 2에서 완료. **공개 저장소** `woosbang/knowledge-wiki`
+- [x] GitHub Pages 실제 배포 — https://woosbang.github.io/knowledge-wiki/ (push 마다 Actions 가 자동 배포)
 - [ ] `/wiki-sync` 슬래시 커맨드 실사용 검증 — 커맨드 정의는 했으나 아직 실행해 본 적 없음.
       **다음 세션에서 문서를 하나 추가해 실제로 돌려보고, 지침이 충분한지 확인할 것**
 - [ ] `classify_api.py` 실행 검증 — 코드만 작성, API 호출은 한 번도 하지 않았다
