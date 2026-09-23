@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% set active_category = entry.category %}
+{% block title %}{{ entry.title }} · {{ site_title }}{% endblock %}
+{% block description %}{{ entry.summary }}{% endblock %}
+{% block shell_class %}{% endblock %}
+{% block sidebar %}
+<nav class="sidebar" aria-label="목차">
+  <p class="sidebar-label">이 문서</p>
+  <ul class="toc">
+  {% for h in headings %}
+    <li class="toc-h{{ h.level }}"><a href="#{{ h.id }}">{{ h.text }}</a></li>
+  {% endfor %}
+  </ul>
+  <p class="sidebar-label">원본</p>
+  <ul class="nav-list">
+    <li><a href="{{ root }}{{ 'raw/' ~ entry.slug ~ '.html' }}" target="_blank" rel="noopener">원본 HTML 보기 ↗</a></li>
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+<nav class="crumbs">
+  <a href="{{ root }}index.html">홈</a> <span>/</span>
+  {% if category %}<a href="{{ root }}{{ 'c/' ~ category.id ~ '.html' }}">{{ category.name }}</a>{% else %}미분류{% endif %}
+</nav>
+
+<article class="doc">
+  <header class="doc-head">
+    <h1>{{ entry.title }}</h1>
+    <p class="doc-meta">
+      {{ entry.doc_date }} · {{ entry.word_count }} words · {{ entry.level }}
+      {% for t in entry.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+    </p>
+    {% if entry.summary %}<p class="lede">{{ entry.summary }}</p>{% endif %}
+  </header>
+
+  {% if entry.status == 'outdated' %}
+  <div class="callout callout-warn">이 문서는 내용이 오래되었을 수 있습니다. 확인 후 갱신하세요.</div>
+  {% elif entry.status == 'superseded' %}
+  <div class="callout callout-warn">
+    이 문서는 대체되었습니다.
+    {% if successor %}→ <a href="{{ root }}{{ 'd/' ~ successor.slug ~ '.html' }}">{{ successor.title }}</a>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if entry.key_points %}
+  <div class="callout callout-key">
+    <p class="callout-title">핵심 정리</p>
+    <ul>{% for k in entry.key_points %}<li>{{ k }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <div class="prose">
+    {{ body|safe }}
+  </div>
+
+  {% if related %}
+  <section class="related">
+    <h2 class="section-title">관련 문서</h2>
+    <ul class="doc-list compact">
+    {% for r in related %}
+      <li><a href="{{ root }}{{ 'd/' ~ r.slug ~ '.html' }}">
+        <span class="doc-title">{{ r.title }}</span>
+        <span class="doc-summary">{{ r.summary }}</span>
+      </a></li>
+    {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <p class="source-note">
+    원본 파일: <code>{{ entry.source }}</code> ·
+    <a href="{{ root }}{{ 'raw/' ~ entry.slug ~ '.html' }}" target="_blank" rel="noopener">원본 그대로 보기 ↗</a>
+  </p>
+</article>
+{% endblock %}

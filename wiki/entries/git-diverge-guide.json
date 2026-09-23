@@ -1,0 +1,94 @@
+{
+  "slug": "git-diverge-guide",
+  "source": "docs/git-diverge-guide.html",
+  "source_hash": "7ed87cef35f12905",
+  "title": "Git Diverge 완벽 가이드",
+  "doc_date": "2026-03-08",
+  "word_count": 1033,
+  "headings": [
+    {
+      "level": 2,
+      "text": "01 Diverge란 무엇인가",
+      "id": "01-diverge란-무엇인가"
+    },
+    {
+      "level": 2,
+      "text": "02 Behind vs Diverge 차이",
+      "id": "02-behind-vs-diverge-차이"
+    },
+    {
+      "level": 3,
+      "text": "🔹 Behind (뒤처진 상태)",
+      "id": "behind-뒤처진-상태"
+    },
+    {
+      "level": 3,
+      "text": "🔹 Diverge (갈라진 상태)",
+      "id": "diverge-갈라진-상태"
+    },
+    {
+      "level": 2,
+      "text": "03 Diverge는 언제 발생하는가",
+      "id": "03-diverge는-언제-발생하는가"
+    },
+    {
+      "level": 2,
+      "text": "04 왜 Diverge가 허용되는가",
+      "id": "04-왜-diverge가-허용되는가"
+    },
+    {
+      "level": 2,
+      "text": "05 Diverge 해결 방법",
+      "id": "05-diverge-해결-방법"
+    },
+    {
+      "level": 3,
+      "text": "실행 명령어",
+      "id": "실행-명령어"
+    },
+    {
+      "level": 2,
+      "text": "06 충돌(Conflict) 해결하기",
+      "id": "06-충돌-conflict-해결하기"
+    },
+    {
+      "level": 3,
+      "text": "해결 순서",
+      "id": "해결-순서"
+    },
+    {
+      "level": 2,
+      "text": "07 상황별 요약 정리",
+      "id": "07-상황별-요약-정리"
+    }
+  ],
+  "category": "version-control",
+  "subcategory": "workflow",
+  "tags": [
+    "git",
+    "브랜치",
+    "merge",
+    "rebase",
+    "충돌"
+  ],
+  "summary": "로컬과 원격이 갈라진(diverged) 상태가 왜 생기고 어떻게 푸는지를 behind 상태와 대비해 설명한다. git status 메시지를 읽고 merge 와 rebase 중 무엇을 쓸지 판단하는 기준을 준다.",
+  "key_points": [
+    "behind 는 fast-forward 로 끝나지만, diverge 는 두 갈래를 합쳐야 한다",
+    "양쪽 모두에 새 커밋이 생겼을 때 diverge 가 발생한다",
+    "해결은 merge 또는 rebase — 히스토리를 남길지 정리할지의 선택이다",
+    "파일 수정이 겹치면 충돌이 나며, 충돌 해결에는 정해진 순서가 있다"
+  ],
+  "level": "intermediate",
+  "related": [
+    "git-guide",
+    "git-revert-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "7ed87cef35f12905"
+}

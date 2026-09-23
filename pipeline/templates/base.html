@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{% block title %}{{ site_title }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ site_description }}{% endblock %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ root }}assets/wiki.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="topbar">
+  <a class="brand" href="{{ root }}index.html">
+    <span class="brand-mark"></span>
+    <span class="brand-name">{{ site_title }}</span>
+  </a>
+  <div class="search-wrap">
+    <input type="search" id="q" placeholder="문서 검색  (/ 키로 포커스)" autocomplete="off"
+           aria-label="문서 검색" data-index="{{ root }}search-index.json">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <button class="theme-toggle" id="theme-toggle" aria-label="테마 전환">◐</button>
+</header>
+
+<div class="shell {% block shell_class %}no-sidebar{% endblock %}">
+  {% block sidebar %}{% endblock %}
+  <main id="main" class="main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<footer class="footer">
+  <span>{{ site_title }}</span>
+  <span>최종 빌드 {{ built_at }}</span>
+</footer>
+
+<script src="{{ root }}assets/wiki.js"></script>
+</body>
+</html>

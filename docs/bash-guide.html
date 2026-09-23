@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bash 입문 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181b25;
+    --surface-raised: #1e2233;
+    --border: #2a2e3e;
+    --text: #c9cdd8;
+    --text-muted: #7a8199;
+    --heading: #e8ecf4;
+    --accent: #6ee7b7;
+    --accent-dim: #2a6b53;
+    --code-bg: #13151e;
+    --comment: #5c6380;
+    --string: #a5d6ff;
+    --flag: #f0a8d0;
+    --cmd: #79c0ff;
+    --warn: #fbbf24;
+    --warn-bg: rgba(251,191,36,0.06);
+    --warn-border: rgba(251,191,36,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 32px 120px;
+  }
+
+  /* ── Header ── */
+  .hero {
+    padding: 56px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--heading);
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 520px;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 32px;
+    letter-spacing: -0.3px;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--heading);
+    margin: 36px 0 14px;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent-dim);
+  }
+
+  p {
+    margin-bottom: 14px;
+    font-size: 15px;
+  }
+
+  .inline-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    padding: 1px 7px;
+    border-radius: 4px;
+    color: var(--cmd);
+  }
+
+  /* ── Code Block ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 14px 0 22px;
+    overflow: hidden;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .code-lang {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .code-block pre {
+    padding: 18px 22px;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .code-block pre code {
+    display: block;
+  }
+
+  .cm { color: var(--comment); }
+  .st { color: var(--string); }
+  .fl { color: var(--flag); }
+  .kw { color: var(--accent); }
+  .cd { color: var(--cmd); }
+  .vr { color: var(--warn); }
+
+  /* ── Warning / Tip Box ── */
+  .callout {
+    border: 1px solid var(--warn-border);
+    background: var(--warn-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .callout-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 16px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 56px;
+  }
+
+  .toc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .toc a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+
+  .toc a:hover { color: var(--accent); }
+  .toc a .num { color: var(--accent-dim); margin-right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 32px 18px 80px; }
+    .hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    .code-block pre { font-size: 12px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-label">Reference Guide</div>
+    <h1>Bash 입문 가이드</h1>
+    <p>파일/디렉토리 관리와 셸 스크립트 작성을 위한 핵심 명령어 모음</p>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">목차</div>
+    <a href="#sec1"><span class="num">01</span>현재 위치 확인과 이동</a>
+    <a href="#sec2"><span class="num">02</span>디렉토리 내용 보기</a>
+    <a href="#sec3"><span class="num">03</span>파일/디렉토리 생성</a>
+    <a href="#sec4"><span class="num">04</span>복사, 이동, 삭제</a>
+    <a href="#sec5"><span class="num">05</span>파일 내용 확인</a>
+    <a href="#sec6"><span class="num">06</span>첫 스크립트 만들기</a>
+    <a href="#sec7"><span class="num">07</span>변수</a>
+    <a href="#sec8"><span class="num">08</span>조건문</a>
+    <a href="#sec9"><span class="num">09</span>반복문</a>
+    <a href="#sec10"><span class="num">10</span>사용자 입력 받기</a>
+    <a href="#sec11"><span class="num">11</span>실전 예시 — 백업 스크립트</a>
+  </nav>
+
+  <!-- ═══════════════════ PART 1 ═══════════════════ -->
+  <div class="section" id="part1">
+    <div class="section-number">PART 01</div>
+    <h2>파일/디렉토리 관리</h2>
+
+    <!-- 1 -->
+    <h3 id="sec1">현재 위치 확인과 이동</h3>
+    <p><span class="inline-code">pwd</span>는 현재 내가 어디에 있는지 보여주고, <span class="inline-code">cd</span>는 이동하는 명령어입니다.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">pwd</span>                  <span class="cm"># 현재 디렉토리 경로 출력</span>
+<span class="cd">cd</span> /home/user        <span class="cm"># 절대경로로 이동</span>
+<span class="cd">cd</span> Documents         <span class="cm"># 현재 위치 기준 하위 폴더로 이동</span>
+<span class="cd">cd</span> ..                <span class="cm"># 상위 디렉토리로 이동</span>
+<span class="cd">cd</span> ~                 <span class="cm"># 홈 디렉토리로 이동</span>
+<span class="cd">cd</span> -                 <span class="cm"># 직전 디렉토리로 돌아가기</span></code></pre>
+    </div>
+
+    <!-- 2 -->
+    <h3 id="sec2">디렉토리 내용 보기</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">ls</span>                   <span class="cm"># 현재 디렉토리 파일 목록</span>
+<span class="cd">ls</span> <span class="fl">-l</span>                <span class="cm"># 상세 정보 (권한, 크기, 수정일 등)</span>
+<span class="cd">ls</span> <span class="fl">-a</span>                <span class="cm"># 숨김 파일 포함 (.으로 시작하는 파일)</span>
+<span class="cd">ls</span> <span class="fl">-la</span>               <span class="cm"># 옵션 조합 가능</span>
+<span class="cd">ls</span> <span class="fl">-lh</span>               <span class="cm"># 파일 크기를 읽기 쉬운 단위로 표시</span></code></pre>
+    </div>
+
+    <!-- 3 -->
+    <h3 id="sec3">파일/디렉토리 생성</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">touch</span> memo.txt       <span class="cm"># 빈 파일 생성 (이미 있으면 수정 시간만 갱신)</span>
+<span class="cd">mkdir</span> projects       <span class="cm"># 디렉토리 생성</span>
+<span class="cd">mkdir</span> <span class="fl">-p</span> a/b/c       <span class="cm"># 중간 경로까지 한번에 생성</span></code></pre>
+    </div>
+
+    <!-- 4 -->
+    <h3 id="sec4">복사, 이동, 삭제</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">cp</span> file.txt backup.txt        <span class="cm"># 파일 복사</span>
+<span class="cd">cp</span> <span class="fl">-r</span> mydir mydir_backup      <span class="cm"># 디렉토리 복사 (-r: 재귀)</span>
+
+<span class="cd">mv</span> file.txt newname.txt       <span class="cm"># 이름 변경</span>
+<span class="cd">mv</span> file.txt /tmp/             <span class="cm"># 파일 이동</span>
+
+<span class="cd">rm</span> file.txt                   <span class="cm"># 파일 삭제 (휴지통 없이 즉시 삭제)</span>
+<span class="cd">rm</span> <span class="fl">-r</span> mydir                   <span class="cm"># 디렉토리와 내용 전체 삭제</span>
+<span class="cd">rm</span> <span class="fl">-i</span> file.txt                <span class="cm"># 삭제 전 확인 물어봄</span></code></pre>
+    </div>
+    <div class="callout">
+      <span class="callout-icon">⚠</span>
+      <span><span class="inline-code">rm</span>은 복구가 안 되므로, 익숙해지기 전까지는 <span class="inline-code">rm -i</span>를 습관으로 쓰는 게 안전합니다.</span>
+    </div>
+
+    <!-- 5 -->
+    <h3 id="sec5">파일 내용 확인</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">cat</span> file.txt         <span class="cm"># 파일 전체 출력</span>
+<span class="cd">head</span> <span class="fl">-n 5</span> file.txt   <span class="cm"># 처음 5줄만 출력</span>
+<span class="cd">tail</span> <span class="fl">-n 5</span> file.txt   <span class="cm"># 마지막 5줄만 출력</span>
+<span class="cd">less</span> file.txt        <span class="cm"># 스크롤하며 읽기 (q로 종료)</span>
+<span class="cd">wc</span> <span class="fl">-l</span> file.txt       <span class="cm"># 줄 수 세기</span></code></pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ PART 2 ═══════════════════ -->
+  <div class="section" id="part2">
+    <div class="section-number">PART 02</div>
+    <h2>셸 스크립트 기초</h2>
+    <p>셸 스크립트는 여러 명령어를 파일에 저장해서 한번에 실행하는 것입니다.</p>
+
+    <!-- 6 -->
+    <h3 id="sec6">첫 스크립트 만들기</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">hello.sh</div></div>
+<pre><code><span class="kw">#!/bin/bash</span>
+<span class="cm"># 첫 줄(shebang)은 이 파일을 bash로 실행하라는 의미</span>
+
+<span class="cd">echo</span> <span class="st">"Hello, World!"</span></code></pre>
+    </div>
+    <p>저장한 뒤 실행하려면:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cd">chmod</span> +x hello.sh    <span class="cm"># 실행 권한 부여 (최초 1회)</span>
+./hello.sh           <span class="cm"># 실행</span></code></pre>
+    </div>
+
+    <!-- 7 -->
+    <h3 id="sec7">변수</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="vr">name</span>=<span class="st">"홍길동"</span>           <span class="cm"># = 앞뒤에 공백 없어야 함</span>
+<span class="cd">echo</span> <span class="st">"이름: <span class="vr">$name</span>"</span>
+
+<span class="vr">today</span>=$(<span class="cd">date</span> +%Y-%m-%d)  <span class="cm"># 명령어 결과를 변수에 저장</span>
+<span class="cd">echo</span> <span class="st">"오늘: <span class="vr">$today</span>"</span></code></pre>
+    </div>
+
+    <!-- 8 -->
+    <h3 id="sec8">조건문</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="kw">#!/bin/bash</span>
+<span class="vr">file</span>=<span class="st">"data.txt"</span>
+
+<span class="kw">if</span> [ <span class="fl">-f</span> <span class="st">"<span class="vr">$file</span>"</span> ]; <span class="kw">then</span>
+    <span class="cd">echo</span> <span class="st">"<span class="vr">$file</span> 이 존재합니다."</span>
+<span class="kw">else</span>
+    <span class="cd">echo</span> <span class="st">"<span class="vr">$file</span> 이 없습니다."</span>
+<span class="kw">fi</span></code></pre>
+    </div>
+    <p>자주 쓰는 조건 플래그: <span class="inline-code">-f</span> 파일 존재 여부, <span class="inline-code">-d</span> 디렉토리 존재 여부, <span class="inline-code">-z</span> 문자열이 비어있는지</p>
+
+    <!-- 9 -->
+    <h3 id="sec9">반복문</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="cm"># 특정 파일들에 대해 반복</span>
+<span class="kw">for</span> f <span class="kw">in</span> *.txt; <span class="kw">do</span>
+    <span class="cd">echo</span> <span class="st">"처리 중: <span class="vr">$f</span>"</span>
+    <span class="cd">cp</span> <span class="st">"<span class="vr">$f</span>"</span> <span class="st">"backup_<span class="vr">$f</span>"</span>
+<span class="kw">done</span>
+
+<span class="cm"># 숫자 반복</span>
+<span class="kw">for</span> i <span class="kw">in</span> {1..5}; <span class="kw">do</span>
+    <span class="cd">echo</span> <span class="st">"번호: <span class="vr">$i</span>"</span>
+<span class="kw">done</span></code></pre>
+    </div>
+
+    <!-- 10 -->
+    <h3 id="sec10">사용자 입력 받기</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">bash</div></div>
+<pre><code><span class="kw">#!/bin/bash</span>
+<span class="cd">read</span> <span class="fl">-p</span> <span class="st">"이름을 입력하세요: "</span> <span class="vr">username</span>
+<span class="cd">echo</span> <span class="st">"안녕하세요, <span class="vr">$username</span> 님"</span></code></pre>
+    </div>
+
+    <!-- 11 -->
+    <h3 id="sec11">실전 예시 — 백업 스크립트</h3>
+    <p>위 내용을 조합한 간단한 실용 스크립트입니다.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang">backup.sh</div></div>
+<pre><code><span class="kw">#!/bin/bash</span>
+<span class="vr">backup_dir</span>=<span class="st">"backup_$(<span class="cd">date</span> +%Y%m%d)"</span>
+
+<span class="kw">if</span> [ <span class="fl">-d</span> <span class="st">"<span class="vr">$backup_dir</span>"</span> ]; <span class="kw">then</span>
+    <span class="cd">echo</span> <span class="st">"이미 오늘 백업이 존재합니다."</span>
+<span class="kw">else</span>
+    <span class="cd">mkdir</span> <span class="st">"<span class="vr">$backup_dir</span>"</span>
+    <span class="cd">cp</span> *.txt <span class="st">"<span class="vr">$backup_dir</span>/"</span> 2>/dev/null
+    <span class="cd">echo</span> <span class="st">"<span class="vr">$backup_dir</span> 에 백업 완료"</span>
+<span class="kw">fi</span></code></pre>
+    </div>
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <span><span class="inline-code">2>/dev/null</span>은 에러 메시지를 숨기는 표현입니다. 여기서는 <span class="inline-code">.txt</span> 파일이 없을 때 나오는 에러를 무시하기 위한 것입니다.</span>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Bash 입문 가이드 — Generated 2026
+  </footer>
+
+</div>
+</body>
+</html>

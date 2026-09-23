@@ -1,0 +1,97 @@
+{
+  "slug": "dev-workflow-guide",
+  "source": "docs/dev-workflow-guide.html",
+  "source_hash": "1f679b6e7b4d24d5",
+  "title": "운영 중 수정 개발 & 배포 가이드 — Next.js · Supabase · Vercel",
+  "doc_date": "2026-03-08",
+  "word_count": 1814,
+  "headings": [
+    {
+      "level": 2,
+      "text": "전체 흐름 한눈에 보기",
+      "id": "전체-흐름-한눈에-보기"
+    },
+    {
+      "level": 2,
+      "text": "개발 브랜치 생성",
+      "id": "개발-브랜치-생성"
+    },
+    {
+      "level": 2,
+      "text": "Supabase 개발용 프로젝트 생성",
+      "id": "supabase-개발용-프로젝트-생성"
+    },
+    {
+      "level": 2,
+      "text": "Auth & OAuth 개발 환경 설정",
+      "id": "auth-oauth-개발-환경-설정"
+    },
+    {
+      "level": 2,
+      "text": "RLS · Functions · Triggers 복제",
+      "id": "rls-functions-triggers-복제"
+    },
+    {
+      "level": 2,
+      "text": "환경 변수로 운영 / 개발 분리",
+      "id": "환경-변수로-운영-개발-분리"
+    },
+    {
+      "level": 2,
+      "text": "로컬에서 수정 개발 & 테스트",
+      "id": "로컬에서-수정-개발-테스트"
+    },
+    {
+      "level": 2,
+      "text": "커밋 → 푸시 → Vercel Preview로 최종 테스트",
+      "id": "커밋-푸시-vercel-preview로-최종-테스트"
+    },
+    {
+      "level": 2,
+      "text": "PR 머지 → 운영 배포",
+      "id": "pr-머지-운영-배포"
+    },
+    {
+      "level": 2,
+      "text": "배포 전 체크리스트",
+      "id": "배포-전-체크리스트"
+    }
+  ],
+  "category": "dev-workflow",
+  "subcategory": "web",
+  "tags": [
+    "nextjs",
+    "supabase",
+    "vercel",
+    "배포",
+    "브랜치"
+  ],
+  "summary": "이미 운영 중인 서비스를 건드리지 않으면서 기능을 수정·배포하는 절차를 다룬다. 개발용 Supabase 프로젝트를 따로 두고 feature 브랜치 → Vercel Preview → PR 머지 순으로 위험을 단계적으로 줄인다.",
+  "key_points": [
+    "운영 DB에서 직접 개발하지 않는다 — 스키마만 복제한 개발 프로젝트를 따로 만든다",
+    "main 을 직접 수정하지 않고 feature 브랜치에서 작업한다",
+    "환경 변수로 운영/개발 접속 정보를 분리한다",
+    "Vercel Preview URL 에서 개발 DB 로 최종 확인한 뒤 머지한다",
+    "RLS·Functions·Triggers 까지 복제해야 개발 환경이 운영과 같아진다"
+  ],
+  "level": "intermediate",
+  "related": [
+    "webapp-development-workflow-guide",
+    "git-guide",
+    "git-revert-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [
+    {
+      "slug": "webapp-development-workflow-guide",
+      "reason": "같은 스택(Next.js·Supabase·Vercel)을 다루지만 이쪽은 운영 중 수정, 저쪽은 신규 개발 단계라 역할이 다르다",
+      "severity": "medium"
+    }
+  ],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "1f679b6e7b4d24d5"
+}

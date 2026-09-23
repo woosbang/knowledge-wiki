@@ -1,0 +1,88 @@
+# 위키 카테고리 체계
+#
+# 이 파일이 분류의 기준(authority)이다. AI 는 여기 있는 카테고리 안에서만 분류한다.
+# 새 카테고리가 필요하면 AI 는 wiki/reports/taxonomy-proposals.md 에 제안만 하고,
+# 실제 추가는 사람이 이 파일을 고쳐서 한다. (카테고리가 멋대로 늘어나는 것을 막는다)
+#
+# id        : URL 과 entry.category 에 쓰이는 키. 영문 소문자-하이픈.
+# name      : 사이트에 보이는 이름
+# blurb     : 카테고리 페이지 상단 한 줄 설명
+# order     : 홈 화면 정렬 순서
+# subcategories: 선택. 문서가 10개를 넘어가면 쪼갠다.
+
+categories:
+  - id: version-control
+    name: 버전 관리
+    blurb: Git, GitHub, 브랜치 전략과 실수 복구
+    order: 10
+    subcategories:
+      - id: basics
+        name: 기초와 설정
+      - id: workflow
+        name: 협업 워크플로우
+      - id: recovery
+        name: 되돌리기와 복구
+
+  - id: dev-environment
+    name: 개발 환경
+    blurb: 셸, 패키지 매니저, 로컬 환경 세팅
+    order: 20
+    subcategories:
+      - id: shell
+        name: 셸과 터미널
+      - id: python
+        name: Python 환경
+      - id: editor
+        name: 에디터와 도구
+
+  - id: dev-workflow
+    name: 개발 워크플로우
+    blurb: 기획부터 배포까지, 무엇을 어떤 순서로 하는가
+    order: 30
+    subcategories:
+      - id: process
+        name: 프로세스
+      - id: web
+        name: 웹 애플리케이션
+
+  - id: ai-ml
+    name: AI · 머신러닝
+    blurb: 모델 평가 지표, LLM 응용, RAG
+    order: 40
+    subcategories:
+      - id: fundamentals
+        name: 기초 개념
+      - id: llm-apps
+        name: LLM 애플리케이션
+      - id: tooling
+        name: AI 도구
+
+  - id: data
+    name: 데이터
+    blurb: 수집, 정제, 분석, 시각화
+    order: 50
+
+  - id: business
+    name: 비즈니스 · 기획
+    blurb: 전략, 기획, 업무 프로세스
+    order: 60
+
+  - id: domain
+    name: 도메인 지식
+    blurb: 특정 분야의 전문 지식
+    order: 70
+
+  - id: misc
+    name: 기타
+    blurb: 아직 자리를 찾지 못한 문서 — 쌓이면 새 카테고리로 승격한다
+    order: 999
+
+# 분류 규칙 (AI 가 따르는 제약)
+rules:
+  max_tags: 6
+  # 한 카테고리에 이만큼 쌓이면 리포트에서 분할을 제안한다
+  split_threshold: 12
+  # misc 에 이만큼 쌓이면 새 카테고리를 제안한다
+  misc_promote_threshold: 3
+  # 이 개월 수 이상 손대지 않은 문서는 리포트에서 '점검 필요'로 표시한다
+  stale_after_months: 12

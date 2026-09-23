@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python uv 환경 가이드북 - 초보자를 위한 완벽 가이드</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-code: #1e293b;
+            --bg-code-inline: #f1f5f9;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            --gradient-cool: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --gradient-fresh: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-weight: 400;
+            font-size: 16px;
+        }
+
+        /* Header */
+        header {
+            background: var(--gradient-primary);
+            padding: 80px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .header-content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent-primary);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-badges {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 100px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 12px 0;
+            flex: 1;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        nav a {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        nav a.active {
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 16px;
+            border-left: 1px solid var(--border-color);
+            margin-left: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            z-index: 101;
+            transition: width 0.1s ease;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        /* TOC Toggle (Mobile) */
+        .toc-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 900px) {
+            .toc-toggle {
+                display: flex;
+            }
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 120px;
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        main {
+            min-width: 0;
+        }
+
+        /* Sidebar TOC */
+        .sidebar {
+            position: relative;
+        }
+
+        .toc {
+            position: sticky;
+            top: 100px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.show {
+                display: block;
+                position: fixed;
+                top: 70px;
+                right: 24px;
+                z-index: 99;
+                width: 280px;
+            }
+
+            .toc {
+                position: relative;
+                top: 0;
+                max-height: calc(100vh - 120px);
+                overflow-y: auto;
+            }
+        }
+
+        .toc-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 4px;
+        }
+
+        .toc-list a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-list a:hover {
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .toc-list a.active {
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+            border-left-color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        /* Sections */
+        section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 640px) {
+            section {
+                padding: 24px;
+                border-radius: var(--radius-lg);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .section-icon.purple { background: rgba(99, 102, 241, 0.1); }
+        .section-icon.orange { background: rgba(249, 115, 22, 0.1); }
+        .section-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .section-icon.blue { background: rgba(59, 130, 246, 0.1); }
+        .section-icon.cyan { background: rgba(6, 182, 212, 0.1); }
+        .section-icon.pink { background: rgba(236, 72, 153, 0.1); }
+        .section-icon.yellow { background: rgba(245, 158, 11, 0.1); }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 16px;
+        }
+
+        h3:first-of-type {
+            margin-top: 0;
+        }
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Intro Cards */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .intro-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .intro-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .intro-card .emoji {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .intro-card h4 {
+            margin: 0 0 8px;
+            color: var(--text-primary);
+        }
+
+        .intro-card p {
+            font-size: 0.875rem;
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        /* Concept Diagram */
+        .concept-visual {
+            background: linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%);
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin: 24px 0;
+        }
+
+        .concept-title {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            font-size: 1.125rem;
+        }
+
+        .concept-boxes {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        @media (max-width: 640px) {
+            .concept-boxes {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .concept-box {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid transparent;
+        }
+
+        .concept-box.warehouse {
+            border-color: var(--accent-yellow);
+        }
+
+        .concept-box.workshop {
+            border-color: var(--accent-green);
+        }
+
+        .concept-box .icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .concept-box h4 {
+            margin: 0 0 8px;
+            color: var(--text-primary);
+        }
+
+        .concept-box p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .concept-box .path {
+            background: var(--bg-code);
+            color: #10b981;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .concept-arrow {
+            font-size: 2rem;
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 640px) {
+            .concept-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .concept-note {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        .concept-note strong {
+            color: var(--accent-primary);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            position: relative;
+            margin: 16px 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #334155;
+            padding: 8px 16px;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .code-lang {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: #e2e8f0;
+            font-size: 0.75rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        pre {
+            background: var(--bg-code);
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin: 0;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        pre code {
+            color: #e2e8f0;
+        }
+
+        /* Inline Code */
+        p code, li code, td code {
+            background: var(--bg-code-inline);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        /* Syntax Highlighting */
+        .comment { color: #64748b; font-style: italic; }
+        .command { color: #fbbf24; font-weight: 500; }
+        .keyword { color: #f472b6; }
+        .string { color: #a5d6ff; }
+        .flag { color: #22d3ee; }
+        .path { color: #4ade80; }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            margin: 24px 0;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 72px;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-left: 2px solid var(--border-color);
+            margin-left: 20px;
+        }
+
+        .step:last-child {
+            border-left: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: -21px;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .step h4 {
+            margin: 0 0 8px;
+            color: var(--text-primary);
+            font-size: 1.0625rem;
+        }
+
+        .step p {
+            margin-bottom: 12px;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin: 20px 0;
+            display: flex;
+            gap: 16px;
+        }
+
+        .info-box .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .info-box .content h4 {
+            margin: 0 0 4px;
+            font-size: 0.9375rem;
+        }
+
+        .info-box .content p {
+            margin: 0;
+            font-size: 0.9375rem;
+        }
+
+        .info-box.tip {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .info-box.tip .icon { color: var(--accent-green); }
+        .info-box.tip h4 { color: var(--accent-green); }
+
+        .info-box.info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .info-box.info .icon { color: var(--accent-blue); }
+        .info-box.info h4 { color: var(--accent-blue); }
+
+        .info-box.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .info-box.warning .icon { color: var(--accent-yellow); }
+        .info-box.warning h4 { color: var(--accent-orange); }
+
+        .info-box.beginner {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .info-box.beginner .icon { color: var(--accent-pink); }
+        .info-box.beginner h4 { color: var(--accent-pink); }
+
+        /* Quick Reference Table */
+        .quick-ref {
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin: 24px 0;
+        }
+
+        .quick-ref-header {
+            background: var(--bg-secondary);
+            padding: 16px 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quick-ref table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .quick-ref th,
+        .quick-ref td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quick-ref tr:last-child td {
+            border-bottom: none;
+        }
+
+        .quick-ref th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .quick-ref td:first-child {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .quick-ref td code {
+            font-size: 0.8125rem;
+        }
+
+        /* Collapsible */
+        details {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 16px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        summary:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        summary::before {
+            content: '▶';
+            font-size: 0.625rem;
+            color: var(--accent-primary);
+            transition: transform 0.2s ease;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        details > .details-content {
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        li::marker {
+            color: var(--accent-primary);
+        }
+
+        /* Workflow Summary */
+        .workflow-summary {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin: 24px 0;
+        }
+
+        .workflow-summary h3 {
+            margin: 0 0 24px;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .workflow-step {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .workflow-step::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .workflow-step::after {
+                display: none;
+            }
+        }
+
+        .workflow-step .number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+        }
+
+        .workflow-step h4 {
+            margin: 0 0 8px;
+            font-size: 0.9375rem;
+        }
+
+        .workflow-step code {
+            font-size: 0.75rem;
+        }
+
+        /* Appendix */
+        .appendix {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .appendix .section-icon {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Scroll to Top */
+        .scroll-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Print Styles */
+        @media print {
+            nav, .sidebar, .scroll-top, .copy-btn, .theme-toggle, .toc-toggle {
+                display: none !important;
+            }
+
+            section {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">uv</div>
+            <h1>Python uv 환경 가이드북</h1>
+            <p class="subtitle">복잡한 Python 환경 설정, 이제 uv 하나로 쉽고 깔끔하게!<br>초보자도 따라할 수 있는 친절한 가이드</p>
+            <div class="header-badges">
+                <span class="badge">⚡ 초고속</span>
+                <span class="badge">🧹 깔끔한 환경</span>
+                <span class="badge">📦 올인원 도구</span>
+                <span class="badge">🎯 초보자 친화</span>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="#intro">소개</a>
+                <a href="#concept">핵심 개념</a>
+                <a href="#install">설치</a>
+                <a href="#python">Python 관리</a>
+                <a href="#project">프로젝트 시작</a>
+                <a href="#package">패키지 관리</a>
+                <a href="#workflow">워크플로우</a>
+                <a href="#tips">팁</a>
+                <a href="#appendix">부록</a>
+            </div>
+            <div class="nav-actions">
+                <button class="toc-toggle" id="tocToggle" aria-label="목차 열기">📑</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <main>
+            <!-- 소개 -->
+            <section id="intro">
+                <div class="section-header">
+                    <div class="section-icon purple">🚀</div>
+                    <h2>uv가 뭔가요?</h2>
+                </div>
+
+                <p><strong>uv</strong>는 Python 개발에 필요한 모든 것을 하나로 합친 <strong>차세대 올인원 도구</strong>입니다. 기존에 pip, virtualenv, pyenv 등 여러 도구를 따로따로 배워야 했다면, 이제는 uv 하나만 알면 됩니다!</p>
+
+                <div class="intro-grid">
+                    <div class="intro-card">
+                        <div class="emoji">⚡</div>
+                        <h4>엄청나게 빠름</h4>
+                        <p>기존 pip보다 10~100배 빠른 속도</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="emoji">🧹</div>
+                        <h4>시스템 오염 없음</h4>
+                        <p>컴퓨터를 깨끗하게 유지</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="emoji">📦</div>
+                        <h4>통합 관리</h4>
+                        <p>Python + 패키지를 한 번에</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="emoji">💾</div>
+                        <h4>용량 절약</h4>
+                        <p>똑똑한 캐시로 중복 저장 방지</p>
+                    </div>
+                </div>
+
+                <div class="info-box beginner">
+                    <div class="icon">🎓</div>
+                    <div class="content">
+                        <h4>초보자라면 이것만 기억하세요!</h4>
+                        <p>uv는 "Python 버전 관리 + 가상환경 + 패키지 설치"를 한 번에 해결해주는 마법 도구입니다. 예전처럼 여러 프로그램을 설치하고 복잡한 설정을 할 필요가 없어요!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 핵심 개념 -->
+            <section id="concept">
+                <div class="section-header">
+                    <div class="section-icon blue">🧠</div>
+                    <h2>핵심 개념: 창고와 작업실</h2>
+                </div>
+
+                <p>uv를 이해하려면 <strong>"창고"</strong>와 <strong>"작업실"</strong>이라는 두 가지 개념만 알면 됩니다. 이게 정말 중요해요!</p>
+
+                <div class="concept-visual">
+                    <div class="concept-title">🎯 uv의 작동 방식</div>
+                    <div class="concept-boxes">
+                        <div class="concept-box warehouse">
+                            <div class="icon">🏭</div>
+                            <h4>전용 창고</h4>
+                            <p>Python 원본이 보관되는 곳<br>버전별로 하나씩만 저장됨<br>직접 사용되지 않고 보관만!</p>
+                            <span class="path">AppData\Roaming\uv\python</span>
+                        </div>
+                        <div class="concept-arrow">🔗</div>
+                        <div class="concept-box workshop">
+                            <div class="icon">🔧</div>
+                            <h4>프로젝트 작업실</h4>
+                            <p>실제 작업이 이루어지는 곳<br>창고의 Python을 빌려다 씀<br>프로젝트별 패키지 설치</p>
+                            <span class="path">내프로젝트\.venv</span>
+                        </div>
+                    </div>
+                    <div class="concept-note">
+                        💡 <strong>핵심 포인트:</strong> Python이 복사되는 게 아니라 <strong>연결(링크)</strong>만 됩니다. 그래서 용량도 적게 들고, 삭제도 깔끔해요!
+                    </div>
+                </div>
+
+                <div class="info-box info">
+                    <div class="icon">💡</div>
+                    <div class="content">
+                        <h4>비유로 이해하기</h4>
+                        <p>마치 도서관(창고)에서 책(Python)을 빌려서 내 책상(프로젝트)에서 읽는 것과 같아요. 책을 통째로 복사하지 않고, "이 책은 도서관 3번 서가에 있어요"라고 메모만 해두는 거죠!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 설치 -->
+            <section id="install">
+                <div class="section-header">
+                    <div class="section-icon orange">📥</div>
+                    <h2>uv 설치하기</h2>
+                </div>
+
+                <p>설치는 정말 간단합니다! 운영체제에 맞는 명령어 한 줄이면 끝이에요.</p>
+
+                <h3>Windows (권장 방법)</h3>
+                <p>Windows에서는 <code>winget</code>을 사용하는 게 가장 편합니다.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">PowerShell</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># uv 설치하기</span>
+<span class="command">winget</span> <span class="keyword">install</span> <span class="flag">-e</span> <span class="flag">--id</span> astral-sh.uv</code></pre>
+                </div>
+
+                <details>
+                    <summary>다른 설치 방법 보기</summary>
+                    <div class="details-content">
+                        <h4>Windows - PowerShell 스크립트</h4>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">PowerShell</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <span>📋</span> 복사
+                                </button>
+                            </div>
+                            <pre><code><span class="command">powershell</span> <span class="flag">-c</span> <span class="string">"irm https://astral.sh/uv/install.ps1 | iex"</span></code></pre>
+                        </div>
+
+                        <h4>macOS / Linux</h4>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">Bash</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <span>📋</span> 복사
+                                </button>
+                            </div>
+                            <pre><code><span class="command">curl</span> <span class="flag">-LsSf</span> https://astral.sh/uv/install.sh | <span class="command">sh</span></code></pre>
+                        </div>
+                    </div>
+                </details>
+
+                <h3>설치 확인</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="command">uv</span> <span class="flag">--version</span></code></pre>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="icon">💡</div>
+                    <div class="content">
+                        <h4>설치 후 터미널을 재시작하세요!</h4>
+                        <p>설치 직후에는 <code>uv</code> 명령어가 인식되지 않을 수 있어요. 터미널(PowerShell, 명령 프롬프트)을 껐다가 다시 열어주세요.</p>
+                    </div>
+                </div>
+
+                <h3>업데이트 & 삭제</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">PowerShell</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 최신 버전으로 업데이트</span>
+<span class="command">winget</span> <span class="keyword">upgrade</span> astral-sh.uv
+
+<span class="comment"># 삭제하기</span>
+<span class="command">winget</span> <span class="keyword">uninstall</span> astral-sh.uv</code></pre>
+                </div>
+            </section>
+
+            <!-- Python 관리 -->
+            <section id="python">
+                <div class="section-header">
+                    <div class="section-icon green">🐍</div>
+                    <h2>Python 버전 관리하기</h2>
+                </div>
+
+                <p>예전에는 Python을 설치하려면 공식 홈페이지에 가서 다운로드해야 했죠? 이제는 터미널에서 한 줄이면 됩니다!</p>
+
+                <h3>Python 설치 (창고에 추가)</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># Python 3.12 버전을 창고에 설치</span>
+<span class="command">uv</span> <span class="keyword">python</span> <span class="keyword">install</span> <span class="string">3.12</span>
+
+<span class="comment"># 여러 버전 설치도 가능!</span>
+<span class="command">uv</span> <span class="keyword">python</span> <span class="keyword">install</span> <span class="string">3.10</span>
+<span class="command">uv</span> <span class="keyword">python</span> <span class="keyword">install</span> <span class="string">3.11</span></code></pre>
+                </div>
+
+                <div class="info-box info">
+                    <div class="icon">📍</div>
+                    <div class="content">
+                        <h4>어디서 실행해도 괜찮아요!</h4>
+                        <p><code>uv python install</code>은 어떤 폴더에서 실행하든 항상 같은 전용 창고에 설치됩니다. 설치된 Python은 제어판의 "프로그램 추가/제거"에 나타나지 않아요!</p>
+                    </div>
+                </div>
+
+                <h3>설치된 버전 확인</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="command">uv</span> <span class="keyword">python</span> <span class="keyword">list</span></code></pre>
+                </div>
+
+                <h3>Python 삭제</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 더 이상 필요 없는 버전 삭제</span>
+<span class="command">uv</span> <span class="keyword">python</span> <span class="keyword">uninstall</span> <span class="string">3.10</span></code></pre>
+                </div>
+            </section>
+
+            <!-- 프로젝트 시작 -->
+            <section id="project">
+                <div class="section-header">
+                    <div class="section-icon cyan">📁</div>
+                    <h2>새 프로젝트 시작하기</h2>
+                </div>
+
+                <p>자, 이제 실제로 프로젝트를 만들어볼까요? 정말 쉬워요!</p>
+
+                <h3>프로젝트 생성 (권장 방법)</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 새 프로젝트 만들기 (Python 3.12 사용)</span>
+<span class="command">uv</span> <span class="keyword">init</span> my_project <span class="flag">--python</span> <span class="string">3.12</span>
+
+<span class="comment"># 프로젝트 폴더로 이동</span>
+<span class="command">cd</span> my_project</code></pre>
+                </div>
+
+                <p>이렇게 하면 <code>my_project</code> 폴더가 생기고, 그 안에 필요한 파일들이 자동으로 만들어집니다!</p>
+
+                <h3>가상환경 직접 만들기 (선택사항)</h3>
+                <p>보통은 자동으로 만들어지지만, 직접 만들고 싶다면:</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 프로젝트 폴더 안에서 실행</span>
+<span class="command">uv</span> <span class="keyword">venv</span> <span class="flag">--python</span> <span class="string">3.12</span></code></pre>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="icon">✨</div>
+                    <div class="content">
+                        <h4>자동 생성 기능!</h4>
+                        <p><code>uv add</code>나 <code>uv run</code> 명령어를 실행할 때 <code>.venv</code> 폴더가 없으면 uv가 자동으로 만들어줍니다. 그래서 <code>uv venv</code>를 따로 안 해도 돼요!</p>
+                    </div>
+                </div>
+
+                <h3>Python 버전 바꾸기</h3>
+                <p>프로젝트 중간에 Python 버전을 바꾸고 싶다면?</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 기존 가상환경 삭제 (Windows)</span>
+<span class="command">rmdir</span> <span class="flag">/s /q</span> <span class="path">.venv</span>
+
+<span class="comment"># 새 버전으로 다시 만들기</span>
+<span class="command">uv</span> <span class="keyword">venv</span> <span class="flag">--python</span> <span class="string">3.11</span></code></pre>
+                </div>
+
+                <details>
+                    <summary>가상환경 활성화/비활성화 (고급)</summary>
+                    <div class="details-content">
+                        <p><code>uv run</code>을 사용하면 활성화가 필요 없지만, 직접 <code>python</code> 명령어를 쓰고 싶다면:</p>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">PowerShell (Windows)</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <span>📋</span> 복사
+                                </button>
+                            </div>
+                            <pre><code><span class="comment"># 활성화</span>
+<span class="path">.\.venv\Scripts\activate</span>
+
+<span class="comment"># 비활성화</span>
+<span class="command">deactivate</span></code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">Bash (macOS/Linux)</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <span>📋</span> 복사
+                                </button>
+                            </div>
+                            <pre><code><span class="comment"># 활성화</span>
+<span class="command">source</span> <span class="path">.venv/bin/activate</span>
+
+<span class="comment"># 비활성화</span>
+<span class="command">deactivate</span></code></pre>
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <!-- 패키지 관리 -->
+            <section id="package">
+                <div class="section-header">
+                    <div class="section-icon pink">📦</div>
+                    <h2>패키지(라이브러리) 관리</h2>
+                </div>
+
+                <p>pandas, numpy 같은 라이브러리를 설치해볼까요? <code>pip install</code> 대신 <code>uv add</code>를 사용합니다!</p>
+
+                <h3>패키지 설치</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 하나씩 설치</span>
+<span class="command">uv</span> <span class="keyword">add</span> pandas
+
+<span class="comment"># 여러 개 한 번에 설치</span>
+<span class="command">uv</span> <span class="keyword">add</span> pandas numpy matplotlib
+
+<span class="comment"># 특정 버전 설치</span>
+<span class="command">uv</span> <span class="keyword">add</span> pandas<span class="string">==2.1.0</span></code></pre>
+                </div>
+
+                <h3>패키지 삭제</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="command">uv</span> <span class="keyword">remove</span> pandas</code></pre>
+                </div>
+
+                <div class="info-box info">
+                    <div class="icon">🗄️</div>
+                    <div class="content">
+                        <h4>패키지도 창고에서 빌려옵니다!</h4>
+                        <p>pandas를 처음 설치하면 uv가 전용 캐시 창고에 저장합니다. 다른 프로젝트에서 또 pandas를 설치해도 <strong>다시 다운로드하지 않고</strong> 창고에 있는 걸 링크해서 사용해요. 그래서 빠르고 용량도 절약됩니다!</p>
+                    </div>
+                </div>
+
+                <h3>캐시 정리하기</h3>
+                <p>오래된 패키지들이 쌓이면:</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="command">uv</span> <span class="keyword">cache</span> <span class="keyword">clean</span></code></pre>
+                </div>
+            </section>
+
+            <!-- 워크플로우 -->
+            <section id="workflow">
+                <div class="section-header">
+                    <div class="section-icon yellow">🎯</div>
+                    <h2>실전 워크플로우</h2>
+                </div>
+
+                <div class="workflow-summary">
+                    <h3>⚡ 새 프로젝트 시작하기 (3단계)</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="number">1</div>
+                            <h4>프로젝트 생성</h4>
+                            <code>uv init my_project --python 3.12</code><br>
+                            <code>cd my_project</code>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="number">2</div>
+                            <h4>패키지 설치</h4>
+                            <code>uv add pandas numpy</code>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="number">3</div>
+                            <h4>코드 실행</h4>
+                            <code>uv run main.py</code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Python 파일 실행하기</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 가상환경 활성화 없이 바로 실행!</span>
+<span class="command">uv</span> <span class="keyword">run</span> main.py
+
+<span class="comment"># 특정 스크립트 실행</span>
+<span class="command">uv</span> <span class="keyword">run</span> <span class="path">scripts/data_analysis.py</span></code></pre>
+                </div>
+
+                <h3>Jupyter Notebook 사용하기</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">터미널</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋</span> 복사
+                        </button>
+                    </div>
+                    <pre><code><span class="comment"># 필수 패키지 설치</span>
+<span class="command">uv</span> <span class="keyword">add</span> ipykernel jupyter
+
+<span class="comment"># Jupyter Notebook 실행</span>
+<span class="command">uv</span> <span class="keyword">run</span> jupyter notebook</code></pre>
+                </div>
+
+                <div class="quick-ref">
+                    <div class="quick-ref-header">
+                        📋 자주 쓰는 명령어 모음
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>하고 싶은 것</th>
+                                <th>명령어</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Python 설치</td>
+                                <td><code>uv python install 3.12</code></td>
+                            </tr>
+                            <tr>
+                                <td>새 프로젝트 만들기</td>
+                                <td><code>uv init 프로젝트명 --python 3.12</code></td>
+                            </tr>
+                            <tr>
+                                <td>가상환경 만들기</td>
+                                <td><code>uv venv --python 3.12</code></td>
+                            </tr>
+                            <tr>
+                                <td>패키지 설치</td>
+                                <td><code>uv add 패키지명</code></td>
+                            </tr>
+                            <tr>
+                                <td>패키지 삭제</td>
+                                <td><code>uv remove 패키지명</code></td>
+                            </tr>
+                            <tr>
+                                <td>패키지 동기화</td>
+                                <td><code>uv sync</code></td>
+                            </tr>
+                            <tr>
+                                <td>Python 파일 실행</td>
+                                <td><code>uv run 파일명.py</code></td>
+                            </tr>
+                            <tr>
+                                <td>설치된 Python 확인</td>
+                                <td><code>uv python list</code></td>
+                            </tr>
+                            <tr>
+                                <td>캐시 정리</td>
+                                <td><code>uv cache clean</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 팁 -->
+            <section id="tips">
+                <div class="section-header">
+                    <div class="section-icon purple">💡</div>
+                    <h2>알아두면 좋은 팁</h2>
+                </div>
+
+                <h3>VS Code에서 설정하기</h3>
+                <p>VS Code를 사용한다면 Python Interpreter를 올바르게 선택해야 합니다:</p>
+                <ol>
+                    <li><code>Ctrl + Shift + P</code> (Mac: <code>Cmd + Shift + P</code>)를 눌러 명령 팔레트 열기</li>
+                    <li>"Python: Select Interpreter" 검색</li>
+                    <li><strong>('.venv': uv)</strong>라고 표시된 항목 선택</li>
+                    <li>목록에 없다면 <code>.venv/Scripts/python.exe</code>를 직접 지정</li>
+                </ol>
+
+                <div class="info-box warning">
+                    <div class="icon">⚠️</div>
+                    <div class="content">
+                        <h4>"아무데서나 python이 실행 안 돼요!"</h4>
+                        <p>정상입니다! uv는 시스템을 깨끗하게 유지하기 위해 전역 <code>python</code> 명령어를 등록하지 않아요. 프로젝트 폴더에서 <code>uv run</code>을 사용하거나, 가상환경을 활성화하세요.</p>
+                    </div>
+                </div>
+
+                <h3>프로젝트 삭제는 간단하게!</h3>
+                <div class="info-box tip">
+                    <div class="icon">🗑️</div>
+                    <div class="content">
+                        <h4>그냥 폴더를 삭제하면 됩니다!</h4>
+                        <p>프로젝트가 끝나면 프로젝트 폴더 전체를 휴지통에 버리세요. 예전처럼 "프로그램 추가/제거"에서 지울 필요 없어요. 시스템에 찌꺼기가 남지 않습니다!</p>
+                    </div>
+                </div>
+
+                <h3>서로 다른 프로젝트, 서로 다른 환경</h3>
+                <p>A 프로젝트는 Python 3.12 + pandas 2.0, B 프로젝트는 Python 3.10 + pandas 1.5를 써도 전혀 문제없어요. 각 프로젝트의 <code>.venv</code>가 완전히 독립되어 있으니까요!</p>
+            </section>
+
+            <!-- 부록 -->
+            <section id="appendix" class="appendix">
+                <div class="section-header">
+                    <div class="section-icon">📎</div>
+                    <h2>부록: 기존 환경 정리하기</h2>
+                </div>
+
+                <p>uv로 완전히 전환하기 전에 기존에 설치된 Conda나 전역 Python을 정리하면 더 깔끔합니다. 꼭 필요한 건 아니지만, 권장드려요!</p>
+
+                <details>
+                    <summary>🐍 Conda 완전 삭제하기 (Windows)</summary>
+                    <div class="details-content">
+                        <div class="steps">
+                            <div class="step">
+                                <h4>프로그램 제거</h4>
+                                <p>설정 → 앱 → 앱 및 기능에서 <strong>Miniconda</strong> 또는 <strong>Anaconda</strong>를 찾아 제거합니다.</p>
+                            </div>
+                            <div class="step">
+                                <h4>잔여 폴더 삭제</h4>
+                                <p>탐색기에서 아래 폴더들을 수동으로 삭제하세요:</p>
+                                <ul>
+                                    <li><code>C:\Users\사용자명\.conda</code></li>
+                                    <li><code>C:\Users\사용자명\.condarc</code></li>
+                                    <li><code>C:\Users\사용자명\miniconda3</code> (또는 anaconda3)</li>
+                                </ul>
+                            </div>
+                            <div class="step">
+                                <h4>환경 변수 정리</h4>
+                                <p>Windows 검색에서 "시스템 환경 변수 편집" 검색 → 환경 변수 → Path에서 Conda 관련 경로 삭제</p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🐍 전역 Python 완전 삭제하기 (Windows)</summary>
+                    <div class="details-content">
+                        <div class="steps">
+                            <div class="step">
+                                <h4>프로그램 제거</h4>
+                                <p>설정 → 앱 → 앱 및 기능에서 <strong>Python 3.x</strong> 및 <strong>Python Launcher</strong>를 찾아 제거합니다.</p>
+                            </div>
+                            <div class="step">
+                                <h4>잔여 폴더 삭제</h4>
+                                <p>탐색기 주소창에 아래 경로를 붙여넣고 폴더가 있으면 삭제:</p>
+                                <ul>
+                                    <li><code>%LocalAppData%\Programs\Python</code></li>
+                                    <li><code>%AppData%\Python</code></li>
+                                </ul>
+                            </div>
+                            <div class="step">
+                                <h4>환경 변수 정리</h4>
+                                <p>"시스템 환경 변수 편집" → Path에서 Python, Python\Scripts 경로 삭제</p>
+                            </div>
+                            <div class="step">
+                                <h4>Windows 앱 별칭 비활성화</h4>
+                                <p>Windows 검색에서 "앱 실행 별칭 관리" 검색 → Python 관련 항목 모두 <strong>끔</strong>으로 설정</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box info">
+                            <div class="icon">✅</div>
+                            <div class="content">
+                                <h4>삭제 확인 방법</h4>
+                                <p>PowerShell에서 <code>python --version</code> 입력 후 "명령어를 찾을 수 없음" 메시지가 나오면 성공!</p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <!-- 마무리 -->
+            <section style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border: 2px solid rgba(99, 102, 241, 0.2);">
+                <div class="section-header">
+                    <div class="section-icon purple">🎉</div>
+                    <h2>축하합니다!</h2>
+                </div>
+
+                <p>이제 uv의 기본 사용법을 모두 배우셨습니다! 정리해볼까요?</p>
+
+                <ul>
+                    <li><strong>창고와 작업실:</strong> Python과 패키지가 중앙 창고에 저장되고, 프로젝트에서 링크로 빌려씁니다</li>
+                    <li><strong>깔끔한 환경:</strong> 시스템을 오염시키지 않아 언제든 깨끗하게 정리 가능</li>
+                    <li><strong>간편한 사용:</strong> <code>uv init</code> → <code>uv add</code> → <code>uv run</code> 세 단계면 충분!</li>
+                    <li><strong>빠른 속도:</strong> 체감될 정도로 빠른 패키지 설치</li>
+                </ul>
+
+                <p style="margin-top: 24px; text-align: center; font-size: 1.125rem;">
+                    <strong>Python 개발 환경, 이제 uv로 종결하세요! 🚀</strong>
+                </p>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="toc">
+                <div class="toc-title">목차</div>
+                <ul class="toc-list">
+                    <li><a href="#intro">🚀 소개</a></li>
+                    <li><a href="#concept">🧠 핵심 개념</a></li>
+                    <li><a href="#install">📥 설치</a></li>
+                    <li><a href="#python">🐍 Python 관리</a></li>
+                    <li><a href="#project">📁 프로젝트 시작</a></li>
+                    <li><a href="#package">📦 패키지 관리</a></li>
+                    <li><a href="#workflow">🎯 워크플로우</a></li>
+                    <li><a href="#tips">💡 팁</a></li>
+                    <li><a href="#appendix">📎 부록</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        <p>이 가이드북은 <a href="https://docs.astral.sh/uv/" target="_blank">uv 공식 문서</a>를 기반으로 작성되었습니다.</p>
+        <p style="margin-top: 8px;">Made with ❤️ for Python beginners</p>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop" aria-label="맨 위로 스크롤">↑</button>
+
+    <script>
+        // Copy button functionality
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span>✓</span> 복사됨!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Progress bar
+        const progressBar = document.getElementById('progressBar');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = progress + '%';
+        });
+
+        // Active nav and TOC highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a, .toc-list a');
+
+        const observerOptions = {
+            rootMargin: '-20% 0px -80% 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Mobile TOC toggle
+        const tocToggle = document.getElementById('tocToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        tocToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        // Close TOC when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !tocToggle.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        // Close TOC when clicking a link (mobile)
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

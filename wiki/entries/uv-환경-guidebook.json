@@ -1,0 +1,179 @@
+{
+  "slug": "uv-환경-guidebook",
+  "source": "docs/uv 환경 guidebook.html",
+  "source_hash": "482571cb6e0a9cbf",
+  "title": "Python uv 환경 가이드북 - 초보자를 위한 완벽 가이드",
+  "doc_date": "2026-01-28",
+  "word_count": 1051,
+  "headings": [
+    {
+      "level": 2,
+      "text": "uv가 뭔가요?",
+      "id": "uv가-뭔가요"
+    },
+    {
+      "level": 2,
+      "text": "핵심 개념: 창고와 작업실",
+      "id": "핵심-개념-창고와-작업실"
+    },
+    {
+      "level": 2,
+      "text": "uv 설치하기",
+      "id": "uv-설치하기"
+    },
+    {
+      "level": 3,
+      "text": "Windows (권장 방법)",
+      "id": "windows-권장-방법"
+    },
+    {
+      "level": 3,
+      "text": "설치 확인",
+      "id": "설치-확인"
+    },
+    {
+      "level": 3,
+      "text": "업데이트 & 삭제",
+      "id": "업데이트-삭제"
+    },
+    {
+      "level": 2,
+      "text": "Python 버전 관리하기",
+      "id": "python-버전-관리하기"
+    },
+    {
+      "level": 3,
+      "text": "Python 설치 (창고에 추가)",
+      "id": "python-설치-창고에-추가"
+    },
+    {
+      "level": 3,
+      "text": "설치된 버전 확인",
+      "id": "설치된-버전-확인"
+    },
+    {
+      "level": 3,
+      "text": "Python 삭제",
+      "id": "python-삭제"
+    },
+    {
+      "level": 2,
+      "text": "새 프로젝트 시작하기",
+      "id": "새-프로젝트-시작하기"
+    },
+    {
+      "level": 3,
+      "text": "프로젝트 생성 (권장 방법)",
+      "id": "프로젝트-생성-권장-방법"
+    },
+    {
+      "level": 3,
+      "text": "가상환경 직접 만들기 (선택사항)",
+      "id": "가상환경-직접-만들기-선택사항"
+    },
+    {
+      "level": 3,
+      "text": "Python 버전 바꾸기",
+      "id": "python-버전-바꾸기"
+    },
+    {
+      "level": 2,
+      "text": "패키지(라이브러리) 관리",
+      "id": "패키지-라이브러리-관리"
+    },
+    {
+      "level": 3,
+      "text": "패키지 설치",
+      "id": "패키지-설치"
+    },
+    {
+      "level": 3,
+      "text": "패키지 삭제",
+      "id": "패키지-삭제"
+    },
+    {
+      "level": 3,
+      "text": "캐시 정리하기",
+      "id": "캐시-정리하기"
+    },
+    {
+      "level": 2,
+      "text": "실전 워크플로우",
+      "id": "실전-워크플로우"
+    },
+    {
+      "level": 3,
+      "text": "⚡ 새 프로젝트 시작하기 (3단계)",
+      "id": "새-프로젝트-시작하기-3단계"
+    },
+    {
+      "level": 3,
+      "text": "Python 파일 실행하기",
+      "id": "python-파일-실행하기"
+    },
+    {
+      "level": 3,
+      "text": "Jupyter Notebook 사용하기",
+      "id": "jupyter-notebook-사용하기"
+    },
+    {
+      "level": 2,
+      "text": "알아두면 좋은 팁",
+      "id": "알아두면-좋은-팁"
+    },
+    {
+      "level": 3,
+      "text": "VS Code에서 설정하기",
+      "id": "vs-code에서-설정하기"
+    },
+    {
+      "level": 3,
+      "text": "프로젝트 삭제는 간단하게!",
+      "id": "프로젝트-삭제는-간단하게"
+    },
+    {
+      "level": 3,
+      "text": "서로 다른 프로젝트, 서로 다른 환경",
+      "id": "서로-다른-프로젝트-서로-다른-환경"
+    },
+    {
+      "level": 2,
+      "text": "부록: 기존 환경 정리하기",
+      "id": "부록-기존-환경-정리하기"
+    },
+    {
+      "level": 2,
+      "text": "축하합니다!",
+      "id": "축하합니다"
+    }
+  ],
+  "category": "dev-environment",
+  "subcategory": "python",
+  "tags": [
+    "uv",
+    "python",
+    "가상환경",
+    "패키지관리"
+  ],
+  "summary": "uv 하나로 Python 버전 관리·가상환경·패키지 설치를 모두 처리하는 방법을 '창고와 작업실' 비유로 풀어낸다. 설치부터 프로젝트 생성, VS Code 연결, 기존 환경 정리까지 실습 순서대로 이어진다.",
+  "key_points": [
+    "uv 는 pip·virtualenv·pyenv 의 역할을 하나로 합친 도구다",
+    "Python 원본은 전용 창고에 두고 프로젝트 .venv 는 링크만 건다 — 그래서 가볍고 삭제가 깔끔하다",
+    "Windows 에서는 winget install -e --id astral-sh.uv 가 가장 편하다",
+    "설치 직후에는 터미널을 재시작해야 uv 명령이 인식된다",
+    "프로젝트 삭제는 폴더를 지우는 것으로 끝난다 — 시스템이 오염되지 않는다"
+  ],
+  "level": "beginner",
+  "related": [
+    "git-guide",
+    "bash-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "482571cb6e0a9cbf"
+}

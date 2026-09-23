@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>혼동 행렬 완전 가이드 — 이론 · 지표 · 활용</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════ */
+  /* Design Tokens                          */
+  /* 3-Color: White + #101820 + #971B2F     */
+  /* ═══════════════════════════════════════ */
+  :root {
+    --black: #101820;
+    --red: #971B2F;
+    --red-hover: #7a1526;
+    --white: #FFFFFF;
+  }
+
+  /* ─── Light Mode ─── */
+  [data-theme="light"] {
+    --bg: #FFFFFF;
+    --bg-alt: #F7F7F8;
+    --bg-card: #FFFFFF;
+    --border: #E2E2E4;
+    --border-light: #EDEDEF;
+    --text-primary: #101820;
+    --text-secondary: #4A4F57;
+    --text-tertiary: #82868E;
+    --text-inverse: #FFFFFF;
+    --table-header-bg: #101820;
+    --table-header-text: #FFFFFF;
+    --table-stripe: #FAFAFA;
+    --callout-bg: #F7F7F8;
+    --callout-border: #D0D0D3;
+    --callout-warn-bg: #FEF9F5;
+    --callout-warn-border: #971B2F;
+    --callout-danger-bg: #FDF5F6;
+    --callout-danger-border: #971B2F;
+    --tag-red-bg: #FDF5F6;
+    --tag-red-text: #971B2F;
+    --tag-dark-bg: #F0F0F2;
+    --tag-dark-text: #101820;
+    --matrix-tp: #F2F5F3;
+    --matrix-fp: #FDF5F6;
+    --matrix-tn: #F2F4F7;
+    --matrix-fn: #FBF7F2;
+    --nav-bg: rgba(255,255,255,0.97);
+    --nav-border: #E2E2E4;
+    --shadow-sm: 0 1px 3px rgba(16,24,32,0.05);
+    --shadow-md: 0 4px 12px rgba(16,24,32,0.07);
+  }
+
+  /* ─── Dark Mode ─── */
+  [data-theme="dark"] {
+    --bg: #101820;
+    --bg-alt: #171F28;
+    --bg-card: #1B2330;
+    --border: #28303C;
+    --border-light: #222A35;
+    --text-primary: #E4E5E8;
+    --text-secondary: #9CA0A8;
+    --text-tertiary: #636870;
+    --text-inverse: #101820;
+    --table-header-bg: #1B2330;
+    --table-header-text: #E4E5E8;
+    --table-stripe: #171F28;
+    --callout-bg: #1B2330;
+    --callout-border: #28303C;
+    --callout-warn-bg: rgba(151,27,47,0.07);
+    --callout-warn-border: #971B2F;
+    --callout-danger-bg: rgba(151,27,47,0.10);
+    --callout-danger-border: #971B2F;
+    --tag-red-bg: rgba(151,27,47,0.14);
+    --tag-red-text: #CFA0A8;
+    --tag-dark-bg: #222A35;
+    --tag-dark-text: #BCC0C6;
+    --matrix-tp: rgba(80,120,80,0.08);
+    --matrix-fp: rgba(151,27,47,0.08);
+    --matrix-tn: rgba(60,90,140,0.08);
+    --matrix-fn: rgba(160,120,50,0.08);
+    --nav-bg: rgba(16,24,32,0.97);
+    --nav-border: #28303C;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.18);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Reset & Base                           */
+  /* ═══════════════════════════════════════ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 15px;
+    transition: background 0.35s ease, color 0.35s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Navigation                             */
+  /* ═══════════════════════════════════════ */
+  .toc {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
+    z-index: 100;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 52px;
+    gap: 4px;
+    overflow-x: auto;
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .toc-logo {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--red);
+    margin-right: 16px;
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
+  }
+
+  .toc a {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .toc a:hover {
+    color: var(--text-primary);
+    background: var(--bg-alt);
+  }
+
+  .toc-spacer { flex: 1; }
+
+  .theme-toggle {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: border-color 0.2s, background 0.35s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--text-tertiary);
+    color: var(--text-primary);
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Layout                                 */
+  /* ═══════════════════════════════════════ */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 84px 24px 60px;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Hero                                   */
+  /* ═══════════════════════════════════════ */
+  .hero {
+    text-align: center;
+    padding: 48px 0 40px;
+  }
+
+  .hero h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1.35;
+    transition: color 0.35s;
+  }
+
+  .hero .subtitle {
+    color: var(--text-tertiary);
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .hero .reading-time {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    border: 1px solid var(--border);
+    padding: 4px 14px;
+    border-radius: 20px;
+    transition: border-color 0.35s;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Separator                              */
+  /* ═══════════════════════════════════════ */
+  .sep {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+    transition: background 0.35s;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Chapter                                */
+  /* ═══════════════════════════════════════ */
+  .chapter {
+    margin-bottom: 48px;
+    scroll-margin-top: 68px;
+  }
+
+  .chapter-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .chapter h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    transition: color 0.35s;
+  }
+
+  .chapter h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    color: var(--text-primary);
+    padding-left: 12px;
+    border-left: 3px solid var(--red);
+    transition: color 0.35s;
+  }
+
+  .chapter p {
+    margin-bottom: 14px;
+    color: var(--text-secondary);
+    transition: color 0.35s;
+  }
+
+  .chapter p strong { color: var(--text-primary); font-weight: 700; }
+
+  /* ═══════════════════════════════════════ */
+  /* Callout                                */
+  /* ═══════════════════════════════════════ */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-left: 3px solid;
+    font-size: 14px;
+    line-height: 1.75;
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .callout.info {
+    background: var(--callout-bg);
+    border-color: var(--black);
+    color: var(--text-secondary);
+  }
+
+  .callout.warn {
+    background: var(--callout-warn-bg);
+    border-color: var(--callout-warn-border);
+    color: var(--text-secondary);
+  }
+
+  .callout.danger {
+    background: var(--callout-danger-bg);
+    border-color: var(--callout-danger-border);
+    color: var(--text-secondary);
+  }
+
+  .callout strong { color: var(--text-primary); }
+
+  /* ═══════════════════════════════════════ */
+  /* Tables                                 */
+  /* ═══════════════════════════════════════ */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 16px 0;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.35s;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+  thead th {
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
+    font-weight: 600;
+    padding: 11px 16px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    transition: background 0.35s, color 0.35s;
+  }
+
+  tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+    color: var(--text-secondary);
+    transition: border-color 0.35s, color 0.35s;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--table-stripe); }
+  tbody tr:hover { background: var(--bg-alt); }
+
+  .label-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; font-size: 15px;
+    text-align: center; color: var(--text-primary);
+  }
+
+  .formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; font-size: 13px;
+    text-align: center; color: var(--text-primary);
+  }
+
+  .text-red { color: var(--red) !important; }
+  .text-muted { color: var(--text-tertiary); font-size: 12px; }
+  .text-center { text-align: center; }
+  .font-bold { font-weight: 700; }
+
+  .error-badge {
+    display: inline-block; padding: 2px 7px;
+    border-radius: 4px; font-size: 11px; font-weight: 600;
+  }
+
+  .error-badge.type1 { background: var(--tag-red-bg); color: var(--red); }
+  .error-badge.type2 { background: var(--tag-dark-bg); color: var(--text-primary); }
+
+  /* ═══════════════════════════════════════ */
+  /* Dual Cards                             */
+  /* ═══════════════════════════════════════ */
+  .dual-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px; margin: 16px 0;
+  }
+
+  .dual-card {
+    border-radius: 8px; padding: 18px 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.35s, background 0.35s;
+  }
+
+  .dual-card.accent-left { border-left: 3px solid var(--red); }
+  .dual-card.accent-left-dark { border-left: 3px solid var(--black); }
+
+  [data-theme="dark"] .dual-card.accent-left-dark { border-left-color: var(--text-tertiary); }
+
+  .dual-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+  .dual-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 4px; }
+  .dual-card .result { font-weight: 700; font-size: 13px; margin-top: 6px; color: var(--text-primary); }
+  .dual-card .result.red { color: var(--red); }
+
+  /* ═══════════════════════════════════════ */
+  /* Confusion Matrix Visual                */
+  /* ═══════════════════════════════════════ */
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    grid-template-rows: auto 40px 1fr 1fr;
+    gap: 0; max-width: 460px;
+    margin: 24px auto; font-size: 14px; text-align: center;
+  }
+
+  .matrix-grid .corner { grid-area: 1/1/3/2; }
+  .matrix-grid .pred-label { grid-area: 1/2/2/4; font-weight: 700; font-size: 12px; color: var(--text-tertiary); padding: 8px; letter-spacing: 1px; text-transform: uppercase; }
+  .matrix-grid .pred-p { grid-area: 2/2/3/3; font-weight: 600; color: var(--text-tertiary); padding: 6px; font-size: 13px; }
+  .matrix-grid .pred-n { grid-area: 2/3/3/4; font-weight: 600; color: var(--text-tertiary); padding: 6px; font-size: 13px; }
+  .matrix-grid .actual-label { grid-area: 3/1/5/2; writing-mode: vertical-rl; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: var(--text-tertiary); letter-spacing: 1px; }
+
+  .matrix-cell {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 18px 10px; border: 1px solid var(--border);
+    border-radius: 6px; margin: 3px;
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .matrix-cell .cell-label { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 20px; margin-bottom: 4px; color: var(--text-primary); }
+  .matrix-cell .cell-desc { font-size: 11px; color: var(--text-tertiary); }
+
+  .cell-tp { background: var(--matrix-tp); }
+  .cell-fp { background: var(--matrix-fp); }
+  .cell-fn { background: var(--matrix-fn); }
+  .cell-tn { background: var(--matrix-tn); }
+
+  /* ═══════════════════════════════════════ */
+  /* Case Study                             */
+  /* ═══════════════════════════════════════ */
+  .case-study {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px; margin: 24px 0;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .case-study .case-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+  .case-study h4 { font-family: 'Noto Serif KR', serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+  .case-study p { font-size: 14px; margin-bottom: 12px; color: var(--text-secondary); }
+
+  .priority-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .priority-tag.high { background: var(--tag-red-bg); color: var(--red); }
+  .priority-tag.med { background: var(--tag-dark-bg); color: var(--text-primary); }
+  .priority-tag.low { background: var(--bg-alt); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  /* ═══════════════════════════════════════ */
+  /* Hypothesis note                        */
+  /* ═══════════════════════════════════════ */
+  .hypothesis-note {
+    background: var(--callout-bg); border-left: 3px solid var(--text-tertiary);
+    padding: 10px 16px; border-radius: 0 6px 6px 0;
+    margin-bottom: 16px; font-size: 13px; color: var(--text-tertiary);
+    font-style: italic; transition: background 0.35s, border-color 0.35s;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Formula Box                            */
+  /* ═══════════════════════════════════════ */
+  .formula-box {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-top: 3px solid var(--red);
+    border-radius: 8px; padding: 28px; text-align: center;
+    margin: 24px 0; box-shadow: var(--shadow-md);
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .formula-line { font-size: 15px; font-weight: 500; margin-bottom: 12px; line-height: 2; color: var(--text-primary); }
+  .formula-line:last-child { margin-bottom: 0; }
+
+  .tag { font-weight: 700; padding: 3px 8px; border-radius: 4px; font-size: 14px; }
+  .tag.dark { background: var(--tag-dark-bg); color: var(--tag-dark-text); }
+  .tag.red { background: var(--tag-red-bg); color: var(--tag-red-text); }
+
+  .divider { color: var(--text-tertiary); margin: 0 4px; }
+
+  /* ═══════════════════════════════════════ */
+  /* Footer                                 */
+  /* ═══════════════════════════════════════ */
+  .footer {
+    text-align: center; padding: 28px 0;
+    color: var(--text-tertiary); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 48px;
+    transition: border-color 0.35s;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Animation                              */
+  /* ═══════════════════════════════════════ */
+  .fade-in { animation: fadeUp 0.45s ease-out both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ═══════════════════════════════════════ */
+  /* Responsive                             */
+  /* ═══════════════════════════════════════ */
+  @media (max-width: 640px) {
+    .dual-cards { grid-template-columns: 1fr; }
+    .container { padding: 64px 16px 40px; }
+    .hero h1 { font-size: 24px; }
+    .chapter h2 { font-size: 19px; }
+    .matrix-grid { grid-template-columns: 72px 1fr 1fr; font-size: 12px; }
+    .matrix-cell .cell-label { font-size: 16px; }
+    .toc a { display: none; }
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Print                                  */
+  /* ═══════════════════════════════════════ */
+  @media print {
+    .toc { display: none; }
+    .container { padding: 0; max-width: 100%; }
+    body { font-size: 13px; background: #fff; color: #111; }
+    .chapter { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="toc">
+  <span class="toc-logo">CM Guide</span>
+  <a href="#theory">이론적 배경</a>
+  <a href="#matrix">혼동 행렬</a>
+  <a href="#metrics">평가지표</a>
+  <a href="#hypothesis">가설검정</a>
+  <a href="#cases">활용 사례</a>
+  <a href="#summary">최종 요약</a>
+  <span class="toc-spacer"></span>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="다크 모드 전환" title="다크 모드 전환">
+    <span class="theme-icon">☾</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero fade-in">
+    <h1>혼동 행렬 완전 가이드</h1>
+    <p class="subtitle">이론적 배경 · 평가지표 암기 요령 · 가설검정 연결 · 실전 활용 사례</p>
+    <span class="reading-time">읽기 약 10분</span>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 1 -->
+  <div class="chapter fade-in" id="theory">
+    <div class="chapter-label">Chapter 1</div>
+    <h2>왜 혼동 행렬이 필요한가?</h2>
+
+    <h3>단순 정확도의 함정</h3>
+    <p>
+      분류 모델을 평가할 때 가장 먼저 떠올리는 지표는 <strong>정확도(Accuracy)</strong>입니다.
+      "전체 예측 중 맞은 비율"이라는 직관적 정의 덕분에 이해하기 쉽지만, 현실의 데이터는
+      대부분 <strong>클래스 불균형(Class Imbalance)</strong> 상태이기 때문에 정확도만으로는 모델의
+      진짜 성능을 판단할 수 없습니다.
+    </p>
+
+    <div class="callout warn">
+      <strong>예시 — 암 검진 시스템</strong><br>
+      전체 환자 1,000명 중 실제 암 환자가 10명(1%)이라고 가정합니다. 모델이 모든 환자를
+      "정상"이라고 예측하더라도 정확도는 99%입니다. 하지만 이 모델은 단 한 명의 암 환자도
+      찾아내지 못했으므로 실질적으로 <em>쓸모가 없습니다.</em>
+    </div>
+
+    <p>
+      이처럼 정확도는 다수 클래스에 치우친 예측을 높은 점수로 보상하는 맹점이 있습니다.
+      이 문제를 해결하기 위해, 모델이 <strong>어떤 유형의 정답과 오답을 만들어냈는지</strong>를
+      구조적으로 분해하는 도구가 바로 <strong>혼동 행렬(Confusion Matrix)</strong>입니다.
+    </p>
+
+    <h3>혼동 행렬의 탄생 배경</h3>
+    <p>
+      혼동 행렬은 통계학과 신호 탐지 이론(Signal Detection Theory)에서 유래했습니다.
+      제2차 세계대전 당시 레이더 신호를 분석하면서, "실제로 적기가 있는데 놓친 경우"와
+      "적기가 없는데 경보를 울린 경우"를 구분해야 할 필요성에서 이 개념이 체계화되었습니다.
+      이후 의학 진단, 정보 검색, 머신러닝 등으로 확산되어 오늘날 모든 분류 문제의
+      표준 평가 프레임워크로 자리잡았습니다.
+    </p>
+
+    <h3>핵심 아이디어</h3>
+    <p>
+      혼동 행렬의 핵심은 단 하나의 질문입니다: <strong>"모델의 예측과 실제 정답이 어떻게
+      교차하는가?"</strong> 이 교차점을 2×2 격자로 시각화하면, 모델이 만들어내는 네 가지
+      결과 유형을 한눈에 파악할 수 있습니다.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 2 -->
+  <div class="chapter fade-in" id="matrix">
+    <div class="chapter-label">Chapter 2</div>
+    <h2>혼동 행렬의 구조</h2>
+
+    <p>
+      이진 분류(Binary Classification)에서 혼동 행렬은 아래와 같이 <strong>2×2 격자</strong>로
+      구성됩니다. 행(row)은 실제 값을, 열(column)은 모델의 예측 값을 나타냅니다.
+    </p>
+
+    <div class="matrix-grid">
+      <div class="corner"></div>
+      <div class="pred-label">모델 예측 (Predicted)</div>
+      <div class="pred-p">Positive</div>
+      <div class="pred-n">Negative</div>
+      <div class="actual-label">실제 값 (Actual)</div>
+      <div class="matrix-cell cell-tp" style="grid-area:3/2/4/3;">
+        <span class="cell-label">TP</span>
+        <span class="cell-desc">참 양성</span>
+      </div>
+      <div class="matrix-cell cell-fn" style="grid-area:3/3/4/4;">
+        <span class="cell-label">FN</span>
+        <span class="cell-desc">거짓 음성 (2종 오류)</span>
+      </div>
+      <div class="matrix-cell cell-fp" style="grid-area:4/2/5/3;">
+        <span class="cell-label">FP</span>
+        <span class="cell-desc">거짓 양성 (1종 오류)</span>
+      </div>
+      <div class="matrix-cell cell-tn" style="grid-area:4/3/5/4;">
+        <span class="cell-label">TN</span>
+        <span class="cell-desc">참 음성</span>
+      </div>
+    </div>
+
+    <h3>암기 요령: 앞 글자 = 정답 여부, 뒷 글자 = 모델 예측</h3>
+    <p>
+      TP, FP, TN, FN이라는 약어에서 <strong>첫 글자(T/F)</strong>는 "모델이 맞았는가 틀렸는가"를,
+      <strong>뒷 글자(P/N)</strong>는 "모델이 뭐라고 예측했는가"를 나타냅니다.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>약어</th><th>의미</th><th>출입문 예시</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="label-code">TP</td>
+            <td>맞았다(T) + Positive로 예측</td>
+            <td>출입 허가 → 실제 등록자 ✓</td>
+          </tr>
+          <tr>
+            <td class="label-code text-red">FP</td>
+            <td>틀렸다(F) + Positive로 예측</td>
+            <td class="text-red">출입 허가 → 실제 미등록자 ✗ <span class="error-badge type1">1종 오류</span></td>
+          </tr>
+          <tr>
+            <td class="label-code">TN</td>
+            <td>맞았다(T) + Negative로 예측</td>
+            <td>출입 거부 → 실제 미등록자 ✓</td>
+          </tr>
+          <tr>
+            <td class="label-code text-red">FN</td>
+            <td>틀렸다(F) + Negative로 예측</td>
+            <td>출입 거부 → 실제 등록자 ✗ <span class="error-badge type2">2종 오류</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 3 -->
+  <div class="chapter fade-in" id="metrics">
+    <div class="chapter-label">Chapter 3</div>
+    <h2>혼동 행렬 기반 평가지표</h2>
+
+    <h3>분모가 누구 기준이냐로 구분</h3>
+    <p>
+      지표들이 헷갈리는 가장 큰 이유는 공식이 비슷하게 생겼기 때문입니다.
+      핵심은 <strong>분모를 누구 기준으로 잡느냐</strong>입니다.
+      Precision은 <em>"모델이 양성이라고 예측한 것들"</em> 중에서 계산하고,
+      Recall/민감도는 <em>"실제로 양성인 것들"</em> 중에서 계산합니다.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>지표</th><th>공식</th><th>핵심 암기법</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="text-center font-bold">정확도<br><span class="text-muted">Accuracy</span></td>
+            <td class="formula">(TP+TN) / 전체</td>
+            <td>전체 중 맞은 비율. 클래스 불균형 시 신뢰도 하락에 주의</td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">정밀도<br><span class="text-muted">Precision</span></td>
+            <td class="formula">TP / (TP+FP)</td>
+            <td><strong>"모델 기준"</strong> — 양성 예측 중 진짜 양성 비율 → <strong>정확성</strong></td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">민감도 = 재현율<br><span class="text-muted">Sensitivity = Recall = TPR</span></td>
+            <td class="formula">TP / (TP+FN)</td>
+            <td><strong>"현실 양성 기준"</strong> — 실제 양성 중 찾아낸 비율 → <strong>완전성</strong></td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">특이도<br><span class="text-muted">Specificity = TNR</span></td>
+            <td class="formula">TN / (TN+FP)</td>
+            <td><strong>"현실 음성 기준"</strong> — 실제 음성 중 올바르게 거부한 비율 → <strong>차단력</strong></td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">F1-Score</td>
+            <td class="formula">2×P×R / (P+R)</td>
+            <td>정밀도와 재현율의 조화 평균 → <strong>균형</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>민감도 vs 특이도: 거울 관계</h3>
+    <p>
+      민감도와 특이도는 서로 대칭적인 관계입니다. 둘 다 분모가 "현실 기준"이지만,
+      민감도는 양성(P) 쪽을, 특이도는 음성(N) 쪽을 바라봅니다.
+    </p>
+
+    <div class="dual-cards">
+      <div class="dual-card accent-left-dark">
+        <h4>민감도가 높으면?</h4>
+        <p>"직원은 무사 통과!"</p>
+        <p class="result">→ 실제 양성을 놓치지 않음</p>
+      </div>
+      <div class="dual-card accent-left">
+        <h4>특이도가 높으면?</h4>
+        <p>"외부인은 확실히 차단!"</p>
+        <p class="result">→ 실제 음성을 정확히 걸러냄</p>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <strong>Precision과 특이도의 차이</strong><br>
+      특이도는 "실제 음성(N) 중 올바르게 거부한 비율"이고,
+      Precision은 "모델이 양성(P)이라 예측한 것 중 실제 양성 비율"입니다.
+      분모의 기준이 다르다는 점을 기억하면 구분할 수 있습니다.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 4 -->
+  <div class="chapter fade-in" id="hypothesis">
+    <div class="chapter-label">Chapter 4</div>
+    <h2>가설검정의 1종·2종 오류와의 연결</h2>
+
+    <p>
+      통계학의 가설검정(Hypothesis Testing)에서 말하는 1종 오류, 2종 오류는
+      혼동 행렬의 FP, FN과 정확히 대응됩니다. 출입문 시스템에 비유하면,
+      귀무가설(H₀)은 <strong>"이 사람은 미등록자이다"</strong>—즉, 문이 잠겨 있는 기본 상태입니다.
+    </p>
+
+    <div class="hypothesis-note">
+      귀무가설(H₀): "이 사람은 미등록자이다" ← 출입문은 기본적으로 잠김(거부)이 기본 상태
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>오류 유형</th><th>혼동행렬</th><th>통계적 의미</th><th>출입문 예시</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="text-center font-bold text-red">1종 오류<br><span class="text-muted">Type I · α</span></td>
+            <td class="label-code text-red">FP</td>
+            <td>H₀가 참인데 기각<br><span class="text-muted">미등록자인데 등록자로 판정</span></td>
+            <td><span class="font-bold text-red">도둑에게 문을 열어줌</span><br><span class="text-muted">→ 보안 사고!</span></td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">2종 오류<br><span class="text-muted">Type II · β</span></td>
+            <td class="label-code">FN</td>
+            <td>H₀가 거짓인데 채택<br><span class="text-muted">등록자인데 미등록자로 판정</span></td>
+            <td><span class="font-bold">직원인데 문이 안 열림</span><br><span class="text-muted">→ 직원 불만!</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>오류와 지표의 관계</h3>
+    <p>
+      어떤 오류를 줄이느냐에 따라 올려야 할 지표가 달라지고,
+      이는 모델의 <strong>임계값(Threshold)</strong> 조정으로 제어합니다.
+      그러나 두 오류는 상충 관계에 있어, 하나를 줄이면 다른 하나가 커지는 트레이드오프가 발생합니다.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>줄이고 싶은 것</th><th>높여야 할 지표</th><th>해석</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="text-center font-bold text-red">1종 오류 (FP)</td>
+            <td class="text-center font-bold">특이도 ↑ 또는 정밀도 ↑</td>
+            <td>외부인 차단 강화 → 보안 강화 (임계값을 높이면 달성)</td>
+          </tr>
+          <tr>
+            <td class="text-center font-bold">2종 오류 (FN)</td>
+            <td class="text-center font-bold">민감도(Recall) ↑</td>
+            <td>직원 통과율 향상 → 편의성 증가 (임계값을 낮추면 달성)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong>트레이드오프의 핵심</strong><br>
+      임계값을 높이면 → 모델이 "양성"이라 판단하는 기준이 엄격해짐 → FP↓ 하지만 FN↑<br>
+      임계값을 낮추면 → 모델이 "양성"이라 판단하는 기준이 느슨해짐 → FN↓ 하지만 FP↑<br>
+      이 균형점을 찾기 위해 <strong>ROC 곡선</strong>과 <strong>EER(Equal Error Rate)</strong> 등의 도구를 사용합니다.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 5 -->
+  <div class="chapter fade-in" id="cases">
+    <div class="chapter-label">Chapter 5</div>
+    <h2>실전 활용 사례</h2>
+
+    <p>
+      같은 혼동 행렬이라도 도메인에 따라 <strong>어떤 오류가 더 치명적인지</strong>가 완전히 달라집니다.
+      이 차이가 곧 "어떤 지표를 우선시해야 하는가"를 결정합니다.
+    </p>
+
+    <!-- Case 1 -->
+    <div class="case-study">
+      <div class="case-label">Case Study 01</div>
+      <h4>안면인식 출입문 시스템</h4>
+
+      <p><strong>상황 설정:</strong>
+        회사 건물에 안면인식 출입문을 설치합니다.
+        카메라가 얼굴을 인식하고, 등록된 직원이면 문을 열고(Positive),
+        미등록자이면 문을 잠급니다(Negative).
+      </p>
+
+      <div class="dual-cards">
+        <div class="dual-card accent-left">
+          <h4 class="text-red">1종 오류 (FP) — 보안 사고</h4>
+          <p>미등록자를 직원으로 잘못 인식하여 문이 열립니다. 비인가자가 사내에 침입할 수 있어 <strong>물리적 보안</strong>이 무너집니다.</p>
+          <p class="result red">→ 군사시설·데이터센터에서는 절대 허용 불가</p>
+        </div>
+        <div class="dual-card accent-left-dark">
+          <h4>2종 오류 (FN) — 직원 불편</h4>
+          <p>등록된 직원인데 미등록자로 판정되어 문이 안 열립니다. 매번 수동 인증을 거쳐야 하므로 업무 효율이 떨어집니다.</p>
+          <p class="result">→ 잦으면 시스템 신뢰도 자체가 하락</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>환경</th><th>우선 지표</th><th>임계값 전략</th><th>이유</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="font-bold">군사·기밀시설</td>
+              <td><span class="priority-tag high">특이도 / 정밀도 최우선</span></td>
+              <td>매우 높게</td>
+              <td>비인가 침입 시 피해가 극심하므로 FP를 극도로 억제</td>
+            </tr>
+            <tr>
+              <td class="font-bold">일반 사무실</td>
+              <td><span class="priority-tag med">F1-Score 균형</span></td>
+              <td>EER 부근</td>
+              <td>보안과 편의성 사이의 합리적 균형점 선택</td>
+            </tr>
+            <tr>
+              <td class="font-bold">편의시설·공유오피스</td>
+              <td><span class="priority-tag low">민감도(Recall) 우선</span></td>
+              <td>낮게</td>
+              <td>이용자 불편을 최소화하는 것이 사업적으로 더 중요</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <strong>실무 참고 — FAR과 FRR</strong><br>
+        안면인식 업계에서는 FP 비율을 <strong>FAR(False Acceptance Rate, 오수락률)</strong>,
+        FN 비율을 <strong>FRR(False Rejection Rate, 오거부율)</strong>이라는 고유 명칭으로 사용합니다.
+        FAR = 1 − 특이도, FRR = 1 − 민감도의 관계에 있습니다.
+      </div>
+    </div>
+
+    <!-- Case 2 -->
+    <div class="case-study">
+      <div class="case-label">Case Study 02</div>
+      <h4>의료 진단 — 암 검출 AI</h4>
+
+      <p><strong>상황 설정:</strong>
+        AI 시스템이 CT 영상을 분석하여 폐암 의심 여부를 판정합니다.
+        양성(Positive)은 "암 의심", 음성(Negative)은 "정상"을 의미합니다.
+      </p>
+
+      <div class="dual-cards">
+        <div class="dual-card accent-left">
+          <h4 class="text-red">2종 오류 (FN) — 생명 위협</h4>
+          <p>실제 암 환자를 "정상"으로 판정합니다. 환자는 치료 시기를 놓치게 되며, <strong>생명과 직결</strong>되는 치명적 오류입니다.</p>
+          <p class="result red">→ 의료 분야에서 가장 위험한 오류</p>
+        </div>
+        <div class="dual-card accent-left-dark">
+          <h4>1종 오류 (FP) — 불필요한 검사</h4>
+          <p>정상인을 "암 의심"으로 판정합니다. 불필요한 정밀 검사, 환자의 정신적 불안, 의료 비용 증가 등이 발생합니다.</p>
+          <p class="result">→ 부담이 크지만 생명 위협보다는 낮음</p>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <strong>핵심 — 의료에서는 민감도(Recall)가 최우선</strong><br>
+        의료 진단에서 "놓침(FN)"은 곧 환자의 생명 위험입니다.
+        따라서 민감도를 최대한 높여 <strong>암 환자를 단 한 명도 놓치지 않는 것</strong>이 첫 번째 목표입니다.
+        그 대가로 FP(위양성)가 늘어나더라도, 추가 정밀 검사를 통해 걸러낼 수 있으므로
+        상대적으로 허용 가능합니다. 이것이 의료 AI에서 민감도를 우선시하는 이유입니다.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>진단 단계</th><th>우선 지표</th><th>이유</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="font-bold">1차 스크리닝 (선별 검사)</td>
+              <td><span class="priority-tag high">민감도(Recall) 최우선</span></td>
+              <td>한 명도 놓치지 않는 것이 목표 → FN 최소화</td>
+            </tr>
+            <tr>
+              <td class="font-bold">2차 정밀 검사</td>
+              <td><span class="priority-tag med">특이도 / 정밀도 강화</span></td>
+              <td>1차에서 걸러진 의심 환자 중 진짜 환자를 정확히 확인 → FP 최소화</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        이처럼 의료 시스템은 흔히 <strong>2단계 구조</strong>로 설계됩니다.
+        1차에서 민감도 중심으로 광범위하게 걸러낸 후, 2차에서 특이도와 정밀도 중심으로
+        정밀하게 확인하는 방식입니다. 이는 안면인식 출입문이 보안(특이도)을 우선시하는 것과
+        정반대의 전략이며, <strong>도메인에 따라 지표 우선순위가 달라지는 대표적 사례</strong>입니다.
+      </p>
+    </div>
+
+    <h3>두 사례 비교: 같은 행렬, 다른 전략</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>안면인식 출입문</th><th>암 검출 AI</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="font-bold">더 치명적인 오류</td>
+            <td class="text-red font-bold">1종 오류 (FP) — 비인가 침입</td>
+            <td class="text-red font-bold">2종 오류 (FN) — 환자 누락</td>
+          </tr>
+          <tr>
+            <td class="font-bold">최우선 지표</td>
+            <td>특이도 / 정밀도</td>
+            <td>민감도 (Recall)</td>
+          </tr>
+          <tr>
+            <td class="font-bold">허용 가능한 오류</td>
+            <td>FN (직원 불편은 수동 인증으로 보완)</td>
+            <td>FP (정밀 검사로 재확인 가능)</td>
+          </tr>
+          <tr>
+            <td class="font-bold">임계값 경향</td>
+            <td>높게 (엄격)</td>
+            <td>낮게 (민감)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- CHAPTER 6 -->
+  <div class="chapter fade-in" id="summary">
+    <div class="chapter-label">Final Summary</div>
+    <h2>한눈에 보는 최종 요약</h2>
+
+    <div class="formula-box">
+      <div class="formula-line">
+        <span class="tag dark">정확도</span> 전체 적중률
+        <span class="divider">│</span>
+        <span class="tag dark">정밀도</span> 예측의 정확성
+        <span class="divider">│</span>
+        <span class="tag dark">민감도</span> 빠짐없이 찾기
+        <span class="divider">│</span>
+        <span class="tag dark">특이도</span> 확실히 걸러내기
+      </div>
+      <div class="formula-line">
+        <span class="tag red">1종 오류 (FP)</span> 없는데 있다고 함
+        <span class="divider">│</span>
+        <span class="tag red">2종 오류 (FN)</span> 있는데 없다고 함
+      </div>
+      <div class="formula-line" style="margin-top: 16px; font-size: 14px; color: var(--text-tertiary);">
+        어떤 오류가 더 치명적인지는 도메인이 결정한다 — 지표 선택에 정답은 없고, 맥락이 있을 뿐이다.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    혼동 행렬 완전 가이드 · Confusion Matrix Complete Guide<br>
+    Generated with Claude · For educational purposes
+  </div>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    var html = document.documentElement;
+    var current = html.getAttribute('data-theme');
+    var next = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-icon').textContent = next === 'light' ? '\u263E' : '\u2600';
+  }
+</script>
+
+</body>
+</html>

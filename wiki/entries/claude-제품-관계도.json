@@ -1,0 +1,77 @@
+{
+  "slug": "claude-제품-관계도",
+  "source": "docs/Claude_제품_관계도.html",
+  "source_hash": "2bc3279cadf8387b",
+  "title": "Claude 에이전트 제품 관계도 | Claude",
+  "doc_date": "2026-03-10",
+  "word_count": 878,
+  "headings": [
+    {
+      "level": 2,
+      "text": "하나의 두뇌, 여러 개의 몸",
+      "id": "하나의-두뇌-여러-개의-몸"
+    },
+    {
+      "level": 2,
+      "text": "세계 1 — 코드를 짠다",
+      "id": "세계-1-코드를-짠다"
+    },
+    {
+      "level": 2,
+      "text": "세계 2 — 일을 대신한다",
+      "id": "세계-2-일을-대신한다"
+    },
+    {
+      "level": 2,
+      "text": "세계 3 — 앱 안에서 돕는다",
+      "id": "세계-3-앱-안에서-돕는다"
+    },
+    {
+      "level": 2,
+      "text": "나는 어떤 Claude를 써야 할까?",
+      "id": "나는-어떤-claude를-써야-할까"
+    },
+    {
+      "level": 3,
+      "text": "의사결정 가이드",
+      "id": "의사결정-가이드"
+    },
+    {
+      "level": 2,
+      "text": "세 가지 세계, 핵심 비교",
+      "id": "세-가지-세계-핵심-비교"
+    },
+    {
+      "level": 2,
+      "text": "자주 묻는 질문",
+      "id": "자주-묻는-질문"
+    }
+  ],
+  "category": "ai-ml",
+  "subcategory": "tooling",
+  "tags": [
+    "claude",
+    "ai-도구",
+    "에이전트",
+    "제품비교"
+  ],
+  "summary": "Claude의 여러 제품이 하나의 엔진(Agent SDK)을 공유하면서 실행 환경과 접근 범위로 갈라진다는 관점에서 전체 지도를 그린다. '어떤 Claude를 써야 하는가'를 결정할 때 보는 문서.",
+  "key_points": [
+    "모든 제품이 동일한 모델을 쓰며, 차이는 '어디서 실행되느냐'와 '무엇에 접근하느냐'에 있다",
+    "세 갈래로 나뉜다 — 코드를 짠다(개발자 도구), 일을 대신한다(Cowork), 앱 안에서 돕는다(앱 통합)",
+    "개발자 도구 6종은 CLI·VS Code·JetBrains·Code on the Web·Desktop·Remote Control",
+    "로컬 실행과 클라우드 실행의 구분이 보안·접근 범위를 결정한다"
+  ],
+  "level": "beginner",
+  "related": [
+    "webapp-development-workflow-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "2bc3279cadf8387b"
+}

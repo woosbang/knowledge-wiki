@@ -1,0 +1,143 @@
+{
+  "slug": "git-methods-comparison",
+  "source": "docs/git-methods-comparison.html",
+  "source_hash": "233f42c801ff474e",
+  "title": "GitHub 저장소 연결 방법 비교: Remote-First vs Local-First",
+  "doc_date": "2026-02-18",
+  "word_count": 1198,
+  "headings": [
+    {
+      "level": 2,
+      "text": "두 방법의 흐름 한눈에 보기",
+      "id": "두-방법의-흐름-한눈에-보기"
+    },
+    {
+      "level": 3,
+      "text": "🅰️ 방법 A — Remote-First (GitHub → 내 PC)",
+      "id": "방법-a-remote-first-github-내-pc"
+    },
+    {
+      "level": 3,
+      "text": "🅱️ 방법 B — Local-First (내 PC → GitHub)",
+      "id": "방법-b-local-first-내-pc-github"
+    },
+    {
+      "level": 2,
+      "text": "Remote-First: GitHub에서 먼저 만들고 Clone",
+      "id": "remote-first-github에서-먼저-만들고-clone"
+    },
+    {
+      "level": 3,
+      "text": "🌐 GitHub에 저장소 생성 (옵션 선택 가능)",
+      "id": "github에-저장소-생성-옵션-선택-가능"
+    },
+    {
+      "level": 3,
+      "text": "📥 내 PC로 Clone (복제)",
+      "id": "내-pc로-clone-복제"
+    },
+    {
+      "level": 3,
+      "text": "⌨️ 코드 작성 & 첫 Push",
+      "id": "코드-작성-첫-push"
+    },
+    {
+      "level": 3,
+      "text": "📋 방법 A 전체 명령어 (3줄 요약)",
+      "id": "방법-a-전체-명령어-3줄-요약"
+    },
+    {
+      "level": 2,
+      "text": "Local-First: 내 PC에서 시작 후 GitHub에 연결",
+      "id": "local-first-내-pc에서-시작-후-github에-연결"
+    },
+    {
+      "level": 3,
+      "text": "💻 내 PC에서 Git 초기화",
+      "id": "내-pc에서-git-초기화"
+    },
+    {
+      "level": 3,
+      "text": "📝 .gitignore 생성 (중요!)",
+      "id": "gitignore-생성-중요"
+    },
+    {
+      "level": 3,
+      "text": "📦 첫 커밋 만들기",
+      "id": "첫-커밋-만들기"
+    },
+    {
+      "level": 3,
+      "text": "🌐 GitHub에 빈 저장소 생성",
+      "id": "github에-빈-저장소-생성"
+    },
+    {
+      "level": 3,
+      "text": "🔗 원격 주소 연결 & Push",
+      "id": "원격-주소-연결-push"
+    },
+    {
+      "level": 3,
+      "text": "📋 방법 B 전체 명령어",
+      "id": "방법-b-전체-명령어"
+    },
+    {
+      "level": 2,
+      "text": "항목별 상세 비교",
+      "id": "항목별-상세-비교"
+    },
+    {
+      "level": 3,
+      "text": "📊 비교표",
+      "id": "비교표"
+    },
+    {
+      "level": 3,
+      "text": "⚡ 단계 수 시각적 비교",
+      "id": "단계-수-시각적-비교"
+    },
+    {
+      "level": 2,
+      "text": "최종 추천: 어떤 방법을 써야 할까?",
+      "id": "최종-추천-어떤-방법을-써야-할까"
+    },
+    {
+      "level": 3,
+      "text": "🏆 초보자에게는 방법 A (Remote-First) 를 강력히 추천합니다",
+      "id": "초보자에게는-방법-a-remote-first-를-강력히-추천합니다"
+    }
+  ],
+  "category": "version-control",
+  "subcategory": "basics",
+  "tags": [
+    "git",
+    "github",
+    "clone",
+    "저장소설정"
+  ],
+  "summary": "GitHub 저장소와 로컬을 연결하는 두 가지 시작점 — 원격에서 먼저 만들고 clone 하는 방식과 로컬에서 시작해 나중에 연결하는 방식 — 을 단계 수까지 비교한다. 새 프로젝트를 어느 쪽으로 시작할지 정할 때 읽는다.",
+  "key_points": [
+    "Remote-First 는 clone 시점에 Git 초기화와 remote 연결이 이미 끝나 있다",
+    "Local-First 는 이미 코드가 있는 폴더를 나중에 GitHub 에 붙일 때 쓴다",
+    "Remote-First 에서는 README·.gitignore·License 자동 생성을 켜도 된다",
+    "초보자에게는 단계가 적은 Remote-First 를 권한다"
+  ],
+  "level": "beginner",
+  "related": [
+    "git-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [
+    {
+      "slug": "git-guide",
+      "reason": "git-guide 의 '최초 세팅' 장과 Local-First 절차가 사실상 같다",
+      "severity": "medium"
+    }
+  ],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "233f42c801ff474e"
+}

@@ -1,0 +1,75 @@
+{
+  "slug": "git-revert-guide",
+  "source": "docs/git-revert-guide.html",
+  "source_hash": "79a44498cf778a31",
+  "title": "Git 되돌리기 가이드 — 변경사항을 마지막 커밋으로 복원하기",
+  "doc_date": "2026-03-08",
+  "word_count": 1712,
+  "headings": [
+    {
+      "level": 2,
+      "text": "되돌리기 전 — 현재 상태 확인하기",
+      "id": "되돌리기-전-현재-상태-확인하기"
+    },
+    {
+      "level": 2,
+      "text": "수정만 했고 커밋은 아직 안 한 상태",
+      "id": "수정만-했고-커밋은-아직-안-한-상태"
+    },
+    {
+      "level": 2,
+      "text": "로컬에서 커밋했지만 푸시는 안 한 상태",
+      "id": "로컬에서-커밋했지만-푸시는-안-한-상태"
+    },
+    {
+      "level": 2,
+      "text": "이미 푸시까지 완료한 상태",
+      "id": "이미-푸시까지-완료한-상태"
+    },
+    {
+      "level": 2,
+      "text": "Vercel 자동 배포와의 관계",
+      "id": "vercel-자동-배포와의-관계"
+    },
+    {
+      "level": 2,
+      "text": "부록: git stash 완전 가이드",
+      "id": "부록-git-stash-완전-가이드"
+    },
+    {
+      "level": 2,
+      "text": "빠른 참조 — 상황별 한 줄 요약",
+      "id": "빠른-참조-상황별-한-줄-요약"
+    }
+  ],
+  "category": "version-control",
+  "subcategory": "recovery",
+  "tags": [
+    "git",
+    "되돌리기",
+    "stash",
+    "reset",
+    "vercel"
+  ],
+  "summary": "무엇을 되돌릴지부터 판단하게 한 뒤, 커밋 전 / 로컬 커밋 후 / 푸시 완료 세 시나리오로 나눠 복구 절차를 제시한다. Vercel 자동 배포가 걸려 있을 때 무엇이 달라지는지와 git stash 사용법도 함께 다룬다.",
+  "key_points": [
+    "git status·git log·git fetch 로 먼저 어느 시나리오인지 확정한다",
+    "커밋 전이라면 stash(나중에 쓸 가능성) 또는 checkout(완전 폐기) 중 선택",
+    "푸시까지 끝난 경우는 히스토리가 공유됐으므로 되돌리는 방식이 달라진다",
+    "Vercel 자동 배포는 푸시에 반응하므로 되돌리기가 곧 재배포를 부른다"
+  ],
+  "level": "intermediate",
+  "related": [
+    "git-guide",
+    "git-diverge-guide",
+    "dev-workflow-guide"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "79a44498cf778a31"
+}

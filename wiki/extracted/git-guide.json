@@ -1,0 +1,130 @@
+{
+  "slug": "git-guide",
+  "title": "멀티 PC 개발자를 위한 Git & GitHub 완벽 가이드",
+  "headings": [
+    {
+      "level": 2,
+      "text": "전체 흐름 한눈에 보기",
+      "id": "전체-흐름-한눈에-보기"
+    },
+    {
+      "level": 3,
+      "text": "📋 단계별 여정",
+      "id": "단계별-여정"
+    },
+    {
+      "level": 2,
+      "text": "최초 세팅: 프로젝트를 GitHub에 올리기",
+      "id": "최초-세팅-프로젝트를-github에-올리기"
+    },
+    {
+      "level": 3,
+      "text": "🌐 GitHub에 빈 저장소 만들기",
+      "id": "github에-빈-저장소-만들기"
+    },
+    {
+      "level": 3,
+      "text": "💻 PC1에서 코드 올리기",
+      "id": "pc1에서-코드-올리기"
+    },
+    {
+      "level": 3,
+      "text": "📥 다른 PC에서 프로젝트 가져오기 (Clone)",
+      "id": "다른-pc에서-프로젝트-가져오기-clone"
+    },
+    {
+      "level": 2,
+      "text": "일상 동기화: Pull → 코딩 → Push",
+      "id": "일상-동기화-pull-코딩-push"
+    },
+    {
+      "level": 3,
+      "text": "🔁 매일 반복하는 3단계",
+      "id": "매일-반복하는-3단계"
+    },
+    {
+      "level": 2,
+      "text": ".gitignore: 올리지 않을 파일 관리",
+      "id": "gitignore-올리지-않을-파일-관리"
+    },
+    {
+      "level": 3,
+      "text": "📝 .gitignore를 프로젝트 시작 직후에 만드세요",
+      "id": "gitignore를-프로젝트-시작-직후에-만드세요"
+    },
+    {
+      "level": 3,
+      "text": "🤔 .gitignore에 넣었는데 다른 PC에서 파일이 없어요!",
+      "id": "gitignore에-넣었는데-다른-pc에서-파일이-없어요"
+    },
+    {
+      "level": 2,
+      "text": "환경 관리: pyproject.toml + uv/poetry",
+      "id": "환경-관리-pyproject-toml-uv-poetry"
+    },
+    {
+      "level": 3,
+      "text": "⚙️ 왜 pyproject.toml 방식이 좋은가?",
+      "id": "왜-pyproject-toml-방식이-좋은가"
+    },
+    {
+      "level": 2,
+      "text": "브랜치: 안전한 협업의 핵심",
+      "id": "브랜치-안전한-협업의-핵심"
+    },
+    {
+      "level": 3,
+      "text": "🌿 브랜치 생성 & 이동",
+      "id": "브랜치-생성-이동"
+    },
+    {
+      "level": 3,
+      "text": "🔀 브랜치 합치기 (Merge)",
+      "id": "브랜치-합치기-merge"
+    },
+    {
+      "level": 3,
+      "text": "👥 팀 협업 시 Pull Request 워크플로우",
+      "id": "팀-협업-시-pull-request-워크플로우"
+    },
+    {
+      "level": 2,
+      "text": "실수 복구: \"되돌리기\" 모음",
+      "id": "실수-복구-되돌리기-모음"
+    },
+    {
+      "level": 3,
+      "text": "↩️ 상황별 복구 방법",
+      "id": "상황별-복구-방법"
+    },
+    {
+      "level": 2,
+      "text": "치트시트: 복사해서 바로 쓰세요",
+      "id": "치트시트-복사해서-바로-쓰세요"
+    },
+    {
+      "level": 3,
+      "text": "🚀 최초 1회 — 프로젝트 올리기 (PC1)",
+      "id": "최초-1회-프로젝트-올리기-pc1"
+    },
+    {
+      "level": 3,
+      "text": "📥 최초 1회 — 다른 PC에서 가져오기",
+      "id": "최초-1회-다른-pc에서-가져오기"
+    },
+    {
+      "level": 3,
+      "text": "🔁 매일 반복 — 동기화 사이클",
+      "id": "매일-반복-동기화-사이클"
+    },
+    {
+      "level": 3,
+      "text": "📊 상태 확인 명령어",
+      "id": "상태-확인-명령어"
+    }
+  ],
+  "html": "\n\n\n\n<p class=\"kicker\">Chapter 00</p>\n<h2 id=\"전체-흐름-한눈에-보기\">전체 흐름 한눈에 보기</h2>\n<p>이 가이드에서 다루는 전체 워크플로우입니다. 먼저 큰 그림을 잡고 시작합시다.</p>\n\n<blockquote>\n\n\n<p><strong>핵심 개념</strong>\n</p><p>GitHub는 클라우드 저장소입니다. 코드를 GitHub에 <code>push</code>하면, 어느 PC에서든 <code>pull</code>로 최신 코드를 받아올 수 있습니다. 마치 구글 드라이브처럼요 — 다만 '변경 이력'까지 완벽하게 관리됩니다.</p>\n\n</blockquote>\n\n<h3 id=\"단계별-여정\">📋 단계별 여정</h3>\n\n\n<h4>① 최초 세팅 (1회만)</h4>\n<p>PC1에서 프로젝트를 만들고, GitHub 저장소를 생성한 뒤 첫 코드를 올립니다.</p>\n\n\n<h4>② 다른 PC에 복제 (PC마다 1회)</h4>\n<p><code>git clone</code>으로 프로젝트를 통째로 가져오고, <code>uv sync</code>로 환경을 맞춥니다.</p>\n\n\n<h4>③ 일상 동기화 (매일 반복)</h4>\n<p><code>pull</code> → 코딩 → <code>add</code> → <code>commit</code> → <code>push</code> 사이클을 반복합니다.</p>\n\n\n\n\n\n\n\n<p class=\"kicker\">Chapter 01</p>\n<h2 id=\"최초-세팅-프로젝트를-github에-올리기\">최초 세팅: 프로젝트를 GitHub에 올리기</h2>\n<p>아직 GitHub에 올라간 적 없는 프로젝트를 처음으로 등록하는 과정입니다. PC1에서 한 번만 하면 됩니다.</p>\n\n\n\n<p class=\"kicker\">Step 1</p>\n<h3 id=\"github에-빈-저장소-만들기\">🌐 GitHub에 빈 저장소 만들기</h3>\n<p><a href=\"https://github.com\">github.com</a>에 로그인한 뒤 새 저장소를 만듭니다.</p>\n<blockquote>\n\n\n<p><strong>반드시 \"빈 저장소\"로 생성하세요</strong>\n</p><p><code>Add a README</code>, <code>.gitignore</code>, <code>License</code> 체크박스를 모두 해제합니다. 이미 로컬에 코드가 있으므로, 체크하면 충돌이 발생합니다.</p>\n\n</blockquote>\n<p>생성 후 화면에 나타나는 <strong>HTTPS 주소</strong>를 복사해둡니다. <code>https://github.com/이름/프로젝트.git</code> 형태입니다.</p>\n\n\n\n<p class=\"kicker\">Step 2</p>\n<h3 id=\"pc1에서-코드-올리기\">💻 PC1에서 코드 올리기</h3>\n<p>터미널(Cursor/VS Code 내장 터미널)에서 프로젝트 폴더로 이동한 뒤 아래 명령어를 순서대로 실행합니다.</p>\n\n<p class=\"kicker\">\n\nTerminal — 최초 업로드\n</p>\n<pre># 1. Git 초기화 (이 폴더를 Git이 관리하게 합니다)\ngit init\n\n# 2. .gitignore 파일 생성 (Chapter 03에서 자세히 다룹니다)\n#    → 먼저 만들어야 불필요한 파일이 올라가지 않습니다\n\n# 3. 모든 파일을 전송 대기열에 추가\ngit add .\n\n# 4. 첫 커밋 (변경사항을 로컬에 저장)\ngit commit -m \"Initial commit\"\n\n# 5. 브랜치 이름을 main으로 통일\ngit branch -M main\n\n# 6. GitHub 주소를 origin이라는 이름으로 연결\ngit remote add origin https://github.com/이름/프로젝트.git\n\n# 7. GitHub 서버로 전송!\ngit push -u origin main</pre>\n\n<p>VS Code / Cursor GUI로도 동일한 작업이 가능합니다:</p>\n<table>\n<thead>\n<tr>\n<th><p>작업</p></th>\n<th><p>터미널</p></th>\n<th><p>GUI 동작</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><p>Git 초기화</p></td>\n<td><p><code>git init</code></p></td>\n<td><p>소스 제어 탭 → Initialize Repository</p></td>\n</tr>\n<tr>\n<td><p>파일 담기</p></td>\n<td><p><code>git add .</code></p></td>\n<td><p>파일 옆 [+] Stage All 클릭</p></td>\n</tr>\n<tr>\n<td><p>커밋</p></td>\n<td><p><code>git commit -m \"msg\"</code></p></td>\n<td><p>메시지 입력 → Commit 클릭</p></td>\n</tr>\n<tr>\n<td><p>주소 연결</p></td>\n<td><p><code>git remote add origin 주소</code></p></td>\n<td><p>[⋯] → Remote → Add Remote</p></td>\n</tr>\n<tr>\n<td><p>최초 전송</p></td>\n<td><p><code>git push -u origin main</code></p></td>\n<td><p>Publish Branch 버튼</p></td>\n</tr>\n</tbody>\n</table>\n\n\n\n<p class=\"kicker\">Step 3</p>\n<h3 id=\"다른-pc에서-프로젝트-가져오기-clone\">📥 다른 PC에서 프로젝트 가져오기 (Clone)</h3>\n<p>PC2(혹은 PC3)에서 최초 1회만 실행합니다. 이후에는 <code>pull</code>만 하면 됩니다.</p>\n\n<p class=\"kicker\">\n\nTerminal — PC2 최초 설정\n</p>\n<pre># 1. 프로젝트 통째로 복제\ngit clone https://github.com/이름/프로젝트.git\n\n# 2. 프로젝트 폴더로 이동\ncd 프로젝트\n\n# 3. Python 환경 동기화 (uv 사용 시)\nuv sync\n\n# 또는 poetry 사용 시:\npoetry install</pre>\n\n<blockquote>\n\n\n<p><strong>uv sync / poetry install이 하는 일</strong>\n</p><p><code>pyproject.toml</code>과 <code>uv.lock</code>(또는 <code>poetry.lock</code>) 파일을 읽어서 PC1과 동일한 라이브러리를 동일한 버전으로 자동 설치합니다. <code>requirements.txt</code>를 수동으로 관리할 필요가 없습니다.</p>\n\n</blockquote>\n\n\n\n\n\n<p class=\"kicker\">Chapter 02</p>\n<h2 id=\"일상-동기화-pull-코딩-push\">일상 동기화: Pull → 코딩 → Push</h2>\n<p>최초 세팅이 끝났다면, 이제부터는 이 사이클만 반복하면 됩니다. 가장 중요한 챕터입니다.</p>\n\n\n<h3 id=\"매일-반복하는-3단계\">🔁 매일 반복하는 3단계</h3>\n<p>\n📥 git pull\n→\n⌨️ 코딩 작업\n→\n📦 git add .\n→\n✅ git commit\n→\n📤 git push\n</p>\n\n\n\n\n<p class=\"kicker\">\nPC1\n        회사에서 작업 시작 &amp; 마무리\n      </p>\n\n\n<p class=\"kicker\">\n\n아침 — 작업 시작 전\n</p>\n<pre># 집에서 올린 최신 코드 받기 (항상 pull 먼저!)\ngit pull origin main\n\n# 새 라이브러리가 추가되었을 수 있으므로 환경 동기화\nuv sync</pre>\n\n\n<p class=\"kicker\">\n\n퇴근 전 — 작업 올리기\n</p>\n<pre># 수정된 파일 모두 담기\ngit add .\n\n# 오늘 한 작업 내용을 메시지로 기록\ngit commit -m \"feat: 로그인 기능 구현\"\n\n# GitHub 서버로 전송\ngit push</pre>\n\n\n\n\n\n<p class=\"kicker\">\nPC2\n        집에서 이어서 작업\n      </p>\n\n\n<p class=\"kicker\">\n\n집 — 정확히 같은 패턴\n</p>\n<pre># 회사에서 올린 최신 코드 받기\ngit pull origin main\nuv sync\n\n# ... 코딩 작업 ...\n\n# 작업 끝나면 올리기\ngit add .\ngit commit -m \"fix: 로그인 버그 수정\"\ngit push</pre>\n\n\n\n\n<blockquote>\n\n\n<p><strong>절대 규칙: Push 전에 항상 Pull 먼저!</strong>\n</p><p>다른 PC에서 올린 변경사항을 받지 않고 push하면 충돌이 발생합니다. \"코딩 시작 전 <code>git pull</code>\"을 습관처럼 하세요.</p>\n\n</blockquote>\n<table>\n<thead>\n<tr>\n<th><p>상황</p></th>\n<th><p>터미널</p></th>\n<th><p>VS Code / Cursor GUI</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><p>최신 코드 받기</p></td>\n<td><p><code>git pull origin main</code></p></td>\n<td><p>하단 바 순환 화살표 ↻ 클릭</p></td>\n</tr>\n<tr>\n<td><p>변경사항 올리기</p></td>\n<td><p><code>git add . → commit → push</code></p></td>\n<td><p>Sync Changes 버튼 클릭</p></td>\n</tr>\n</tbody>\n</table>\n\n\n\n\n<p class=\"kicker\">Chapter 03</p>\n<h2 id=\"gitignore-올리지-않을-파일-관리\">.gitignore: 올리지 않을 파일 관리</h2>\n<p>비밀키, 대용량 데이터, 가상환경처럼 GitHub에 올리면 안 되는 파일을 차단하는 '출입 금지 명단'입니다.</p>\n\n\n<p class=\"kicker\">핵심</p>\n<h3 id=\"gitignore를-프로젝트-시작-직후에-만드세요\">📝 .gitignore를 프로젝트 시작 직후에 만드세요</h3>\n<p>프로젝트 최상위 폴더에 <code>.gitignore</code> 파일을 만들고, 올리지 않을 파일명을 한 줄씩 적습니다. 이미 GitHub에 올라간 파일에는 적용되지 않으므로, <strong>반드시 첫 커밋 전에 생성</strong>하는 것이 이상적입니다.</p>\n<p>\n\n📄 .gitignore\n      \n\n1# Python 가상환경 (각 PC에서 개별 생성)\n2.venv/\n3__pycache__/\n4\n5# 비밀키 · 환경변수 (절대 올리면 안 됨!)\n6.env\n7config.json\n8\n9# 대용량 데이터 폴더\n10data_*/\n11*.csv\n12*.xlsx\n13\n14# Node.js 의존성\n15node_modules/\n16\n17# OS 자동 생성 파일\n18.DS_Store\n19Thumbs.db\n\n</p>\n\n\n<p class=\"kicker\">문제 해결</p>\n<h3 id=\"gitignore에-넣었는데-다른-pc에서-파일이-없어요\">🤔 .gitignore에 넣었는데 다른 PC에서 파일이 없어요!</h3>\n<p>보안이나 용량 때문에 제외한 파일은 당연히 다른 PC에 없습니다. 이를 해결하는 3가지 표준 전략이 있습니다.</p>\n\n\n<p>\n          전략 1 — 설정 파일: <code>.env.example</code> 샘플 제공\n        </p>\n\n<p>비밀키가 담긴 <code>.env</code>는 올리지 않되, 어떤 항목이 필요한지 알려주는 <strong>껍데기 파일</strong>을 함께 올립니다.</p>\n\n<p>\n\n.env.example (이 파일은 GitHub에 올림)\n</p>\n<pre># 아래 항목을 복사하여 .env 파일로 만들고 값을 채우세요\nDATABASE_URL=your_database_url_here\nAPI_KEY=your_api_key_here\nSECRET_KEY=your_secret_key_here</pre>\n\n<p>다른 PC에서: <code>.env.example</code>을 복사 → <code>.env</code>로 이름 변경 → 값 채우기</p>\n\n\n\n<p class=\"kicker\">\n          전략 2 — 데이터 파일: 외부 링크 또는 샘플 데이터\n        </p>\n\n<p>큰 데이터는 구글 드라이브, AWS S3 등에 따로 보관하고, <code>README.md</code>에 다운로드 링크를 안내합니다. 또는 프로그램 테스트용 소량 샘플 데이터를 <code>data/sample.csv</code>로 포함시킵니다.</p>\n\n\n\n<p class=\"kicker\">\n          전략 3 — 폴더 구조 유지: <code>.gitkeep</code> 활용\n        </p>\n\n<p>Git은 빈 폴더를 인식하지 못합니다. 폴더 안에 아무 내용 없는 <code>.gitkeep</code> 파일을 만들면, 폴더 구조는 유지되면서 데이터 파일은 올라가지 않습니다.</p>\n\n<p class=\"kicker\">\n\nTerminal — .gitkeep 만들기\n</p>\n<pre># data_202510 폴더에 빈 .gitkeep 파일 생성\ntouch data_202510/.gitkeep</pre>\n\n<p>이제 다른 PC에서 <code>clone</code> 시 <code>data_202510/</code> 폴더가 자동 생성되어 <code>FileNotFoundError</code>를 방지합니다.</p>\n\n\n\n<blockquote>\n\n\n<p><strong>가장 중요한 것</strong>\n</p><p><code>README.md</code>에 \"이 프로젝트를 실행하려면 이 파일들을 수동으로 준비해야 합니다\"라는 안내 문구를 적어두세요. 미래의 자신에게도 큰 도움이 됩니다.</p>\n\n</blockquote>\n\n\n\n\n\n<p class=\"kicker\">Chapter 04</p>\n<h2 id=\"환경-관리-pyproject-toml-uv-poetry\">환경 관리: pyproject.toml + uv/poetry</h2>\n<p>PC를 옮길 때마다 라이브러리를 하나하나 설치할 필요가 없습니다. 패키지 매니저가 자동으로 해결합니다.</p>\n\n\n<p class=\"kicker\">원리</p>\n<h3 id=\"왜-pyproject-toml-방식이-좋은가\">⚙️ 왜 pyproject.toml 방식이 좋은가?</h3>\n<ul>\n<li><p><strong>일관성:</strong> <code>uv.lock</code> / <code>poetry.lock</code> 파일 덕분에 모든 PC에서 라이브러리 버전이 소수점까지 일치합니다.</p></li>\n<li><p><strong>간결함:</strong> <code>requirements.txt</code>를 수동으로 만들 필요 없이, 설정 파일 하나로 해결됩니다.</p></li>\n<li><p><strong>안전성:</strong> <code>.venv</code>는 GitHub에 올리지 않아 전송이 빠르고, 각 PC에서 자동 생성됩니다.</p></li>\n</ul>\n\n\n\n<p class=\"kicker\">\nPC1\n        라이브러리 추가 &amp; 올리기\n      </p>\n\n\n<p class=\"kicker\">\n\nTerminal\n</p>\n<pre># 새 라이브러리 설치 (pyproject.toml이 자동 업데이트됨)\nuv add pandas\n\n# 코딩 작업 후 커밋 &amp; 푸시\ngit add .      # pyproject.toml, uv.lock 포함\ngit commit -m \"Add pandas for data analysis\"\ngit push</pre>\n\n\n\n\n<p class=\"kicker\">\nPC2\n        받아서 환경 동기화\n      </p>\n\n\n<p class=\"kicker\">\n\nTerminal\n</p>\n<pre># 최신 코드 받기\ngit pull origin main\n\n# 환경 동기화 (pandas가 자동으로 설치됨!)\nuv sync\n\n# 확인: 새 라이브러리가 정상 설치되었는지\npython -c \"import pandas; print(pandas.__version__)\"</pre>\n\n\n\n\n<blockquote>\n\n\n<p><strong>GitHub에 올라가는 것 vs 안 올라가는 것</strong>\n</p><p>\n        ✅ 올라감: <code>pyproject.toml</code>, <code>uv.lock</code>, 코드 파일, <code>.gitignore</code>, <code>.gitkeep</code><br/>\n        ❌ 안 올라감: <code>.venv/</code>, <code>.env</code>, <code>data_*/</code> (대용량 데이터), <code>__pycache__/</code>\n</p>\n\n</blockquote>\n\n\n\n\n<p class=\"kicker\">Chapter 05</p>\n<h2 id=\"브랜치-안전한-협업의-핵심\">브랜치: 안전한 협업의 핵심</h2>\n<p>브랜치는 나무의 '가지'입니다. 메인 줄기를 건드리지 않고 새 기능을 만들 수 있습니다. 혼자 작업할 때도 실험적인 기능을 시도할 때 유용합니다.</p>\n\n\n<p class=\"kicker\">기본</p>\n<h3 id=\"브랜치-생성-이동\">🌿 브랜치 생성 &amp; 이동</h3>\n<table>\n<thead>\n<tr>\n<th><p>작업</p></th>\n<th><p>터미널</p></th>\n<th><p>GUI</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><p>새 브랜치 만들기</p></td>\n<td><p><code>git branch feature-login</code></p></td>\n<td><p>하단 바 main 클릭 → Create new branch</p></td>\n</tr>\n<tr>\n<td><p>브랜치 이동</p></td>\n<td><p><code>git checkout feature-login</code></p></td>\n<td><p>하단 바 클릭 → 목록에서 선택</p></td>\n</tr>\n<tr>\n<td><p>만들면서 바로 이동</p></td>\n<td><p><code>git checkout -b feature-login</code></p></td>\n<td><p>GUI에서는 생성 시 자동 이동</p></td>\n</tr>\n</tbody>\n</table>\n\n\n<p class=\"kicker\">합치기</p>\n<h3 id=\"브랜치-합치기-merge\">🔀 브랜치 합치기 (Merge)</h3>\n<p>기능 개발이 끝났다면, <code>main</code>에 합칩니다.</p>\n\n<p class=\"kicker\">\n\nTerminal — Merge\n</p>\n<pre># 1. main 브랜치로 이동\ngit checkout main\n\n# 2. 기능 브랜치를 main에 합치기\ngit merge feature-login\n\n# 3. 합친 결과를 GitHub에 올리기\ngit push</pre>\n\n<blockquote>\n\n\n<p><strong>충돌(Conflict)이 발생했다면</strong>\n</p><p>같은 줄을 동시에 수정한 경우 충돌이 납니다. 에디터에 <strong>Accept Current</strong>(내 코드 유지) 또는 <strong>Accept Incoming</strong>(상대 코드 수용) 버튼이 나타나니, 원하는 쪽을 선택한 뒤 다시 커밋하면 됩니다.</p>\n\n</blockquote>\n\n\n<p class=\"kicker\">협업</p>\n<h3 id=\"팀-협업-시-pull-request-워크플로우\">👥 팀 협업 시 Pull Request 워크플로우</h3>\n<p>팀 프로젝트에서는 <code>main</code>에 직접 push하는 대신, Pull Request(PR)를 통해 코드 리뷰를 받습니다.</p>\n<p>\n📥 pull\n→\n🌿 branch 생성\n→\n⌨️ 코딩\n→\n📤 push branch\n→\n🔍 PR 생성\n→\n✅ Merge\n</p>\n\n<p class=\"kicker\">\n\nTerminal — 팀 워크플로우\n</p>\n<pre># 1. 출근 후 최신 코드 받기\ngit checkout main\ngit pull\n\n# 2. 오늘 작업용 브랜치 만들기\ngit checkout -b feature-login\n\n# 3. 작업 완료 후 커밋\ngit add .\ngit commit -m \"feat: 로그인 페이지 구현\"\n\n# 4. 내 브랜치를 GitHub에 올리기\ngit push origin feature-login\n\n# 5. GitHub 웹사이트에서 Pull Request 생성\n# → 팀원 리뷰 → 승인 → Merge 버튼 클릭!</pre>\n\n\n\n\n\n\n<p class=\"kicker\">Chapter 06</p>\n<h2 id=\"실수-복구-되돌리기-모음\">실수 복구: \"되돌리기\" 모음</h2>\n<p>실수는 누구나 합니다. 침착하게 아래 명령어로 복구하세요.</p>\n\n\n<h3 id=\"상황별-복구-방법\">↩️ 상황별 복구 방법</h3>\n<table>\n<thead>\n<tr>\n<th><p>상황</p></th>\n<th><p>터미널</p></th>\n<th><p>GUI</p></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><p>커밋 메시지를 잘못 썼어요</p></td>\n<td><p><code>git reset --soft HEAD~1</code></p></td>\n<td><p>[⋯] → Commit → Undo Last Commit</p></td>\n</tr>\n<tr>\n<td><p>수정한 내용을 버리고 싶어요</p></td>\n<td><p><code>git checkout -- 파일명</code></p></td>\n<td><p>파일 옆 Discard Changes 아이콘</p></td>\n</tr>\n<tr>\n<td><p>GitHub 주소를 잘못 연결했어요</p></td>\n<td><p><code>git remote set-url origin 새주소</code></p></td>\n<td><p>[⋯] → Remote → Add Remote</p></td>\n</tr>\n<tr>\n<td><p>add한 파일을 빼고 싶어요</p></td>\n<td><p><code>git reset HEAD 파일명</code></p></td>\n<td><p>파일 옆 [-] Unstage 아이콘</p></td>\n</tr>\n</tbody>\n</table>\n\n<blockquote>\n\n\n<p><strong>git push --force 주의!</strong>\n</p><p>주소가 꼬였을 때 <code>--force</code>를 쓰면 해결되지만, 협업 중일 때는 다른 사람의 코드를 덮어쓸 수 있습니다. 혼자 작업할 때만 사용하세요.</p>\n\n</blockquote>\n\n\n\n\n<p class=\"kicker\">Chapter 07</p>\n<h2 id=\"치트시트-복사해서-바로-쓰세요\">치트시트: 복사해서 바로 쓰세요</h2>\n<p>가장 자주 쓰는 명령어만 모았습니다. 이 페이지를 북마크해두세요.</p>\n\n\n<h3 id=\"최초-1회-프로젝트-올리기-pc1\">🚀 최초 1회 — 프로젝트 올리기 (PC1)</h3>\n\n<p class=\"kicker\">\n\n복사용\n</p>\n<pre>git init\ngit add .\ngit commit -m \"Initial commit\"\ngit branch -M main\ngit remote add origin [GitHub HTTPS 주소]\ngit push -u origin main</pre>\n\n\n\n<h3 id=\"최초-1회-다른-pc에서-가져오기\">📥 최초 1회 — 다른 PC에서 가져오기</h3>\n\n<p class=\"kicker\">\n\n복사용\n</p>\n<pre>git clone [GitHub HTTPS 주소]\ncd [프로젝트 폴더]\nuv sync  # 또는 poetry install</pre>\n\n\n\n<h3 id=\"매일-반복-동기화-사이클\">🔁 매일 반복 — 동기화 사이클</h3>\n\n<p class=\"kicker\">\n\n복사용\n</p>\n<pre># ── 시작 전 ──\ngit pull origin main\nuv sync\n\n# ── 코딩 작업... ──\n\n# ── 마무리 ──\ngit add .\ngit commit -m \"작업 내용 요약\"\ngit push</pre>\n\n\n\n<h3 id=\"상태-확인-명령어\">📊 상태 확인 명령어</h3>\n\n<p class=\"kicker\">\n\n복사용\n</p>\n<pre>git status          # 현재 변경된 파일 목록 보기\ngit log --oneline    # 커밋 히스토리 간략히 보기\ngit remote -v        # 연결된 GitHub 주소 확인\ngit branch           # 현재 브랜치 목록 보기\ngit diff             # 수정된 내용 상세 비교</pre>\n\n\n<blockquote>\n\n\n<p><strong>마지막 핵심 습관 3가지</strong>\n</p><p>\n        ① 코딩 시작 전 <code>git pull</code> — 항상 최신 상태에서 시작<br/>\n        ② 작업 단위마다 <code>commit</code> — 의미 있는 단위로 자주 저장<br/>\n        ③ 퇴근 전 <code>git push</code> — 오늘 작업을 안전하게 클라우드에 백업\n      </p>\n\n</blockquote>\n\n",
+  "text": "Chapter 00 전체 흐름 한눈에 보기 이 가이드에서 다루는 전체 워크플로우입니다. 먼저 큰 그림을 잡고 시작합시다. 핵심 개념 GitHub는 클라우드 저장소입니다. 코드를 GitHub에 push 하면, 어느 PC에서든 pull 로 최신 코드를 받아올 수 있습니다. 마치 구글 드라이브처럼요 — 다만 '변경 이력'까지 완벽하게 관리됩니다. 📋 단계별 여정 ① 최초 세팅 (1회만) PC1에서 프로젝트를 만들고, GitHub 저장소를 생성한 뒤 첫 코드를 올립니다. ② 다른 PC에 복제 (PC마다 1회) git clone 으로 프로젝트를 통째로 가져오고, uv sync 로 환경을 맞춥니다. ③ 일상 동기화 (매일 반복) pull → 코딩 → add → commit → push 사이클을 반복합니다. Chapter 01 최초 세팅: 프로젝트를 GitHub에 올리기 아직 GitHub에 올라간 적 없는 프로젝트를 처음으로 등록하는 과정입니다. PC1에서 한 번만 하면 됩니다. Step 1 🌐 GitHub에 빈 저장소 만들기 github.com 에 로그인한 뒤 새 저장소를 만듭니다. 반드시 \"빈 저장소\"로 생성하세요 Add a README , .gitignore , License 체크박스를 모두 해제합니다. 이미 로컬에 코드가 있으므로, 체크하면 충돌이 발생합니다. 생성 후 화면에 나타나는 HTTPS 주소 를 복사해둡니다. https://github.com/이름/프로젝트.git 형태입니다. Step 2 💻 PC1에서 코드 올리기 터미널(Cursor/VS Code 내장 터미널)에서 프로젝트 폴더로 이동한 뒤 아래 명령어를 순서대로 실행합니다. Terminal — 최초 업로드 # 1. Git 초기화 (이 폴더를 Git이 관리하게 합니다) git init # 2. .gitignore 파일 생성 (Chapter 03에서 자세히 다룹니다) #    → 먼저 만들어야 불필요한 파일이 올라가지 않습니다 # 3. 모든 파일을 전송 대기열에 추가 git add . # 4. 첫 커밋 (변경사항을 로컬에 저장) git commit -m \"Initial commit\" # 5. 브랜치 이름을 main으로 통일 git branch -M main # 6. GitHub 주소를 origin이라는 이름으로 연결 git remote add origin https://github.com/이름/프로젝트.git # 7. GitHub 서버로 전송! git push -u origin main VS Code / Cursor GUI로도 동일한 작업이 가능합니다: 작업 터미널 GUI 동작 Git 초기화 git init 소스 제어 탭 → Initialize Repository 파일 담기 git add . 파일 옆 [+] Stage All 클릭 커밋 git commit -m \"msg\" 메시지 입력 → Commit 클릭 주소 연결 git remote add origin 주소 [⋯] → Remote → Add Remote 최초 전송 git push -u origin main Publish Branch 버튼 Step 3 📥 다른 PC에서 프로젝트 가져오기 (Clone) PC2(혹은 PC3)에서 최초 1회만 실행합니다. 이후에는 pull 만 하면 됩니다. Terminal — PC2 최초 설정 # 1. 프로젝트 통째로 복제 git clone https://github.com/이름/프로젝트.git # 2. 프로젝트 폴더로 이동 cd 프로젝트 # 3. Python 환경 동기화 (uv 사용 시) uv sync # 또는 poetry 사용 시: poetry install uv sync / poetry install이 하는 일 pyproject.toml 과 uv.lock (또는 poetry.lock ) 파일을 읽어서 PC1과 동일한 라이브러리를 동일한 버전으로 자동 설치합니다. requirements.txt 를 수동으로 관리할 필요가 없습니다. Chapter 02 일상 동기화: Pull → 코딩 → Push 최초 세팅이 끝났다면, 이제부터는 이 사이클만 반복하면 됩니다. 가장 중요한 챕터입니다. 🔁 매일 반복하는 3단계 📥 git pull → ⌨️ 코딩 작업 → 📦 git add . → ✅ git commit → 📤 git push PC1 회사에서 작업 시작 & 마무리 아침 — 작업 시작 전 # 집에서 올린 최신 코드 받기 (항상 pull 먼저!) git pull origin main # 새 라이브러리가 추가되었을 수 있으므로 환경 동기화 uv sync 퇴근 전 — 작업 올리기 # 수정된 파일 모두 담기 git add . # 오늘 한 작업 내용을 메시지로 기록 git commit -m \"feat: 로그인 기능 구현\" # GitHub 서버로 전송 git push PC2 집에서 이어서 작업 집 — 정확히 같은 패턴 # 회사에서 올린 최신 코드 받기 git pull origin main uv sync # ... 코딩 작업 ... # 작업 끝나면 올리기 git add . git commit -m \"fix: 로그인 버그 수정\" git push 절대 규칙: Push 전에 항상 Pull 먼저! 다른 PC에서 올린 변경사항을 받지 않고 push하면 충돌이 발생합니다. \"코딩 시작 전 git pull \"을 습관처럼 하세요. 상황 터미널 VS Code / Cursor GUI 최신 코드 받기 git pull origin main 하단 바 순환 화살표 ↻ 클릭 변경사항 올리기 git add . → commit → push Sync Changes 버튼 클릭 Chapter 03 .gitignore: 올리지 않을 파일 관리 비밀키, 대용량 데이터, 가상환경처럼 GitHub에 올리면 안 되는 파일을 차단하는 '출입 금지 명단'입니다. 핵심 📝 .gitignore를 프로젝트 시작 직후에 만드세요 프로젝트 최상위 폴더에 .gitignore 파일을 만들고, 올리지 않을 파일명을 한 줄씩 적습니다. 이미 GitHub에 올라간 파일에는 적용되지 않으므로, 반드시 첫 커밋 전에 생성 하는 것이 이상적입니다. 📄 .gitignore 1 # Python 가상환경 (각 PC에서 개별 생성) 2 .venv/ 3 __pycache__/ 4 5 # 비밀키 · 환경변수 (절대 올리면 안 됨!) 6 .env 7 config.json 8 9 # 대용량 데이터 폴더 10 data_*/ 11 *.csv 12 *.xlsx 13 14 # Node.js 의존성 15 node_modules/ 16 17 # OS 자동 생성 파일 18 .DS_Store 19 Thumbs.db 문제 해결 🤔 .gitignore에 넣었는데 다른 PC에서 파일이 없어요! 보안이나 용량 때문에 제외한 파일은 당연히 다른 PC에 없습니다. 이를 해결하는 3가지 표준 전략이 있습니다. 전략 1 — 설정 파일: .env.example 샘플 제공 비밀키가 담긴 .env 는 올리지 않되, 어떤 항목이 필요한지 알려주는 껍데기 파일 을 함께 올립니다. .env.example (이 파일은 GitHub에 올림) # 아래 항목을 복사하여 .env 파일로 만들고 값을 채우세요 DATABASE_URL = your_database_url_here API_KEY = your_api_key_here SECRET_KEY = your_secret_key_here 다른 PC에서: .env.example 을 복사 → .env 로 이름 변경 → 값 채우기 전략 2 — 데이터 파일: 외부 링크 또는 샘플 데이터 큰 데이터는 구글 드라이브, AWS S3 등에 따로 보관하고, README.md 에 다운로드 링크를 안내합니다. 또는 프로그램 테스트용 소량 샘플 데이터를 data/sample.csv 로 포함시킵니다. 전략 3 — 폴더 구조 유지: .gitkeep 활용 Git은 빈 폴더를 인식하지 못합니다. 폴더 안에 아무 내용 없는 .gitkeep 파일을 만들면, 폴더 구조는 유지되면서 데이터 파일은 올라가지 않습니다. Terminal — .gitkeep 만들기 # data_202510 폴더에 빈 .gitkeep 파일 생성 touch data_202510/.gitkeep 이제 다른 PC에서 clone 시 data_202510/ 폴더가 자동 생성되어 FileNotFoundError 를 방지합니다. 가장 중요한 것 README.md 에 \"이 프로젝트를 실행하려면 이 파일들을 수동으로 준비해야 합니다\"라는 안내 문구를 적어두세요. 미래의 자신에게도 큰 도움이 됩니다. Chapter 04 환경 관리: pyproject.toml + uv/poetry PC를 옮길 때마다 라이브러리를 하나하나 설치할 필요가 없습니다. 패키지 매니저가 자동으로 해결합니다. 원리 ⚙️ 왜 pyproject.toml 방식이 좋은가? 일관성: uv.lock / poetry.lock 파일 덕분에 모든 PC에서 라이브러리 버전이 소수점까지 일치합니다. 간결함: requirements.txt 를 수동으로 만들 필요 없이, 설정 파일 하나로 해결됩니다. 안전성: .venv 는 GitHub에 올리지 않아 전송이 빠르고, 각 PC에서 자동 생성됩니다. PC1 라이브러리 추가 & 올리기 Terminal # 새 라이브러리 설치 (pyproject.toml이 자동 업데이트됨) uv add pandas # 코딩 작업 후 커밋 & 푸시 git add . # pyproject.toml, uv.lock 포함 git commit -m \"Add pandas for data analysis\" git push PC2 받아서 환경 동기화 Terminal # 최신 코드 받기 git pull origin main # 환경 동기화 (pandas가 자동으로 설치됨!) uv sync # 확인: 새 라이브러리가 정상 설치되었는지 python -c \"import pandas; print(pandas.__version__)\" GitHub에 올라가는 것 vs 안 올라가는 것 ✅ 올라감: pyproject.toml , uv.lock , 코드 파일, .gitignore , .gitkeep ❌ 안 올라감: .venv/ , .env , data_*/ (대용량 데이터), __pycache__/ Chapter 05 브랜치: 안전한 협업의 핵심 브랜치는 나무의 '가지'입니다. 메인 줄기를 건드리지 않고 새 기능을 만들 수 있습니다. 혼자 작업할 때도 실험적인 기능을 시도할 때 유용합니다. 기본 🌿 브랜치 생성 & 이동 작업 터미널 GUI 새 브랜치 만들기 git branch feature-login 하단 바 main 클릭 → Create new branch 브랜치 이동 git checkout feature-login 하단 바 클릭 → 목록에서 선택 만들면서 바로 이동 git checkout -b feature-login GUI에서는 생성 시 자동 이동 합치기 🔀 브랜치 합치기 (Merge) 기능 개발이 끝났다면, main 에 합칩니다. Terminal — Merge # 1. main 브랜치로 이동 git checkout main # 2. 기능 브랜치를 main에 합치기 git merge feature-login # 3. 합친 결과를 GitHub에 올리기 git push 충돌(Conflict)이 발생했다면 같은 줄을 동시에 수정한 경우 충돌이 납니다. 에디터에 Accept Current (내 코드 유지) 또는 Accept Incoming (상대 코드 수용) 버튼이 나타나니, 원하는 쪽을 선택한 뒤 다시 커밋하면 됩니다. 협업 👥 팀 협업 시 Pull Request 워크플로우 팀 프로젝트에서는 main 에 직접 push하는 대신, Pull Request(PR)를 통해 코드 리뷰를 받습니다. 📥 pull → 🌿 branch 생성 → ⌨️ 코딩 → 📤 push branch → 🔍 PR 생성 → ✅ Merge Terminal — 팀 워크플로우 # 1. 출근 후 최신 코드 받기 git checkout main git pull # 2. 오늘 작업용 브랜치 만들기 git checkout -b feature-login # 3. 작업 완료 후 커밋 git add . git commit -m \"feat: 로그인 페이지 구현\" # 4. 내 브랜치를 GitHub에 올리기 git push origin feature-login # 5. GitHub 웹사이트에서 Pull Request 생성 # → 팀원 리뷰 → 승인 → Merge 버튼 클릭! Chapter 06 실수 복구: \"되돌리기\" 모음 실수는 누구나 합니다. 침착하게 아래 명령어로 복구하세요. ↩️ 상황별 복구 방법 상황 터미널 GUI 커밋 메시지를 잘못 썼어요 git reset --soft HEAD~1 [⋯] → Commit → Undo Last Commit 수정한 내용을 버리고 싶어요 git checkout -- 파일명 파일 옆 Discard Changes 아이콘 GitHub 주소를 잘못 연결했어요 git remote set-url origin 새주소 [⋯] → Remote → Add Remote add한 파일을 빼고 싶어요 git reset HEAD 파일명 파일 옆 [-] Unstage 아이콘 git push --force 주의! 주소가 꼬였을 때 --force 를 쓰면 해결되지만, 협업 중일 때는 다른 사람의 코드를 덮어쓸 수 있습니다. 혼자 작업할 때만 사용하세요. Chapter 07 치트시트: 복사해서 바로 쓰세요 가장 자주 쓰는 명령어만 모았습니다. 이 페이지를 북마크해두세요. 🚀 최초 1회 — 프로젝트 올리기 (PC1) 복사용 git init git add . git commit -m \"Initial commit\" git branch -M main git remote add origin [GitHub HTTPS 주소] git push -u origin main 📥 최초 1회 — 다른 PC에서 가져오기 복사용 git clone [GitHub HTTPS 주소] cd [프로젝트 폴더] uv sync # 또는 poetry install 🔁 매일 반복 — 동기화 사이클 복사용 # ── 시작 전 ── git pull origin main uv sync # ── 코딩 작업... ── # ── 마무리 ── git add . git commit -m \"작업 내용 요약\" git push 📊 상태 확인 명령어 복사용 git status # 현재 변경된 파일 목록 보기 git log --oneline # 커밋 히스토리 간략히 보기 git remote -v # 연결된 GitHub 주소 확인 git branch # 현재 브랜치 목록 보기 git diff # 수정된 내용 상세 비교 마지막 핵심 습관 3가지 ① 코딩 시작 전 git pull — 항상 최신 상태에서 시작 ② 작업 단위마다 commit — 의미 있는 단위로 자주 저장 ③ 퇴근 전 git push — 오늘 작업을 안전하게 클라우드에 백업",
+  "word_count": 1622,
+  "char_count": 7238
+}

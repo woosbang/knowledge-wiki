@@ -1,0 +1,15 @@
+<nav class="sidebar" aria-label="카테고리">
+  <p class="sidebar-label">카테고리</p>
+  <ul class="nav-list">
+  {% for g in groups %}
+    {% if g.count %}
+    <li>
+      <a href="{{ root }}{{ 'c/' ~ g.id ~ '.html' }}"
+         class="{{ 'is-active' if active_category == g.id else '' }}">
+        {{ g.name }}<span class="count">{{ g.count }}</span>
+      </a>
+    </li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+</nav>

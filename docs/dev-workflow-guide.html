@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>운영 중 수정 개발 & 배포 가이드 — Next.js · Supabase · Vercel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --surface: #14171e;
+      --surface-raised: #1a1e28;
+      --border: #252a36;
+      --border-accent: #3b82f6;
+      --text: #e2e4e9;
+      --text-muted: #8b90a0;
+      --text-dim: #5c6070;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.12);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.1);
+      --supabase: #3ecf8e;
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      padding: 80px 40px 60px;
+      text-align: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+    .hero-badge span { color: var(--accent); }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e2e4e9 30%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 540px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .stack-pills {
+      display: flex; justify-content: center; gap: 12px;
+      margin-top: 32px; flex-wrap: wrap;
+    }
+    .stack-pill {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .stack-pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .dot-next { background: #fff; }
+    .dot-supa { background: var(--supabase); }
+    .dot-vercel { background: #fff; }
+    .dot-github { background: #8b5cf6; }
+
+    /* ─── TOC ─── */
+    .toc {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 28px 0;
+    }
+    .toc-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .toc-item:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .toc-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border-radius: 6px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ─── Step Section ─── */
+    .step {
+      position: relative;
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .step-number {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(59,130,246,0.25);
+    }
+    .step-title {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+      padding-top: 6px;
+    }
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    /* ─── Code Block ─── */
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: var(--surface-raised);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+    .code-lang {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .code-block pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #c9cdd7;
+    }
+    .code-block pre .comment { color: #5c6070; font-style: italic; }
+    .code-block pre .keyword { color: #c084fc; }
+    .code-block pre .string { color: #86efac; }
+    .code-block pre .flag { color: #fbbf24; }
+
+    /* ─── Callout ─── */
+    .callout {
+      display: flex;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      margin: 20px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .callout-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .callout.warning {
+      background: var(--red-dim);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    .callout.tip {
+      background: var(--green-dim);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+    .callout.info {
+      background: var(--accent-glow);
+      border: 1px solid rgba(59,130,246, 0.2);
+      color: #93c5fd;
+    }
+    .callout.note {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      color: #fcd34d;
+    }
+
+    /* ─── File Tree ─── */
+    .file-tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+      color: var(--text-muted);
+      margin: 20px 0;
+    }
+    .file-tree .folder { color: var(--accent); }
+    .file-tree .env-file { color: var(--green); }
+    .file-tree .ignore { color: var(--red); }
+    .file-tree .dim { color: var(--text-dim); }
+
+    /* ─── Flow Diagram ─── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 40px 0;
+      padding: 36px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .flow-node {
+      width: 100%;
+      max-width: 460px;
+      padding: 16px 22px;
+      border-radius: var(--radius);
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .flow-node.prod {
+      background: var(--red-dim);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+    }
+    .flow-node.dev {
+      background: var(--accent-glow);
+      border: 1px solid rgba(59,130,246,0.25);
+      color: #93c5fd;
+    }
+    .flow-node.review {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: #fcd34d;
+    }
+    .flow-node.deploy {
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #86efac;
+    }
+    .flow-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 8px 0;
+    }
+    .flow-arrow::before {
+      content: '';
+      width: 1px; height: 18px;
+      background: var(--border);
+    }
+    .flow-arrow::after {
+      content: '▼';
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    .flow-arrow-label {
+      margin-top: 4px;
+      color: var(--text-dim);
+    }
+
+    /* ─── Table ─── */
+    .env-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .env-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .env-table td {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+    }
+    .env-table td.label-cell {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .env-table td.mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── Inline code ─── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 2px 7px;
+      color: #c084fc;
+    }
+
+    /* ─── Sub heading ─── */
+    .sub-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 32px 0 12px;
+    }
+
+    /* ─── Dashboard Path ─── */
+    .dash-path {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 2px 0;
+    }
+    .dash-path .sep { color: var(--text-dim); }
+
+    /* ─── Numbered Steps (inline) ─── */
+    .inline-steps {
+      margin: 16px 0 24px;
+      padding-left: 0;
+      list-style: none;
+      counter-reset: inline-step;
+    }
+    .inline-steps li {
+      counter-increment: inline-step;
+      position: relative;
+      padding: 10px 0 10px 44px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+      border-left: 1px solid var(--border);
+      margin-left: 15px;
+    }
+    .inline-steps li::before {
+      content: counter(inline-step);
+      position: absolute;
+      left: -16px;
+      top: 8px;
+      width: 30px; height: 30px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .inline-steps li:last-child {
+      border-left-color: transparent;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      padding: 48px 28px;
+      color: var(--text-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .hero { padding: 56px 20px 40px; }
+      .container { padding: 0 18px; }
+      .step { padding: 40px 0; }
+      .stack-pills { gap: 8px; }
+      .flow-node { font-size: 13px; padding: 14px 16px; }
+      .toc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ Hero ═══════ -->
+  <header class="hero">
+    <div class="hero-badge">
+      <span>●</span> 운영 중 수정 개발 가이드
+    </div>
+    <h1>안전한 수정 개발 &<br/>배포 워크플로우</h1>
+    <p>운영 중인 서비스를 건드리지 않고 기능을 수정·테스트·배포하는 전체 절차를 단계별로 정리합니다.</p>
+    <div class="stack-pills">
+      <div class="stack-pill"><span class="dot dot-next"></span>Next.js</div>
+      <div class="stack-pill"><span class="dot dot-supa"></span>Supabase (Auth · RLS · Functions)</div>
+      <div class="stack-pill"><span class="dot dot-vercel"></span>Vercel</div>
+      <div class="stack-pill"><span class="dot dot-github"></span>GitHub</div>
+    </div>
+  </header>
+
+  <!-- ═══════ TOC ═══════ -->
+  <nav class="toc">
+    <div class="toc-title">목차</div>
+    <div class="toc-grid">
+      <a href="#overview" class="toc-item"><span class="toc-num">◎</span>전체 흐름 한눈에 보기</a>
+      <a href="#step1" class="toc-item"><span class="toc-num">01</span>개발 브랜치 생성</a>
+      <a href="#step2" class="toc-item"><span class="toc-num">02</span>Supabase 개발 프로젝트 생성</a>
+      <a href="#step3" class="toc-item"><span class="toc-num">03</span>Auth & OAuth 개발 환경 설정</a>
+      <a href="#step4" class="toc-item"><span class="toc-num">04</span>RLS · Functions · Triggers 복제</a>
+      <a href="#step5" class="toc-item"><span class="toc-num">05</span>환경 변수로 운영/개발 분리</a>
+      <a href="#step6" class="toc-item"><span class="toc-num">06</span>로컬에서 수정 개발 & 테스트</a>
+      <a href="#step7" class="toc-item"><span class="toc-num">07</span>Vercel Preview로 최종 테스트</a>
+      <a href="#step8" class="toc-item"><span class="toc-num">08</span>PR 머지 → 운영 배포</a>
+      <a href="#checklist" class="toc-item"><span class="toc-num">✓</span>배포 전 체크리스트</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ═══════ Overview Flow ═══════ -->
+    <section class="step" id="overview">
+      <div class="step-header">
+        <div class="step-number">◎</div>
+        <h2 class="step-title">전체 흐름 한눈에 보기</h2>
+      </div>
+      <div class="flow">
+        <div class="flow-node prod">🔴&nbsp; 운영 환경 (main 브랜치 + Supabase 운영 프로젝트 + Vercel Production) — 건드리지 않음</div>
+        <div class="flow-arrow"><span class="flow-arrow-label">git checkout -b feature/xxx</span></div>
+        <div class="flow-node dev">🔵&nbsp; 로컬 개발 (feature 브랜치 + Supabase 개발 프로젝트)</div>
+        <div class="flow-arrow"><span class="flow-arrow-label">push → Pull Request → Vercel 자동 Preview 배포</span></div>
+        <div class="flow-node review">🟡&nbsp; Vercel Preview URL에서 동작 확인 (개발 DB 연결)</div>
+        <div class="flow-arrow"><span class="flow-arrow-label">운영 DB 마이그레이션 (필요 시) → PR 머지</span></div>
+        <div class="flow-node deploy">🟢&nbsp; Vercel 자동 Production 배포 → 운영 반영 완료</div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 1 ═══════ -->
+    <section class="step" id="step1">
+      <div class="step-header">
+        <div class="step-number">01</div>
+        <h2 class="step-title">개발 브랜치 생성</h2>
+      </div>
+      <p class="step-desc">
+        운영 코드가 있는 <code>main</code> 브랜치를 직접 수정하지 않습니다.
+        별도의 feature 브랜치를 만들어 독립된 공간에서 작업합니다.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 최신 상태 동기화</span>
+<span class="keyword">git</span> checkout main
+<span class="keyword">git</span> pull origin main
+
+<span class="comment"># 작업용 브랜치 생성 및 이동</span>
+<span class="keyword">git</span> checkout <span class="flag">-b</span> feature/새기능이름</pre>
+      </div>
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>브랜치 이름은 <code>feature/add-search</code>, <code>fix/login-bug</code>처럼 작업 내용을 알 수 있게 짓는 것이 좋습니다.</div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 2 ═══════ -->
+    <section class="step" id="step2">
+      <div class="step-header">
+        <div class="step-number">02</div>
+        <h2 class="step-title">Supabase 개발용 프로젝트 생성</h2>
+      </div>
+      <p class="step-desc">
+        <strong>운영 Supabase 프로젝트에서 직접 개발하면 안 됩니다.</strong>
+        개발 전용 프로젝트를 별도로 만들어 사용합니다.
+        모든 작업은 Supabase 대시보드에서 진행합니다.
+      </p>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div>운영 DB에서 직접 개발하면 실수로 사용자 데이터가 삭제되거나 테이블 구조가 깨질 수 있습니다. Auth 설정이 꼬이면 기존 사용자가 로그인 불가 상태에 빠질 수도 있습니다.</div>
+      </div>
+
+      <p class="sub-heading">A. 새 프로젝트 생성</p>
+      <ol class="inline-steps">
+        <li><a href="https://supabase.com/dashboard" style="color:var(--accent);">supabase.com/dashboard</a> 접속 → <strong>New Project</strong> 클릭</li>
+        <li>프로젝트 이름을 <code>myapp-dev</code> 등 구분 가능하게 지정</li>
+        <li>리전(Region)은 운영 프로젝트와 동일하게 선택 (성능 차이 방지)</li>
+        <li>DB 비밀번호 설정 후 프로젝트 생성 완료</li>
+      </ol>
+
+      <p class="sub-heading">B. 운영 테이블 구조(스키마) 복제</p>
+      <p class="step-desc">
+        운영 프로젝트에서 테이블 구조만 복사하여 개발 프로젝트에 적용합니다.
+        <strong>실제 사용자 데이터는 가져오지 않습니다.</strong>
+      </p>
+      <ol class="inline-steps">
+        <li><strong>운영 프로젝트</strong> 대시보드 → <span class="dash-path">SQL Editor</span> 에서 아래 쿼리를 실행하여 각 테이블의 전체 DDL(CREATE TABLE 문)을 확인합니다</li>
+        <li>출력된 DDL을 모두 복사합니다</li>
+        <li><strong>개발 프로젝트</strong> 대시보드 → <span class="dash-path">SQL Editor</span> 에 붙여넣기 후 실행합니다</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 운영 프로젝트 SQL Editor에서 실행</span>
+        </div>
+<pre><span class="comment">-- 모든 public 테이블의 전체 DDL 추출</span>
+<span class="comment">-- (컬럼, 타입, NOT NULL, 기본값, Primary Key 포함)</span>
+<span class="keyword">SELECT</span>
+  <span class="string">'CREATE TABLE IF NOT EXISTS '</span> || c.table_name || <span class="string">' ('</span> ||
+  string_agg(
+    c.column_name || <span class="string">' '</span> ||
+    c.data_type ||
+    <span class="keyword">CASE WHEN</span> c.character_maximum_length <span class="keyword">IS NOT NULL</span>
+      <span class="keyword">THEN</span> <span class="string">'('</span> || c.character_maximum_length || <span class="string">')'</span>
+      <span class="keyword">ELSE</span> <span class="string">''</span> <span class="keyword">END</span> ||
+    <span class="keyword">CASE WHEN</span> c.is_nullable = <span class="string">'NO'</span>
+      <span class="keyword">THEN</span> <span class="string">' NOT NULL'</span>
+      <span class="keyword">ELSE</span> <span class="string">''</span> <span class="keyword">END</span> ||
+    <span class="keyword">CASE WHEN</span> c.column_default <span class="keyword">IS NOT NULL</span>
+      <span class="keyword">THEN</span> <span class="string">' DEFAULT '</span> || c.column_default
+      <span class="keyword">ELSE</span> <span class="string">''</span> <span class="keyword">END</span>,
+    <span class="string">', '</span>
+    <span class="keyword">ORDER BY</span> c.ordinal_position
+  ) || <span class="string">');'</span> <span class="keyword">AS</span> ddl
+<span class="keyword">FROM</span> information_schema.columns c
+<span class="keyword">WHERE</span> c.table_schema = <span class="string">'public'</span>
+<span class="keyword">GROUP BY</span> c.table_name
+<span class="keyword">ORDER BY</span> c.table_name;</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          <strong>더 간단한 방법:</strong> 운영 프로젝트의 <span class="dash-path">Table Editor</span>에서 각 테이블의 구조(컬럼, 타입, 기본값, 제약조건)를 확인하고 개발 프로젝트의 Table Editor에서 동일하게 수동 생성해도 됩니다. 테이블이 많지 않다면 이 방법이 직관적입니다. Primary Key, Foreign Key, NOT NULL 등 제약조건을 빠뜨리지 않도록 주의하세요.
+        </div>
+      </div>
+
+      <p class="sub-heading">C. 테스트용 더미 데이터 삽입</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 개발 프로젝트 SQL Editor</span>
+        </div>
+<pre><span class="comment">-- 예시: 테스트 데이터 (실제 테이블에 맞게 수정)</span>
+<span class="keyword">INSERT INTO</span> posts (title, content, user_id) <span class="keyword">VALUES</span>
+  (<span class="string">'테스트 게시글 1'</span>, <span class="string">'내용입니다'</span>, <span class="string">'auth-user-uuid'</span>),
+  (<span class="string">'테스트 게시글 2'</span>, <span class="string">'두 번째 글'</span>, <span class="string">'auth-user-uuid'</span>);</pre>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div>
+          Auth를 사용하는 테이블이라면 <code>user_id</code>에 넣을 UUID가 필요합니다. 이 경우 <strong>Step 3 (Auth & OAuth 설정)을 먼저 완료한 뒤</strong> 개발 프로젝트에서 소셜 로그인 테스트 계정으로 회원가입을 하고, 해당 사용자의 UUID를 사용하세요. (<span class="dash-path">Authentication <span class="sep">→</span> Users</span>에서 확인 가능)
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 3: Auth & OAuth ═══════ -->
+    <section class="step" id="step3">
+      <div class="step-header">
+        <div class="step-number">03</div>
+        <h2 class="step-title">Auth & OAuth 개발 환경 설정</h2>
+      </div>
+      <p class="step-desc">
+        Supabase Auth와 Google/GitHub 소셜 로그인을 사용 중이므로,
+        개발 프로젝트에서도 동일하게 설정해야 합니다.
+        <strong>이 단계를 빠뜨리면 개발 환경에서 로그인 자체가 안 됩니다.</strong>
+      </p>
+
+      <p class="sub-heading">A. Supabase Auth 기본 설정</p>
+      <ol class="inline-steps">
+        <li><strong>개발 프로젝트</strong> 대시보드 → <span class="dash-path">Authentication <span class="sep">→</span> URL Configuration</span></li>
+        <li><strong>Site URL</strong>을 <code>http://localhost:3000</code>으로 설정</li>
+        <li><strong>Redirect URLs</strong>에 다음 두 개를 추가합니다</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Redirect URLs — 개발 프로젝트에 등록</span>
+        </div>
+<pre><span class="comment"># 로컬 개발 환경</span>
+<span class="string">http://localhost:3000/**</span>
+
+<span class="comment"># Vercel Preview 배포 (와일드카드로 모든 Preview URL 허용)</span>
+<span class="comment"># 아래의 username 을 본인의 Vercel 계정명으로 교체하세요</span>
+<span class="string">https://*-username.vercel.app/**</span></pre>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div>
+          <strong>운영 프로젝트의 Redirect URLs는 건드리지 마세요.</strong>
+          운영 프로젝트에는 운영 도메인만, 개발 프로젝트에는 localhost와 Preview URL만 등록합니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">B. Google OAuth 개발용 설정</p>
+      <ol class="inline-steps">
+        <li><a href="https://console.cloud.google.com/apis/credentials" style="color:var(--accent);">Google Cloud Console</a> → OAuth 2.0 클라이언트 → <strong>새 Client ID 생성</strong> (개발 전용)</li>
+        <li><strong>승인된 리디렉션 URI</strong>에 개발 프로젝트의 콜백 URL을 추가합니다</li>
+        <li>개발 Supabase 프로젝트 → <span class="dash-path">Authentication <span class="sep">→</span> Providers <span class="sep">→</span> Google</span>에서 Client ID와 Secret 입력</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Google OAuth — 승인된 리디렉션 URI에 추가</span>
+        </div>
+<pre><span class="comment"># 개발 Supabase 프로젝트의 콜백 URL 형식</span>
+<span class="string">https://[개발프로젝트-ref].supabase.co/auth/v1/callback</span></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div>
+          <code>[개발프로젝트-ref]</code>는 개발 프로젝트의 <span class="dash-path">Settings <span class="sep">→</span> API</span>에서 Project URL 내의 서브도메인 부분입니다.
+          예: <code>https://abcdefg.supabase.co</code> 라면 ref는 <code>abcdefg</code>입니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">C. GitHub OAuth 개발용 설정</p>
+      <ol class="inline-steps">
+        <li><a href="https://github.com/settings/developers" style="color:var(--accent);">GitHub Developer Settings</a> → OAuth Apps → <strong>New OAuth App</strong> (개발 전용으로 새로 생성)</li>
+        <li>Homepage URL: <code>http://localhost:3000</code></li>
+        <li>Authorization callback URL: <code>https://[개발프로젝트-ref].supabase.co/auth/v1/callback</code></li>
+        <li>생성된 Client ID / Secret을 개발 Supabase 프로젝트 → <span class="dash-path">Authentication <span class="sep">→</span> Providers <span class="sep">→</span> GitHub</span>에 입력</li>
+      </ol>
+
+      <div class="callout note">
+        <div class="callout-icon">📝</div>
+        <div>
+          <strong>운영용 OAuth 앱과 개발용 OAuth 앱을 분리하는 것이 핵심입니다.</strong>
+          만약 운영용 Google/GitHub OAuth 앱에 localhost를 추가해버리면, 보안상 좋지 않고
+          나중에 정리하기도 어렵습니다. 개발 전용 OAuth 앱을 별도로 만드세요.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 4: RLS, Functions, Triggers ═══════ -->
+    <section class="step" id="step4">
+      <div class="step-header">
+        <div class="step-number">04</div>
+        <h2 class="step-title">RLS · Functions · Triggers 복제</h2>
+      </div>
+      <p class="step-desc">
+        테이블 구조만 복사하면 RLS 정책, DB Functions, Triggers가 빠지게 됩니다.
+        이것들도 개발 프로젝트에 동일하게 적용해야 실제 운영과 같은 환경에서 테스트할 수 있습니다.
+      </p>
+
+      <p class="sub-heading">A. RLS 정책 복제</p>
+      <p class="step-desc">
+        운영 프로젝트에서 현재 적용된 RLS 정책 목록을 확인하고, 개발 프로젝트에 동일하게 적용합니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 운영 프로젝트에서 RLS 정책 확인</span>
+        </div>
+<pre><span class="comment">-- 모든 RLS 정책 확인</span>
+<span class="keyword">SELECT</span>
+  schemaname, tablename, policyname, permissive,
+  roles, cmd, qual, with_check
+<span class="keyword">FROM</span> pg_policies
+<span class="keyword">WHERE</span> schemaname = <span class="string">'public'</span>
+<span class="keyword">ORDER BY</span> tablename, policyname;</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 개발 프로젝트에 RLS 적용 예시</span>
+        </div>
+<pre><span class="comment">-- 1. 테이블에 RLS 활성화</span>
+<span class="keyword">ALTER TABLE</span> posts <span class="keyword">ENABLE</span> ROW LEVEL SECURITY;
+
+<span class="comment">-- 2. 운영과 동일한 정책 생성</span>
+<span class="keyword">CREATE POLICY</span> <span class="string">"Users can read own posts"</span>
+  <span class="keyword">ON</span> posts <span class="keyword">FOR SELECT</span>
+  <span class="keyword">USING</span> (auth.uid() = user_id);
+
+<span class="keyword">CREATE POLICY</span> <span class="string">"Users can insert own posts"</span>
+  <span class="keyword">ON</span> posts <span class="keyword">FOR INSERT</span>
+  <span class="keyword">WITH CHECK</span> (auth.uid() = user_id);</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          대시보드에서도 가능합니다: 각 테이블의 <span class="dash-path">Table Editor <span class="sep">→</span> 테이블 선택 <span class="sep">→</span> RLS Policies 탭</span>에서 운영 프로젝트의 정책을 확인하고, 개발 프로젝트에서 동일하게 만들어주면 됩니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">B. DB Functions 복제</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 운영 프로젝트에서 Functions 확인</span>
+        </div>
+<pre><span class="comment">-- public 스키마의 모든 함수 정의 확인</span>
+<span class="keyword">SELECT</span>
+  routine_name,
+  routine_definition
+<span class="keyword">FROM</span> information_schema.routines
+<span class="keyword">WHERE</span> routine_schema = <span class="string">'public'</span>
+  <span class="keyword">AND</span> routine_type = <span class="string">'FUNCTION'</span>;</pre>
+      </div>
+      <p class="step-desc">
+        확인된 함수 정의를 개발 프로젝트의 SQL Editor에서 그대로 실행합니다.
+        또는 대시보드 <span class="dash-path">Database <span class="sep">→</span> Functions</span>에서 하나씩 확인하고 동일하게 생성할 수 있습니다.
+      </p>
+
+      <p class="sub-heading">C. DB Triggers 복제</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 운영 프로젝트에서 Triggers 확인</span>
+        </div>
+<pre><span class="comment">-- 모든 트리거 확인</span>
+<span class="keyword">SELECT</span>
+  trigger_name,
+  event_manipulation,
+  event_object_table,
+  action_statement
+<span class="keyword">FROM</span> information_schema.triggers
+<span class="keyword">WHERE</span> trigger_schema = <span class="string">'public'</span>;</pre>
+      </div>
+      <p class="step-desc">
+        확인된 트리거 정의를 개발 프로젝트에 동일하게 생성합니다.
+      </p>
+
+      <div class="callout note">
+        <div class="callout-icon">📝</div>
+        <div>
+          <strong>팁: 이 모든 SQL을 하나의 파일로 정리해 두세요.</strong>
+          프로젝트 내에 <code>supabase/seed.sql</code> 파일을 만들어 테이블 DDL + RLS + Functions + Triggers를 한 번에 관리하면, 나중에 개발 프로젝트를 다시 만들 때도 한 번에 적용할 수 있습니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 5: 환경 변수 ═══════ -->
+    <section class="step" id="step5">
+      <div class="step-header">
+        <div class="step-number">05</div>
+        <h2 class="step-title">환경 변수로 운영 / 개발 분리</h2>
+      </div>
+      <p class="step-desc">
+        같은 코드가 환경에 따라 다른 Supabase 프로젝트에 연결되도록 환경 변수를 분리합니다.
+        개발 프로젝트의 <span class="dash-path">Settings <span class="sep">→</span> API</span>에서 URL과 anon key를 확인합니다.
+      </p>
+
+      <div class="file-tree">
+        <span class="folder">📁 프로젝트 루트</span><br/>
+        &nbsp;&nbsp;├─ <span class="env-file">.env.local</span> <span class="dim">← 로컬 개발용 (개발 Supabase 연결)</span><br/>
+        &nbsp;&nbsp;├─ <span class="ignore">.gitignore</span> <span class="dim">← .env.local 포함 필수</span><br/>
+        &nbsp;&nbsp;├─ <span class="folder">supabase/</span><br/>
+        &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└─ <span class="env-file">seed.sql</span> <span class="dim">← DDL + RLS + Functions + Triggers 모음</span><br/>
+        &nbsp;&nbsp;└─ <span class="dim">Vercel 대시보드 → 환경별 변수 (Production / Preview)</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">.env.local — 로컬 개발용</span>
+        </div>
+<pre><span class="comment"># ── Supabase 개발 프로젝트 ──</span>
+NEXT_PUBLIC_SUPABASE_URL=<span class="string">https://[개발프로젝트-ref].supabase.co</span>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<span class="string">eyJhbGciOi...개발키...</span>
+
+<span class="comment"># 서버 사이드에서 사용하는 경우</span>
+SUPABASE_SERVICE_ROLE_KEY=<span class="string">eyJhbGciOi...개발서비스키...</span></pre>
+      </div>
+
+      <table class="env-table">
+        <thead>
+          <tr>
+            <th>환경</th>
+            <th>환경 변수 위치</th>
+            <th>Supabase 연결 대상</th>
+            <th>OAuth 앱</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">로컬 개발</td>
+            <td class="mono">.env.local</td>
+            <td>개발 프로젝트</td>
+            <td>개발용</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Vercel Preview</td>
+            <td>대시보드 (Preview)</td>
+            <td>개발 프로젝트</td>
+            <td>개발용</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Vercel Production</td>
+            <td>대시보드 (Production)</td>
+            <td>운영 프로젝트</td>
+            <td>운영용</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="sub-heading">Vercel 환경 변수 설정 방법</p>
+      <ol class="inline-steps">
+        <li>Vercel 대시보드 → 프로젝트 선택 → <span class="dash-path">Settings <span class="sep">→</span> Environment Variables</span></li>
+        <li><code>NEXT_PUBLIC_SUPABASE_URL</code> 등록 시 <strong>Production에는 운영 URL</strong>, <strong>Preview에는 개발 URL</strong>을 각각 입력</li>
+        <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>도 동일한 방식으로 환경별 분리</li>
+        <li><code>SUPABASE_SERVICE_ROLE_KEY</code>를 사용 중이라면 이것도 환경별로 분리</li>
+      </ol>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div>
+          Vercel은 환경 변수 등록 시 <strong>Production / Preview / Development</strong> 체크박스로 적용 범위를 선택할 수 있습니다. 같은 키 이름으로 환경별 다른 값을 넣으면 자동으로 분리됩니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 6: 로컬 개발 ═══════ -->
+    <section class="step" id="step6">
+      <div class="step-header">
+        <div class="step-number">06</div>
+        <h2 class="step-title">로컬에서 수정 개발 & 테스트</h2>
+      </div>
+      <p class="step-desc">
+        이제 개발 Supabase에 안전하게 연결된 상태이므로 자유롭게 수정하고 테스트합니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 개발 서버 실행</span>
+<span class="keyword">npm</span> run dev
+
+<span class="comment"># 브라우저에서 확인</span>
+<span class="comment"># http://localhost:3000</span></pre>
+      </div>
+
+      <p class="sub-heading">로컬 테스트 시 확인 사항</p>
+      <table class="env-table">
+        <thead>
+          <tr>
+            <th>확인 항목</th>
+            <th>테스트 방법</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">소셜 로그인</td>
+            <td>Google/GitHub 로그인 버튼 클릭 → 정상적으로 로그인/회원가입 되는지 확인</td>
+          </tr>
+          <tr>
+            <td class="label-cell">RLS 정책</td>
+            <td>로그인한 사용자가 본인 데이터만 보이는지, 다른 사용자 데이터에 접근 불가한지 확인</td>
+          </tr>
+          <tr>
+            <td class="label-cell">DB Functions</td>
+            <td>해당 함수를 호출하는 기능을 실행하여 결과가 운영과 동일한지 확인</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Triggers</td>
+            <td>트리거가 발동하는 동작(예: 데이터 삽입 시 자동 업데이트)이 정상 작동하는지 확인</td>
+          </tr>
+          <tr>
+            <td class="label-cell">새로 수정한 기능</td>
+            <td>추가/변경한 기능이 의도대로 동작하는지 확인</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="sub-heading">DB 스키마 변경이 필요한 경우</p>
+      <p class="step-desc">
+        개발 프로젝트의 대시보드에서 Table Editor 또는 SQL Editor로 변경합니다.
+        <strong>변경한 SQL은 반드시 별도로 기록해 두세요.</strong>
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 개발 프로젝트 SQL Editor</span>
+        </div>
+<pre><span class="comment">-- 예: 새 컬럼 추가</span>
+<span class="keyword">ALTER TABLE</span> posts
+<span class="keyword">ADD COLUMN</span> category <span class="string">text</span> <span class="keyword">DEFAULT</span> <span class="string">'general'</span>;
+
+<span class="comment">-- 예: 새 컬럼에 대한 RLS 정책 수정이 필요하면 함께 기록</span>
+<span class="comment">-- 예: 새 트리거가 필요하면 함께 기록</span></pre>
+      </div>
+
+      <div class="callout note">
+        <div class="callout-icon">📝</div>
+        <div>
+          변경 SQL을 프로젝트 내 <code>supabase/migrations/</code> 디렉토리에 날짜별로 저장하세요.
+          예: <code>20250308_add_category_column.sql</code>.
+          이 파일은 Git에 커밋하여 어떤 DB 변경이 있었는지 추적합니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 7: Vercel Preview ═══════ -->
+    <section class="step" id="step7">
+      <div class="step-header">
+        <div class="step-number">07</div>
+        <h2 class="step-title">커밋 → 푸시 → Vercel Preview로 최종 테스트</h2>
+      </div>
+      <p class="step-desc">
+        로컬 테스트가 끝나면 코드를 커밋하고 GitHub에 푸시합니다.
+        Vercel은 <code>main</code>이 아닌 브랜치가 푸시되면 자동으로 <strong>Preview 배포</strong>를 생성합니다.
+        이것이 배포 전 최종 테스트 환경입니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="keyword">git</span> add .
+<span class="keyword">git</span> commit <span class="flag">-m</span> <span class="string">"feat: 검색 기능 추가"</span>
+<span class="keyword">git</span> push origin feature/새기능이름</pre>
+      </div>
+
+      <p class="step-desc" style="margin-top: 20px;">
+        푸시하면 Vercel이 자동으로 Preview URL을 생성합니다.
+        GitHub에서도 해당 브랜치에 대한 Pull Request를 생성할 수 있는 안내가 표시됩니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Vercel Preview URL 예시</span>
+        </div>
+<pre><span class="string">https://myapp-git-feature-xxx-username.vercel.app</span></pre>
+      </div>
+
+      <p class="sub-heading">Pull Request 생성</p>
+      <ol class="inline-steps">
+        <li>GitHub 저장소 페이지로 이동하면 "Compare & pull request" 버튼이 나타납니다</li>
+        <li>변경 내용 설명을 작성하고 <strong>Create pull request</strong> 클릭</li>
+        <li>PR 페이지 하단에서 Vercel이 자동으로 달아주는 Preview URL 링크를 확인합니다</li>
+      </ol>
+
+      <p class="sub-heading">Preview에서 반드시 테스트할 항목</p>
+      <table class="env-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>왜 중요한가</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">소셜 로그인 (Google/GitHub)</td>
+            <td>Preview URL이 OAuth Redirect URI에 등록되어 있어야 작동합니다. 안 되면 3단계 Redirect URL 설정을 확인하세요.</td>
+          </tr>
+          <tr>
+            <td class="label-cell">데이터 CRUD</td>
+            <td>RLS 정책 때문에 로컬과 다르게 동작할 수 있습니다.</td>
+          </tr>
+          <tr>
+            <td class="label-cell">새로 추가/변경한 기능</td>
+            <td>실제 배포 환경과 동일한 조건에서 최종 확인합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          Preview 환경 변수를 개발 Supabase로 설정해 두었으므로,
+          Preview URL에서의 모든 동작은 개발 DB에 영향을 미칩니다.
+          운영 데이터는 안전합니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Step 8: 배포 ═══════ -->
+    <section class="step" id="step8">
+      <div class="step-header">
+        <div class="step-number">08</div>
+        <h2 class="step-title">PR 머지 → 운영 배포</h2>
+      </div>
+      <p class="step-desc">
+        Preview에서 문제가 없으면 Step 7에서 생성한 Pull Request를 머지합니다.
+        Vercel은 <code>main</code> 브랜치에 변경이 감지되면 자동으로 Production 배포를 실행합니다.
+      </p>
+
+      <p class="sub-heading">DB 변경이 없는 경우 (코드만 수정)</p>
+      <ol class="inline-steps">
+        <li>GitHub에서 PR 페이지로 이동</li>
+        <li>변경 내용 최종 확인 후 <strong>Merge pull request</strong> 클릭</li>
+        <li>Vercel이 자동으로 Production 배포 시작</li>
+        <li>배포 완료 후 운영 사이트에서 정상 동작 확인</li>
+      </ol>
+
+      <p class="sub-heading">DB 스키마 / RLS / Functions / Triggers 변경이 있는 경우</p>
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div>
+          <strong>순서가 매우 중요합니다.</strong> 코드가 먼저 배포되면 아직 없는 컬럼/함수를 참조하여 서비스 장애가 발생합니다.
+        </div>
+      </div>
+
+      <ol class="inline-steps">
+        <li><strong>운영 Supabase 프로젝트</strong> 대시보드 → <span class="dash-path">SQL Editor</span> 에서 기록해둔 마이그레이션 SQL을 실행합니다</li>
+        <li>운영 DB에 변경이 정상 적용되었는지 Table Editor에서 확인합니다</li>
+        <li>그 다음 GitHub에서 PR을 머지합니다</li>
+        <li>Vercel Production 배포 완료 후 운영 사이트에서 최종 확인합니다</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — 운영 프로젝트 SQL Editor에서 실행</span>
+        </div>
+<pre><span class="comment">-- 개발 시 기록해둔 마이그레이션 SQL을 그대로 실행</span>
+<span class="comment">-- 예: supabase/migrations/20250308_add_category_column.sql</span>
+
+<span class="keyword">ALTER TABLE</span> posts
+<span class="keyword">ADD COLUMN</span> category <span class="string">text</span> <span class="keyword">DEFAULT</span> <span class="string">'general'</span>;
+
+<span class="comment">-- RLS 정책 변경이 있었다면 함께 실행</span>
+<span class="comment">-- Functions/Triggers 변경이 있었다면 함께 실행</span></pre>
+      </div>
+    </section>
+
+    <!-- ═══════ Checklist ═══════ -->
+    <section class="step" id="checklist">
+      <div class="step-header">
+        <div class="step-number">✓</div>
+        <h2 class="step-title">배포 전 체크리스트</h2>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">기본 확인</span>
+        </div>
+<pre>□  feature 브랜치에서 작업했는가
+□  .env.local은 개발 Supabase를 가리키는가
+□  운영 Supabase에 직접 연결한 적이 없는가
+□  로컬에서 주요 기능 테스트를 완료했는가
+□  Vercel Preview URL에서 정상 동작을 확인했는가
+□  PR을 생성하고 변경 내용을 최종 검토했는가</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Auth & OAuth 확인</span>
+        </div>
+<pre>□  개발 Supabase에 Auth Redirect URL이 등록되어 있는가
+□  Google/GitHub OAuth 개발용 앱에 콜백 URL이 등록되어 있는가
+□  Preview URL에서 소셜 로그인이 정상 동작하는가
+□  로그인 후 사용자 데이터 접근(RLS)이 정상인가</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">DB 변경 시 추가 확인</span>
+        </div>
+<pre>□  스키마 변경 SQL을 migrations/ 디렉토리에 기록했는가
+□  RLS 정책 변경이 있다면 함께 기록했는가
+□  Functions / Triggers 변경이 있다면 함께 기록했는가
+□  운영 DB에 마이그레이션을 PR 머지 <strong>전에</strong> 적용했는가
+□  운영 DB 변경 후 Table Editor에서 정상 적용을 확인했는가</pre>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Next.js + Supabase + Vercel 운영 수정 개발 가이드
+  </footer>
+
+</body>
+</html>

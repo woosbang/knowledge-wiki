@@ -1,0 +1,173 @@
+{
+  "slug": "git-guide",
+  "source": "docs/git-guide.html",
+  "source_hash": "93e264523f823cdd",
+  "title": "멀티 PC 개발자를 위한 Git & GitHub 완벽 가이드",
+  "doc_date": "2026-02-18",
+  "word_count": 1622,
+  "headings": [
+    {
+      "level": 2,
+      "text": "전체 흐름 한눈에 보기",
+      "id": "전체-흐름-한눈에-보기"
+    },
+    {
+      "level": 3,
+      "text": "📋 단계별 여정",
+      "id": "단계별-여정"
+    },
+    {
+      "level": 2,
+      "text": "최초 세팅: 프로젝트를 GitHub에 올리기",
+      "id": "최초-세팅-프로젝트를-github에-올리기"
+    },
+    {
+      "level": 3,
+      "text": "🌐 GitHub에 빈 저장소 만들기",
+      "id": "github에-빈-저장소-만들기"
+    },
+    {
+      "level": 3,
+      "text": "💻 PC1에서 코드 올리기",
+      "id": "pc1에서-코드-올리기"
+    },
+    {
+      "level": 3,
+      "text": "📥 다른 PC에서 프로젝트 가져오기 (Clone)",
+      "id": "다른-pc에서-프로젝트-가져오기-clone"
+    },
+    {
+      "level": 2,
+      "text": "일상 동기화: Pull → 코딩 → Push",
+      "id": "일상-동기화-pull-코딩-push"
+    },
+    {
+      "level": 3,
+      "text": "🔁 매일 반복하는 3단계",
+      "id": "매일-반복하는-3단계"
+    },
+    {
+      "level": 2,
+      "text": ".gitignore: 올리지 않을 파일 관리",
+      "id": "gitignore-올리지-않을-파일-관리"
+    },
+    {
+      "level": 3,
+      "text": "📝 .gitignore를 프로젝트 시작 직후에 만드세요",
+      "id": "gitignore를-프로젝트-시작-직후에-만드세요"
+    },
+    {
+      "level": 3,
+      "text": "🤔 .gitignore에 넣었는데 다른 PC에서 파일이 없어요!",
+      "id": "gitignore에-넣었는데-다른-pc에서-파일이-없어요"
+    },
+    {
+      "level": 2,
+      "text": "환경 관리: pyproject.toml + uv/poetry",
+      "id": "환경-관리-pyproject-toml-uv-poetry"
+    },
+    {
+      "level": 3,
+      "text": "⚙️ 왜 pyproject.toml 방식이 좋은가?",
+      "id": "왜-pyproject-toml-방식이-좋은가"
+    },
+    {
+      "level": 2,
+      "text": "브랜치: 안전한 협업의 핵심",
+      "id": "브랜치-안전한-협업의-핵심"
+    },
+    {
+      "level": 3,
+      "text": "🌿 브랜치 생성 & 이동",
+      "id": "브랜치-생성-이동"
+    },
+    {
+      "level": 3,
+      "text": "🔀 브랜치 합치기 (Merge)",
+      "id": "브랜치-합치기-merge"
+    },
+    {
+      "level": 3,
+      "text": "👥 팀 협업 시 Pull Request 워크플로우",
+      "id": "팀-협업-시-pull-request-워크플로우"
+    },
+    {
+      "level": 2,
+      "text": "실수 복구: \"되돌리기\" 모음",
+      "id": "실수-복구-되돌리기-모음"
+    },
+    {
+      "level": 3,
+      "text": "↩️ 상황별 복구 방법",
+      "id": "상황별-복구-방법"
+    },
+    {
+      "level": 2,
+      "text": "치트시트: 복사해서 바로 쓰세요",
+      "id": "치트시트-복사해서-바로-쓰세요"
+    },
+    {
+      "level": 3,
+      "text": "🚀 최초 1회 — 프로젝트 올리기 (PC1)",
+      "id": "최초-1회-프로젝트-올리기-pc1"
+    },
+    {
+      "level": 3,
+      "text": "📥 최초 1회 — 다른 PC에서 가져오기",
+      "id": "최초-1회-다른-pc에서-가져오기"
+    },
+    {
+      "level": 3,
+      "text": "🔁 매일 반복 — 동기화 사이클",
+      "id": "매일-반복-동기화-사이클"
+    },
+    {
+      "level": 3,
+      "text": "📊 상태 확인 명령어",
+      "id": "상태-확인-명령어"
+    }
+  ],
+  "category": "version-control",
+  "subcategory": "basics",
+  "tags": [
+    "git",
+    "github",
+    "브랜치",
+    "gitignore",
+    "협업"
+  ],
+  "summary": "여러 PC를 오가며 작업하는 상황을 전제로 Git·GitHub 사용법을 처음부터 끝까지 묶은 종합 가이드. 최초 세팅, 일상 동기화, .gitignore, 브랜치, 실수 복구, 치트시트까지 한 문서에 들어 있다.",
+  "key_points": [
+    "최초 세팅은 PC1에서 한 번, 다른 PC는 clone 으로 받는다",
+    "일상 사이클은 pull → 코딩 → add → commit → push 다섯 단계",
+    ".gitignore 는 프로젝트 시작 직후에 만들어야 불필요한 파일이 올라가지 않는다",
+    "환경은 파일이 아니라 pyproject.toml + uv 로 재현한다",
+    "상황별 되돌리기 방법과 복붙용 치트시트를 부록으로 제공한다"
+  ],
+  "level": "beginner",
+  "related": [
+    "git-methods-comparison",
+    "git-revert-guide",
+    "git-diverge-guide",
+    "uv-환경-guidebook"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [
+    {
+      "slug": "git-methods-comparison",
+      "reason": "최초 저장소 연결 절차가 겹친다. 이 문서는 Local-First 방식만 다루고, 비교 문서는 두 방식을 나란히 놓는다",
+      "severity": "medium"
+    },
+    {
+      "slug": "git-revert-guide",
+      "reason": "'실수 복구' 장이 되돌리기 가이드의 요약판에 해당한다",
+      "severity": "low"
+    }
+  ],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "93e264523f823cdd"
+}

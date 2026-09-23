@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git 되돌리기 가이드 — 변경사항을 마지막 커밋으로 복원하기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --surface: #14171e;
+      --surface-raised: #1a1e28;
+      --border: #252a36;
+      --border-accent: #3b82f6;
+      --text: #e2e4e9;
+      --text-muted: #8b90a0;
+      --text-dim: #5c6070;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.12);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.1);
+      --orange: #f97316;
+      --orange-dim: rgba(249, 115, 22, 0.12);
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      padding: 80px 40px 60px;
+      text-align: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(239,68,68,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+    .hero-badge span { color: var(--red); }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 50px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e2e4e9 30%, #ef4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 580px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ─── Situation Selector ─── */
+    .situation-box {
+      max-width: 820px;
+      margin: 40px auto 0;
+      padding: 0 28px;
+    }
+    .situation-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .situation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+    }
+    .situation-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .situation-card:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .situation-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+    .situation-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ─── Step Section ─── */
+    .step {
+      position: relative;
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .step-number {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(59,130,246,0.25);
+    }
+    .step-number.danger {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(239,68,68,0.25);
+    }
+    .step-number.safe {
+      background: var(--green-dim);
+      color: var(--green);
+      border-color: rgba(34,197,94,0.25);
+    }
+    .step-number.caution {
+      background: var(--amber-dim);
+      color: var(--amber);
+      border-color: rgba(245,158,11,0.25);
+    }
+    .step-title {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+      padding-top: 6px;
+    }
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    /* ─── Code Block ─── */
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: var(--surface-raised);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+    .code-lang {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .code-block pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #c9cdd7;
+    }
+    .code-block pre .comment { color: #5c6070; font-style: italic; }
+    .code-block pre .keyword { color: #c084fc; }
+    .code-block pre .string { color: #86efac; }
+    .code-block pre .flag { color: #fbbf24; }
+    .code-block pre .danger { color: #fca5a5; }
+    .code-block pre .output { color: #8b90a0; }
+
+    /* ─── Callout ─── */
+    .callout {
+      display: flex;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      margin: 20px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .callout-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .callout.warning {
+      background: var(--red-dim);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    .callout.tip {
+      background: var(--green-dim);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+    .callout.info {
+      background: var(--accent-glow);
+      border: 1px solid rgba(59,130,246, 0.2);
+      color: #93c5fd;
+    }
+    .callout.note {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      color: #fcd34d;
+    }
+
+    /* ─── Diagram ─── */
+    .diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      margin: 24px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 2.2;
+      color: var(--text-muted);
+      overflow-x: auto;
+    }
+    .diagram .label {
+      color: var(--text-dim);
+      font-size: 11px;
+    }
+    .diagram .highlight { color: var(--accent); font-weight: 600; }
+    .diagram .safe { color: var(--green); font-weight: 600; }
+    .diagram .warn { color: var(--amber); font-weight: 600; }
+    .diagram .danger { color: var(--red); font-weight: 600; }
+    .diagram .arrow { color: var(--text-dim); }
+    .diagram .dim { color: var(--text-dim); }
+
+    /* ─── Inline code ─── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 2px 7px;
+      color: #c084fc;
+    }
+
+    /* ─── Sub heading ─── */
+    .sub-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 32px 0 12px;
+    }
+
+    /* ─── Numbered Steps ─── */
+    .inline-steps {
+      margin: 16px 0 24px;
+      padding-left: 0;
+      list-style: none;
+      counter-reset: inline-step;
+    }
+    .inline-steps li {
+      counter-increment: inline-step;
+      position: relative;
+      padding: 10px 0 10px 44px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+      border-left: 1px solid var(--border);
+      margin-left: 15px;
+    }
+    .inline-steps li::before {
+      content: counter(inline-step);
+      position: absolute;
+      left: -16px;
+      top: 8px;
+      width: 30px; height: 30px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .inline-steps li:last-child {
+      border-left-color: transparent;
+    }
+
+    /* ─── Comparison Table ─── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .cmp-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .cmp-table td {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .cmp-table td.mono {
+      font-family: 'JetBrains Mono', monospace;
+      color: #c084fc;
+    }
+    .cmp-table td.label-cell {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-safe {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+    .badge-danger {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+    .badge-caution {
+      background: var(--amber-dim);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+
+    /* ─── Scenario Tag ─── */
+    .scenario-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .scenario-tag.a {
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: var(--green);
+    }
+    .scenario-tag.b {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: var(--amber);
+    }
+    .scenario-tag.c {
+      background: var(--red-dim);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: var(--red);
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      padding: 48px 28px;
+      color: var(--text-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .hero { padding: 56px 20px 40px; }
+      .container { padding: 0 18px; }
+      .step { padding: 40px 0; }
+      .situation-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ Hero ═══════ -->
+  <header class="hero">
+    <div class="hero-badge">
+      <span>●</span> Git 되돌리기 가이드
+    </div>
+    <h1>변경사항을 마지막 커밋으로<br/>되돌리는 방법</h1>
+    <p>개발 중 코드가 꼬였을 때, 상황별로 안전하게 되돌리는 전체 절차를 단계별로 정리합니다. 되돌리기 전에 반드시 현재 상태를 확인하세요.</p>
+  </header>
+
+  <!-- ═══════ Situation Selector ═══════ -->
+  <nav class="situation-box">
+    <div class="situation-title">내 상황 찾기</div>
+    <div class="situation-grid">
+      <a href="#scenario-a" class="situation-card">
+        <span class="situation-icon">🟢</span>
+        <div>
+          <strong>수정만 했고 커밋은 안 함</strong>
+          <div class="situation-label">파일을 수정/추가했지만 git commit을 아직 안 한 상태</div>
+        </div>
+      </a>
+      <a href="#scenario-b" class="situation-card">
+        <span class="situation-icon">🟡</span>
+        <div>
+          <strong>로컬에서 커밋했지만 푸시는 안 함</strong>
+          <div class="situation-label">git commit까지 했지만 git push는 아직 안 한 상태</div>
+        </div>
+      </a>
+      <a href="#scenario-c" class="situation-card">
+        <span class="situation-icon">🔴</span>
+        <div>
+          <strong>이미 푸시까지 완료함</strong>
+          <div class="situation-label">git push까지 해서 GitHub에 올라간 상태</div>
+        </div>
+      </a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ═══════ Step 0: 현재 상태 확인 ═══════ -->
+    <section class="step">
+      <div class="step-header">
+        <div class="step-number">00</div>
+        <h2 class="step-title">되돌리기 전 — 현재 상태 확인하기</h2>
+      </div>
+      <p class="step-desc">
+        무엇을 되돌릴지 정확히 파악하는 것이 먼저입니다.
+        아래 명령어로 현재 상태를 확인하고, 어떤 시나리오에 해당하는지 판단하세요.
+      </p>
+
+      <p class="sub-heading">A. 작업 디렉토리 상태 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="keyword">git</span> status</pre>
+      </div>
+      <p class="step-desc">이 명령어의 출력을 보면 현재 상태를 알 수 있습니다:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">출력 예시 — 수정은 했지만 커밋 전</span>
+        </div>
+<pre><span class="output">On branch feature/my-feature
+Changes not staged for commit:
+    <span class="danger">modified:   src/app/page.tsx</span>
+    <span class="danger">modified:   src/lib/utils.ts</span>
+
+Untracked files:
+    <span class="danger">src/components/NewComponent.tsx</span></span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">출력 예시 — 커밋까지 완료한 상태</span>
+        </div>
+<pre><span class="output">On branch feature/my-feature
+nothing to commit, working tree clean</span></pre>
+      </div>
+
+      <p class="sub-heading">B. 커밋 히스토리 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 최근 커밋 5개 간단히 보기</span>
+<span class="keyword">git</span> log <span class="flag">--oneline</span> <span class="flag">-5</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">출력 예시</span>
+        </div>
+<pre><span class="output"><span class="string">a3f7b2c</span> feat: 검색 기능 추가 (실패한 시도)
+<span class="string">e1d9c4a</span> fix: 버그 수정 중간 저장
+<span class="string">b8f2d1a</span> deploy: 최종 배포 버전    ← 여기로 돌아가고 싶음</span></pre>
+      </div>
+
+      <p class="sub-heading">C. 로컬과 원격의 차이 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 원격 정보 최신화</span>
+<span class="keyword">git</span> fetch origin
+
+<span class="comment"># 로컬이 원격보다 앞서 있는 커밋 수 확인</span>
+<span class="keyword">git</span> log origin/main..HEAD <span class="flag">--oneline</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">출력 해석</span>
+        </div>
+<pre><span class="output"><span class="comment"># 출력이 없으면 → 로컬과 원격이 같은 상태 (푸시할 것 없음)</span>
+<span class="comment"># 커밋이 나오면 → 로컬에만 있는 커밋 (아직 푸시 안 함)</span></span></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div>위 명령어들의 결과를 종합하면 아래 3가지 시나리오 중 어디에 해당하는지 알 수 있습니다. 해당하는 시나리오로 이동하세요.</div>
+      </div>
+    </section>
+
+    <!-- ═══════ Scenario A ═══════ -->
+    <section class="step" id="scenario-a">
+      <div class="step-header">
+        <div class="step-number safe">A</div>
+        <h2 class="step-title">수정만 했고 커밋은 아직 안 한 상태</h2>
+      </div>
+      <div class="scenario-tag a">🟢 가장 간단한 경우 — 되돌리기 쉬움</div>
+      <p class="step-desc">
+        파일을 수정하거나 새 파일을 추가했지만 <code>git commit</code>을 하지 않은 상태입니다.
+        이 경우 마지막 커밋 시점으로 작업 디렉토리를 깨끗하게 복원할 수 있습니다.
+      </p>
+
+      <div class="diagram">
+        <span class="label">현재 상태:</span><br/>
+        <span class="safe">마지막 커밋 (HEAD)</span> <span class="arrow">───</span> <span class="warn">수정된 파일들 (아직 커밋 안 됨)</span><br/><br/>
+        <span class="label">되돌린 후:</span><br/>
+        <span class="safe">마지막 커밋 (HEAD)</span> <span class="arrow">───</span> <span class="dim">깨끗한 작업 디렉토리</span>
+      </div>
+
+      <p class="sub-heading">Step 1. 되돌리기 전 — 혹시 살릴 코드가 있는지 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 어떤 파일이 변경되었는지 확인</span>
+<span class="keyword">git</span> status
+
+<span class="comment"># 변경 내용 상세 확인 (혹시 살려야 할 코드가 있을 수 있음)</span>
+<span class="keyword">git</span> diff</pre>
+      </div>
+
+      <p class="sub-heading">Step 2. 방법 선택 — 임시 저장 또는 완전 삭제</p>
+      <p class="step-desc">
+        아래 두 가지 방법 중 하나를 선택하세요.
+        나중에 코드를 재활용할 가능성이 조금이라도 있다면 <strong>방법 A (stash)</strong>를 추천합니다.
+        완전히 버려도 된다면 <strong>방법 B (checkout)</strong>로 바로 삭제합니다.
+      </p>
+
+      <p class="sub-heading">방법 A. 임시 저장 후 되돌리기 (추천)</p>
+      <p class="step-desc">
+        변경사항을 임시 보관함에 저장합니다. 저장 즉시 작업 디렉토리가 마지막 커밋 상태로 깨끗해집니다.
+        나중에 필요하면 꺼낼 수 있습니다.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal — 임시 저장 (stash)</span>
+        </div>
+<pre><span class="comment"># 변경사항을 임시 보관함에 저장 (저장 즉시 작업 디렉토리가 깨끗해짐)</span>
+<span class="keyword">git</span> stash <span class="flag">-u</span>
+
+<span class="comment"># -u 옵션: 새로 만든 파일(untracked)도 함께 저장</span>
+
+<span class="comment"># 나중에 다시 꺼내고 싶으면:</span>
+<span class="keyword">git</span> stash pop
+
+<span class="comment"># 필요 없으면 삭제:</span>
+<span class="keyword">git</span> stash drop
+
+<span class="comment"># 임시 저장 목록 확인:</span>
+<span class="keyword">git</span> stash list</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          <code>git stash -u</code>를 실행하면 변경사항이 보관함에 저장되면서 동시에 작업 디렉토리가 깨끗해집니다. 즉, stash만 하면 되돌리기가 끝납니다. 아래 방법 B를 추가로 실행할 필요가 없습니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">방법 B. 변경사항 완전히 버리기</p>
+      <p class="step-desc">
+        코드를 다시 볼 일이 없다면, 임시 저장 없이 바로 삭제합니다.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 1) 수정한 파일을 마지막 커밋 상태로 되돌리기</span>
+<span class="keyword">git</span> checkout <span class="flag">--</span> .
+
+<span class="comment"># 2) 새로 추가한 파일(untracked) 삭제</span>
+<span class="keyword">git</span> clean <span class="flag">-fd</span></pre>
+      </div>
+
+      <p class="step-desc">
+        또는 <code>checkout</code> 대신 <code>reset --hard</code>를 쓸 수도 있습니다.
+        효과는 동일하지만 staging area까지 함께 초기화한다는 차이가 있습니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal — reset 사용</span>
+        </div>
+<pre><span class="comment"># 수정 파일 되돌리기 (checkout -- . 과 동일 + staging 초기화)</span>
+<span class="keyword">git</span> reset <span class="flag">--hard</span> HEAD
+
+<span class="comment"># 새로 추가한 파일 삭제 (이건 별도로 실행 필요)</span>
+<span class="keyword">git</span> clean <span class="flag">-fd</span></pre>
+      </div>
+
+      <p class="sub-heading">각 명령어가 하는 일</p>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>명령어</th>
+            <th>역할</th>
+            <th>대상</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">git stash -u</td>
+            <td>변경사항을 임시 보관함에 저장하고 작업 디렉토리를 깨끗하게 복원</td>
+            <td>추적 중인 파일 + 새 파일 (복구 가능)</td>
+          </tr>
+          <tr>
+            <td class="mono">git checkout -- .</td>
+            <td>수정된 파일들을 마지막 커밋 상태로 복원</td>
+            <td>이미 Git이 추적 중인 파일</td>
+          </tr>
+          <tr>
+            <td class="mono">git clean -fd</td>
+            <td>Git이 모르는 새 파일과 폴더를 삭제</td>
+            <td>새로 만든 파일 (untracked)</td>
+          </tr>
+          <tr>
+            <td class="mono">git reset --hard HEAD</td>
+            <td>위의 checkout과 동일한 효과 + staging area도 초기화</td>
+            <td>추적 중인 파일 + staging</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="sub-heading">Step 3. 되돌리기 완료 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="keyword">git</span> status
+
+<span class="comment"># 아래와 같이 나오면 성공:</span>
+<span class="output">On branch feature/my-feature
+nothing to commit, working tree clean</span></pre>
+      </div>
+    </section>
+
+    <!-- ═══════ Scenario B ═══════ -->
+    <section class="step" id="scenario-b">
+      <div class="step-header">
+        <div class="step-number caution">B</div>
+        <h2 class="step-title">로컬에서 커밋했지만 푸시는 안 한 상태</h2>
+      </div>
+      <div class="scenario-tag b">🟡 중간 난이도 — 로컬 커밋만 취소</div>
+      <p class="step-desc">
+        <code>git commit</code>을 한 번 이상 했지만 <code>git push</code>는 아직 하지 않은 상태입니다.
+        커밋이 로컬에만 존재하므로, 원격 저장소(GitHub)에 영향 없이 되돌릴 수 있습니다.
+      </p>
+
+      <div class="diagram">
+        <span class="label">현재 상태:</span><br/>
+        <span class="safe">GitHub (origin/main)</span> <span class="arrow">──</span> <span class="highlight">b8f2d1a 배포 버전</span><br/>
+        <span class="dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="arrow"> ↘</span><br/>
+        <span class="warn">로컬 (HEAD)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow"> ──</span> <span class="danger">e1d9c4a</span> <span class="arrow">──</span> <span class="danger">a3f7b2c (실패한 시도)</span><br/><br/>
+        <span class="label">되돌린 후:</span><br/>
+        <span class="safe">GitHub (origin/main)</span> <span class="arrow">──</span> <span class="highlight">b8f2d1a 배포 버전</span><br/>
+        <span class="safe">로컬 (HEAD)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow"> ──</span> <span class="highlight">b8f2d1a 배포 버전</span> <span class="dim">(동일)</span>
+      </div>
+
+      <p class="sub-heading">Step 1. 되돌릴 지점 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 원격 정보 최신화</span>
+<span class="keyword">git</span> fetch origin
+
+<span class="comment"># 로컬에만 있는 커밋 확인</span>
+<span class="keyword">git</span> log origin/main..HEAD <span class="flag">--oneline</span>
+
+<span class="comment"># 출력 예시:</span>
+<span class="output">a3f7b2c feat: 검색 기능 추가 (실패한 시도)
+e1d9c4a fix: 버그 수정 중간 저장</span>
+<span class="comment"># → 이 커밋들이 로컬에만 있고 아직 푸시되지 않은 것</span></pre>
+      </div>
+
+      <p class="sub-heading">Step 2. 방법 선택</p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>방법</th>
+            <th>명령어</th>
+            <th>커밋 기록</th>
+            <th>파일 변경사항</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">완전히 버리기</td>
+            <td class="mono">git reset --hard origin/main</td>
+            <td><span class="badge badge-danger">삭제됨</span></td>
+            <td><span class="badge badge-danger">삭제됨</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">커밋만 취소 (코드는 유지)</td>
+            <td class="mono">git reset --soft origin/main</td>
+            <td><span class="badge badge-danger">삭제됨</span></td>
+            <td><span class="badge badge-safe">유지됨 (staged)</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">커밋 취소 + unstage</td>
+            <td class="mono">git reset origin/main</td>
+            <td><span class="badge badge-danger">삭제됨</span></td>
+            <td><span class="badge badge-caution">유지됨 (unstaged)</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="sub-heading">Step 3-① 완전히 버리기 (코드 변경사항도 모두 삭제)</p>
+      <p class="step-desc">
+        로컬 커밋과 파일 변경사항을 모두 버리고, 원격(GitHub)에 푸시한 마지막 상태로 완전히 되돌립니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 원격의 마지막 푸시 상태로 완전 복원</span>
+<span class="keyword">git</span> reset <span class="flag">--hard</span> origin/main
+
+<span class="comment"># 새로 추가한 파일(untracked)도 삭제</span>
+<span class="keyword">git</span> clean <span class="flag">-fd</span></pre>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div>
+          <code>--hard</code>를 실행하면 커밋 기록과 파일 변경사항이 즉시 사라집니다.
+          확신이 없다면 아래의 <code>--soft</code> 방법을 사용하세요.
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <div>
+          <strong>실수로 <code>--hard</code>를 실행했다면?</strong>
+          <code>git reflog</code>를 실행하면 최근 HEAD 이동 기록이 나옵니다.
+          거기서 되돌리고 싶은 커밋 해시를 찾아 <code>git reset --hard [해시]</code>로 복구할 수 있습니다.
+          단, 커밋하지 않은 파일 변경사항은 복구할 수 없습니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">Step 3-② 커밋만 취소하기 (코드는 보존)</p>
+      <p class="step-desc">
+        커밋 기록만 제거하고, 변경한 코드는 파일에 그대로 남깁니다.
+        코드를 다시 살펴보고 일부만 골라서 다시 커밋할 수 있습니다.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 커밋만 취소, 변경 코드는 staged 상태로 유지</span>
+<span class="keyword">git</span> reset <span class="flag">--soft</span> origin/main
+
+<span class="comment"># 확인하면 변경사항이 staged 상태로 남아있음</span>
+<span class="keyword">git</span> status
+<span class="output">Changes to be committed:
+    modified:   src/app/page.tsx
+    modified:   src/lib/utils.ts</span></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          <code>--soft</code>를 쓰면 코드가 남아있으므로, 필요한 부분만 골라서 다시 커밋하거나
+          전부 필요 없다면 그때 <code>git reset --hard</code>로 정리할 수 있습니다.
+          가장 안전한 선택입니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">Step 4. 되돌리기 완료 확인</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 로컬과 원격이 같은 커밋을 가리키는지 확인</span>
+<span class="keyword">git</span> log <span class="flag">--oneline</span> <span class="flag">-3</span>
+
+<span class="comment"># 원격과 비교 — 출력이 없으면 동일한 상태</span>
+<span class="keyword">git</span> log origin/main..HEAD <span class="flag">--oneline</span></pre>
+      </div>
+    </section>
+
+    <!-- ═══════ Scenario C ═══════ -->
+    <section class="step" id="scenario-c">
+      <div class="step-header">
+        <div class="step-number danger">C</div>
+        <h2 class="step-title">이미 푸시까지 완료한 상태</h2>
+      </div>
+      <div class="scenario-tag c">🔴 가장 주의 필요 — 원격 저장소에 영향</div>
+      <p class="step-desc">
+        실패한 코드를 이미 <code>git push</code>해서 GitHub에 올린 상태입니다.
+        이 경우 원격 저장소의 히스토리에도 영향을 줄 수 있으므로 신중하게 진행해야 합니다.
+        상황에 따라 두 가지 방법이 있습니다.
+      </p>
+
+      <p class="sub-heading">방법 ① git revert — 되돌리는 "새 커밋"을 만들기 (추천)</p>
+      <p class="step-desc">
+        기존 커밋을 삭제하는 것이 아니라, 해당 커밋의 변경을 취소하는 새로운 커밋을 만듭니다.
+        히스토리가 보존되므로 팀 작업 시에도 안전합니다.
+      </p>
+
+      <div class="diagram">
+        <span class="label">현재 상태:</span><br/>
+        <span class="highlight">b8f2d1a 배포</span> <span class="arrow">→</span> <span class="danger">e1d9c4a 실패</span> <span class="arrow">→</span> <span class="danger">a3f7b2c 실패</span> <span class="dim">(HEAD, origin/main)</span><br/><br/>
+        <span class="label">revert 후:</span><br/>
+        <span class="highlight">b8f2d1a</span> <span class="arrow">→</span> <span class="danger">e1d9c4a</span> <span class="arrow">→</span> <span class="danger">a3f7b2c</span> <span class="arrow">→</span> <span class="safe">revert-1</span> <span class="arrow">→</span> <span class="safe">revert-2</span> <span class="dim">(코드는 b8f2d1a와 동일)</span>
+      </div>
+
+      <ol class="inline-steps">
+        <li>되돌릴 커밋 해시를 확인합니다</li>
+        <li>최신 커밋부터 역순으로 하나씩 revert합니다</li>
+        <li>revert 커밋을 원격에 push합니다</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 1) 되돌릴 커밋 확인</span>
+<span class="keyword">git</span> log <span class="flag">--oneline</span> <span class="flag">-5</span>
+<span class="output">a3f7b2c feat: 검색 기능 추가 (실패)     ← 이것도 되돌려야 함
+e1d9c4a fix: 버그 수정 중간 저장          ← 이것도 되돌려야 함
+b8f2d1a deploy: 최종 배포 버전            ← 여기로 돌아가고 싶음</span>
+
+<span class="comment"># 2) 최신 커밋부터 역순으로 revert (하나씩)</span>
+<span class="keyword">git</span> revert a3f7b2c <span class="flag">--no-edit</span>
+<span class="keyword">git</span> revert e1d9c4a <span class="flag">--no-edit</span>
+
+<span class="comment"># 3) 또는 범위로 한 번에 revert</span>
+<span class="keyword">git</span> revert b8f2d1a..HEAD <span class="flag">--no-edit</span>
+
+<span class="comment"># 4) 원격에 push</span>
+<span class="keyword">git</span> push origin main</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          <code>--no-edit</code> 옵션을 쓰면 revert 커밋 메시지를 자동 생성합니다.
+          직접 메시지를 작성하고 싶으면 옵션을 빼면 편집기가 열립니다.
+        </div>
+      </div>
+
+      <p class="sub-heading">방법 ② git reset + force push — 히스토리 자체를 삭제</p>
+      <p class="step-desc">
+        커밋을 히스토리에서 완전히 제거합니다.
+        <strong>혼자 작업하는 경우에만 사용하세요.</strong>
+        다른 사람이 이미 pull한 상태에서 force push하면 그 사람의 작업이 꼬입니다.
+      </p>
+
+      <div class="diagram">
+        <span class="label">현재 상태:</span><br/>
+        <span class="highlight">b8f2d1a 배포</span> <span class="arrow">→</span> <span class="danger">e1d9c4a 실패</span> <span class="arrow">→</span> <span class="danger">a3f7b2c 실패</span> <span class="dim">(HEAD, origin/main)</span><br/><br/>
+        <span class="label">force push 후:</span><br/>
+        <span class="highlight">b8f2d1a 배포</span> <span class="dim">(HEAD, origin/main) — 실패 커밋이 히스토리에서 사라짐</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal</span>
+        </div>
+<pre><span class="comment"># 1) 돌아갈 커밋으로 로컬 리셋</span>
+<span class="keyword">git</span> reset <span class="flag">--hard</span> b8f2d1a
+
+<span class="comment"># 2) 원격 히스토리를 강제로 덮어쓰기</span>
+<span class="keyword">git</span> push origin main <span class="flag">--force</span></pre>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-icon">⚠️</div>
+        <div>
+          <code>--force</code>는 원격 저장소의 히스토리를 강제로 변경합니다.
+          팀원이 있거나, 해당 브랜치를 기반으로 다른 브랜치가 만들어진 경우 심각한 문제가 생길 수 있습니다.
+          <strong>1인 개발이고 확실한 경우에만 사용하세요.</strong>
+        </div>
+      </div>
+
+      <p class="sub-heading">어떤 방법을 선택해야 할까?</p>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>기준</th>
+            <th>git revert (방법 ①)</th>
+            <th>git reset + force push (방법 ②)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">안전성</td>
+            <td><span class="badge badge-safe">안전</span></td>
+            <td><span class="badge badge-danger">위험</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">히스토리</td>
+            <td>보존됨 (되돌린 기록이 남음)</td>
+            <td>삭제됨 (실패 커밋이 사라짐)</td>
+          </tr>
+          <tr>
+            <td class="label-cell">팀 작업</td>
+            <td>문제 없음</td>
+            <td>팀원 작업이 꼬일 수 있음</td>
+          </tr>
+          <tr>
+            <td class="label-cell">추천 상황</td>
+            <td>main 브랜치, 팀 프로젝트, 대부분의 경우</td>
+            <td>1인 개발의 feature 브랜치</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div>
+          <strong>feature 브랜치에 푸시한 경우라면</strong> force push가 오히려 더 적합합니다.
+          feature 브랜치는 본인만 사용하는 경우가 대부분이고,
+          revert 커밋이 쌓이면 나중에 main에 머지할 때 히스토리가 지저분해집니다.
+          반면 <strong>main 브랜치에 직접 푸시한 경우라면</strong> revert를 사용하세요.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Vercel 자동 배포 주의 ═══════ -->
+    <section class="step">
+      <div class="step-header">
+        <div class="step-number danger">!</div>
+        <h2 class="step-title">Vercel 자동 배포와의 관계</h2>
+      </div>
+      <p class="step-desc">
+        Vercel은 GitHub의 <code>main</code> 브랜치에 변경이 감지되면 자동으로 배포합니다.
+        따라서 <code>main</code> 브랜치에서 revert 또는 force push를 하면 Vercel이 자동으로 재배포됩니다.
+      </p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Git 작업</th>
+            <th>Vercel 반응</th>
+            <th>결과</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">git revert → push</td>
+            <td>새 커밋 감지 → 자동 배포</td>
+            <td>되돌린 코드로 자동 재배포됨</td>
+          </tr>
+          <tr>
+            <td class="label-cell">git reset --hard → force push</td>
+            <td>브랜치 변경 감지 → 자동 배포</td>
+            <td>되돌린 코드로 자동 재배포됨</td>
+          </tr>
+          <tr>
+            <td class="label-cell">feature 브랜치에서 reset (main 미변경)</td>
+            <td>main 변경 없음 → 배포 안 함</td>
+            <td>운영에 영향 없음</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout note">
+        <div class="callout-icon">📝</div>
+        <div>
+          <strong>DB 스키마 변경을 이미 운영 Supabase에 적용한 상태에서 코드를 되돌리는 경우</strong>,
+          코드는 이전 버전인데 DB는 변경된 상태가 됩니다.
+          이 경우 운영 DB의 스키마 변경도 함께 롤백해야 합니다.
+          (예: 추가한 컬럼이 있다면 해당 컬럼도 제거)
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ Stash 상세 ═══════ -->
+    <section class="step">
+      <div class="step-header">
+        <div class="step-number safe">+</div>
+        <h2 class="step-title">부록: git stash 완전 가이드</h2>
+      </div>
+      <p class="step-desc">
+        <code>git stash</code>는 "변경사항을 임시 보관함에 넣어두는 것"입니다.
+        작업 중 급하게 브랜치를 바꾸거나, 되돌리기 전에 백업해두고 싶을 때 유용합니다.
+      </p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>명령어</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">git stash</td>
+            <td>현재 변경사항을 임시 저장 (추적 중인 파일만)</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash -u</td>
+            <td>새로 만든 파일(untracked)까지 함께 임시 저장</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash push -m "설명"</td>
+            <td>설명을 붙여서 저장 (나중에 구분하기 쉬움)</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash list</td>
+            <td>임시 저장 목록 확인</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash pop</td>
+            <td>가장 최근 저장본을 꺼내서 적용 (보관함에서 삭제됨)</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash apply</td>
+            <td>가장 최근 저장본을 적용 (보관함에 남아있음)</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash drop</td>
+            <td>가장 최근 저장본을 삭제 (적용하지 않고 버림)</td>
+          </tr>
+          <tr>
+            <td class="mono">git stash show -p</td>
+            <td>저장된 내용의 변경사항을 상세히 확인</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Terminal — 실전 사용 예시</span>
+        </div>
+<pre><span class="comment"># 작업 중인 내용을 설명과 함께 임시 저장</span>
+<span class="keyword">git</span> stash <span class="flag">-u</span> <span class="flag">-m</span> <span class="string">"검색 기능 작업 중 - 안 되면 버릴 예정"</span>
+
+<span class="comment"># 이제 작업 디렉토리가 깨끗한 상태</span>
+<span class="comment"># 다른 작업을 하거나, 코드를 리셋하거나...</span>
+
+<span class="comment"># 나중에 저장 목록 확인</span>
+<span class="keyword">git</span> stash list
+<span class="output">stash@{0}: On feature/search: 검색 기능 작업 중 - 안 되면 버릴 예정</span>
+
+<span class="comment"># 내용이 필요하면 꺼내기</span>
+<span class="keyword">git</span> stash pop
+
+<span class="comment"># 필요 없으면 삭제</span>
+<span class="keyword">git</span> stash drop</pre>
+      </div>
+    </section>
+
+    <!-- ═══════ Quick Reference ═══════ -->
+    <section class="step">
+      <div class="step-header">
+        <div class="step-number">⚡</div>
+        <h2 class="step-title">빠른 참조 — 상황별 한 줄 요약</h2>
+      </div>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>상황</th>
+            <th>명령어</th>
+            <th>위험도</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">수정 파일 되돌리기 (커밋 전)</td>
+            <td class="mono">git checkout -- .</td>
+            <td><span class="badge badge-caution">변경 사라짐</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">새 파일도 함께 삭제 (커밋 전)</td>
+            <td class="mono">git checkout -- . && git clean -fd</td>
+            <td><span class="badge badge-caution">변경 사라짐</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">커밋 전 한 방에 리셋</td>
+            <td class="mono">git reset --hard HEAD && git clean -fd</td>
+            <td><span class="badge badge-caution">변경 사라짐</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">로컬 커밋 취소 (코드 유지)</td>
+            <td class="mono">git reset --soft origin/main</td>
+            <td><span class="badge badge-safe">코드 보존</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">로컬 커밋 + 코드 모두 버리기</td>
+            <td class="mono">git reset --hard origin/main</td>
+            <td><span class="badge badge-danger">전부 사라짐</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">푸시 후 안전하게 되돌리기</td>
+            <td class="mono">git revert [커밋해시] → push</td>
+            <td><span class="badge badge-safe">히스토리 보존</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">푸시 후 히스토리까지 삭제 (1인 개발)</td>
+            <td class="mono">git reset --hard [해시] → push --force</td>
+            <td><span class="badge badge-danger">히스토리 삭제</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">변경사항 임시 저장 (보험)</td>
+            <td class="mono">git stash -u</td>
+            <td><span class="badge badge-safe">안전</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Git 되돌리기 가이드 — 변경사항을 마지막 커밋으로 복원하기
+  </footer>
+
+</body>
+</html>

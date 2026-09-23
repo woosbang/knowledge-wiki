@@ -1,0 +1,56 @@
+{
+  "slug": "webapp-development-workflow-guide",
+  "source": "docs/WebApp_Development_Workflow_Guide.html",
+  "source_hash": "fd95ef46d5d39191",
+  "title": "웹 앱 개발 워크플로우 가이드",
+  "doc_date": "2026-03-15",
+  "word_count": 793,
+  "headings": [
+    {
+      "level": 2,
+      "text": "사용 도구 한눈에 보기",
+      "id": "사용-도구-한눈에-보기"
+    },
+    {
+      "level": 3,
+      "text": "💡 비개발자를 위한 핵심 팁",
+      "id": "비개발자를-위한-핵심-팁"
+    }
+  ],
+  "category": "dev-workflow",
+  "subcategory": "process",
+  "tags": [
+    "claude-code",
+    "nextjs",
+    "supabase",
+    "vercel",
+    "기획"
+  ],
+  "summary": "비개발자가 AI 코딩 도구로 웹 앱을 기획부터 배포까지 끌고 가는 10단계 절차를 정리한다. 핵심은 '좋은 기획 문서 → AI에게 정확한 지시 → 반복 수정'이라는 순서를 지키는 것이다.",
+  "key_points": [
+    "코드 생성보다 기획 문서(DB 스키마·API 명세·페이지 구조)가 먼저다",
+    "Supabase 프로젝트와 환경 변수는 코드 생성 전에 준비해 둔다",
+    ".env.local 은 절대 GitHub 에 올리지 않는다",
+    "DB 마이그레이션은 코드 생성 후에 적용한다",
+    "전체 10단계를 기획·셋업·생성·배포로 묶어 이해하면 순서가 헷갈리지 않는다"
+  ],
+  "level": "beginner",
+  "related": [
+    "dev-workflow-guide",
+    "claude-제품-관계도"
+  ],
+  "supersedes": [],
+  "superseded_by": "",
+  "overlaps": [
+    {
+      "slug": "dev-workflow-guide",
+      "reason": "스택은 같지만 이 문서는 신규 개발 흐름, 저 문서는 운영 중 수정 흐름을 다룬다",
+      "severity": "medium"
+    }
+  ],
+  "status": "active",
+  "notes": "",
+  "classified_at": "2026-09-23",
+  "classified_by": "claude-code",
+  "classifier_hash": "fd95ef46d5d39191"
+}

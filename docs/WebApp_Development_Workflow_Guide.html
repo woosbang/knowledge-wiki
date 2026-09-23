@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹 앱 개발 워크플로우 가이드</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: #ffffff;
+    color: #101820;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 24px;
+    border-bottom: 3px solid #101820;
+    margin-bottom: 36px;
+  }
+  .header-left h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .header-left h1 span { color: #971B2F; }
+  .header-left p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 6px;
+  }
+  .header-right {
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ── Subtitle ── */
+  .intro {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 36px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #3d4551;
+  }
+  .intro strong { color: #101820; }
+
+  /* ── Flow ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .phase {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Left timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #101820;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+  .step-number.accent { background: #971B2F; }
+  .step-number.success { background: #059669; }
+
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: #e5e7eb;
+  }
+  .phase:last-child .timeline-line { display: none; }
+
+  /* Right content */
+  .step-content {
+    padding: 0 0 32px 20px;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    min-height: 40px;
+  }
+  .step-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .step-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .badge-plan { background: #f3f4f6; color: #6b7280; }
+  .badge-setup { background: #fdf2f4; color: #971B2F; }
+  .badge-dev { background: #ecfdf5; color: #059669; }
+  .badge-deploy { background: #eff6ff; color: #1d4ed8; }
+  .badge-loop { background: #fefce8; color: #a16207; }
+
+  .step-desc {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #3d4551;
+    margin-bottom: 12px;
+  }
+
+  .step-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .detail-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .detail-card.full { grid-column: 1 / -1; }
+  .detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .detail-value {
+    font-size: 13px;
+    color: #101820;
+    line-height: 1.5;
+  }
+  .detail-value code {
+    background: #f3f4f6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #971B2F;
+  }
+
+  /* ── Loop indicator ── */
+  .loop-box {
+    border: 2px dashed #d97706;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: -8px 0 12px 0;
+    position: relative;
+  }
+  .loop-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: #fff;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #a16207;
+  }
+
+  /* ── Checklist ── */
+  .checklist {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #3d4551;
+    padding: 3px 0 3px 22px;
+    position: relative;
+  }
+  .checklist li::before {
+    content: '☐';
+    position: absolute;
+    left: 0;
+    color: #9ca3af;
+  }
+
+  /* ── Tool map ── */
+  .tool-map {
+    margin-top: 36px;
+    border-top: 2px solid #101820;
+    padding-top: 24px;
+  }
+  .tool-map h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .tool-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .tool-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  .tool-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .tool-role {
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+
+  /* ── Tips ── */
+  .tips {
+    margin-top: 32px;
+    background: #fdf2f4;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .tips h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #971B2F;
+    margin-bottom: 10px;
+  }
+  .tips ul {
+    list-style: none;
+    padding: 0;
+  }
+  .tips li {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #3d4551;
+    padding: 2px 0 2px 18px;
+    position: relative;
+  }
+  .tips li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #971B2F;
+    font-weight: 700;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 11px;
+    color: #9ca3af;
+    text-align: center;
+  }
+
+  /* ── Command Block ── */
+  .cmd-block {
+    background: #101820;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 8px;
+    overflow-x: auto;
+  }
+  .cmd-block + .cmd-block { margin-top: 6px; }
+  .cmd-line {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    white-space: pre;
+  }
+  .cmd-comment { color: #6b7280; }
+  .cmd-text { color: #e5e7eb; }
+  .cmd-highlight { color: #fbbf24; }
+
+  @media print {
+    .page { padding: 24px; }
+    .phase { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>AI 기반 웹 앱 개발<br><span>워크플로우 가이드</span></h1>
+      <p>Claude Code + Next.js + Supabase + Vercel</p>
+    </div>
+    <div class="header-right">
+      비개발자를 위한<br>단계별 실행 가이드<br>v1.0 · 2026.03
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    이 문서는 <strong>AI 코딩 도구(Claude Code)</strong>를 활용하여 웹 앱을 기획부터 배포까지 완성하는 전체 과정을 정리한 것입니다. 
+    개발 경험이 없어도 각 단계의 목적과 행동을 이해하고 따라할 수 있도록 구성했습니다.
+    총 <strong>10단계</strong>이며, 핵심은 <strong>"좋은 기획 문서 → AI에게 정확한 지시 → 반복 수정"</strong>입니다.
+  </div>
+
+  <!-- Flow -->
+  <div class="flow">
+
+    <!-- Step 1 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number">1</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">아이디어 구상</div>
+          <div class="step-badge badge-plan">기획</div>
+        </div>
+        <div class="step-desc">
+          만들고 싶은 앱의 목적, 사용자, 핵심 기능을 자유롭게 정리한다. 완벽할 필요 없다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">핵심 질문</div>
+            <div class="detail-value">누가 쓰는가? 어떤 문제를 해결하는가? 가장 중요한 기능 3가지는?</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">도구</div>
+            <div class="detail-value">메모장, 노션, 또는 Claude 대화</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number">2</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">플랜 문서 작성</div>
+          <div class="step-badge badge-plan">기획</div>
+        </div>
+        <div class="step-desc">
+          Claude와 대화하며 아이디어를 구체적인 개발 계획서로 발전시킨다.
+          DB 구조, API 설계, 페이지 구조, 스타일 가이드까지 포함해야 한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card full">
+            <div class="detail-label">산출물</div>
+            <div class="detail-value">
+              개발 계획서 (.md) — 기술 스택, DB 스키마, API 명세, 페이지 구조, 디렉토리 구조, 스타일 가이드 포함
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number accent">3</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Supabase 셋업</div>
+          <div class="step-badge badge-setup">셋업</div>
+        </div>
+        <div class="step-desc">
+          코드 생성 전에 Supabase 프로젝트를 먼저 만들어둔다. DB 테이블은 코드 생성 후에 적용한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">Supabase 가입</div>
+            <div class="detail-value"><a href="https://supabase.com" style="color:#971B2F;">supabase.com</a> 가입 → 새 프로젝트 생성 → 리전은 Northeast Asia (Tokyo) 선택</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">API Key 확보</div>
+            <div class="detail-value">Settings → API 에서 <code>Project URL</code>, <code>anon key</code>, <code>service_role key</code> 복사해 둔다</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number accent">4</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">환경 변수 설정</div>
+          <div class="step-badge badge-setup">셋업</div>
+        </div>
+        <div class="step-desc">
+          Supabase에서 발급받은 Key를 프로젝트에 연결한다. 
+          <code>.env.local</code> 파일에 작성하며, 이 파일은 절대 GitHub에 올리지 않는다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card full">
+            <div class="detail-label">필요한 값</div>
+            <div class="detail-value">
+              <code>NEXT_PUBLIC_SUPABASE_URL</code> · 
+              <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> · 
+              <code>SUPABASE_SERVICE_ROLE_KEY</code> · 
+              <code>NEXT_PUBLIC_APP_URL</code> (로컬에서는 <code>http://localhost:3000</code>, Vercel 배포 후 실제 URL로 변경)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number accent">5</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Claude Code로 코드 생성</div>
+          <div class="step-badge badge-dev">개발</div>
+        </div>
+        <div class="step-desc">
+          플랜 문서를 기반으로 작성한 프롬프트를 Claude Code에 전달한다.
+          Claude Code가 프로젝트의 모든 파일(API, 페이지, 컴포넌트, 설정)을 자동 생성한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">입력</div>
+            <div class="detail-value">개발 프롬프트 (.md) — DB 스키마, API 명세, 페이지 동작, 스타일 규칙 포함</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">출력</div>
+            <div class="detail-value">전체 프로젝트 파일 (API Routes, 페이지, 컴포넌트, 유틸리티, 설정 파일)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6: DB 마이그레이션 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number accent">6</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">DB 마이그레이션 적용</div>
+          <div class="step-badge badge-setup">셋업</div>
+        </div>
+        <div class="step-desc">
+          Claude Code가 생성한 SQL 파일(테이블, 인덱스, RLS 정책 등)을 Supabase에 적용한다.
+          DB 구조가 준비되어야 로컬에서 앱이 정상 동작한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">적용 방법</div>
+            <div class="detail-value">
+              Supabase 대시보드 → <strong>SQL Editor</strong> → 프로젝트 내 <code>.sql</code> 파일 내용을 붙여넣기 → Run
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">확인</div>
+            <div class="detail-value">
+              Table Editor에서 테이블 생성 확인. 에러 시 Claude Code에 메시지를 전달하여 수정
+            </div>
+          </div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-line"><span class="cmd-comment"># 프로젝트 내 마이그레이션 파일 위치 예시</span></div>
+          <div class="cmd-line"><span class="cmd-text">cat </span><span class="cmd-highlight">supabase-migrate.sql</span></div>
+          <div class="cmd-line"></div>
+          <div class="cmd-line"><span class="cmd-comment"># → 출력된 SQL을 Supabase SQL Editor에 붙여넣기 후 Run</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number success">7</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">로컬 실행 테스트</div>
+          <div class="step-badge badge-dev">개발</div>
+        </div>
+        <div class="step-desc">
+          환경 변수와 DB가 모두 준비된 상태에서 앱을 실행하여 정상 동작하는지 확인한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">실행 명령</div>
+            <div class="detail-value"><code>npm install</code> → <code>npm run dev</code> → 브라우저에서 <code>localhost:3000</code> 접속</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">확인 항목</div>
+            <div class="detail-value">
+              <ul class="checklist">
+                <li>이벤트 생성 → QR 표시</li>
+                <li>QR 스캔 → 참여 등록</li>
+                <li>관리 URL → 명단 확인</li>
+                <li>모바일 화면 레이아웃</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 7 — Loop -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number" style="background: #d97706;">⟳</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">수정 · 반복</div>
+          <div class="step-badge badge-loop">반복</div>
+        </div>
+        <div class="loop-box">
+          <div class="loop-label">완성될 때까지 반복</div>
+          <div class="step-desc" style="margin-bottom:0;">
+            테스트에서 발견한 문제나 개선사항을 Claude Code에 전달하여 수정한다.
+            "이 버튼이 모바일에서 잘려요", "QR코드가 안 보여요" 등 구체적으로 설명할수록 정확한 수정이 된다. <strong>Step 5→7을 문제가 없을 때까지 반복</strong>한다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8: GitHub 저장소 생성 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number success">8</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">GitHub 저장소 생성</div>
+          <div class="step-badge badge-deploy">배포</div>
+        </div>
+        <div class="step-desc">
+          코드를 올릴 빈 저장소를 GitHub에 먼저 만든다. README 등 초기 파일은 추가하지 않는다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">절차</div>
+            <div class="detail-value">
+              <a href="https://github.com" style="color:#971B2F;">github.com</a> 로그인 → 우측 상단 <strong>+</strong> → <strong>New repository</strong>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">설정</div>
+            <div class="detail-value">
+              Repository name 입력 · Private 선택 · <strong>README, .gitignore 체크 해제</strong> (빈 상태) → Create
+            </div>
+          </div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-line"><span class="cmd-comment"># 프로젝트 폴더에서 Git 초기화</span></div>
+          <div class="cmd-line"><span class="cmd-text">git init</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 9: GitHub 푸시 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number success">9</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">GitHub 푸시</div>
+          <div class="step-badge badge-deploy">배포</div>
+        </div>
+        <div class="step-desc">
+          완성된 코드를 GitHub 저장소에 업로드한다. 이후 모든 변경 이력이 여기에 기록된다.
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-line"><span class="cmd-comment"># 모든 파일을 스테이지에 올리기</span></div>
+          <div class="cmd-line"><span class="cmd-text">git add .</span></div>
+          <div class="cmd-line"></div>
+          <div class="cmd-line"><span class="cmd-comment"># 첫 번째 커밋</span></div>
+          <div class="cmd-line"><span class="cmd-text">git commit -m </span><span class="cmd-highlight">"Initial commit"</span></div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-line"><span class="cmd-comment"># 브랜치 이름을 main으로 변경 (Git 기본값이 master일 수 있으므로)</span></div>
+          <div class="cmd-line"><span class="cmd-text">git branch -M main</span></div>
+          <div class="cmd-line"></div>
+          <div class="cmd-line"><span class="cmd-comment"># GitHub 주소를 origin이라는 이름으로 연결</span></div>
+          <div class="cmd-line"><span class="cmd-text">git remote add origin </span><span class="cmd-highlight">https://github.com/내이름/프로젝트.git</span></div>
+          <div class="cmd-line"></div>
+          <div class="cmd-line"><span class="cmd-comment"># GitHub 서버로 전송 (-u는 기본 연결 설정, 최초 1회만)</span></div>
+          <div class="cmd-line"><span class="cmd-text">git push -u origin main</span></div>
+        </div>
+        <div class="step-detail" style="margin-top:12px;">
+          <div class="detail-card full">
+            <div class="detail-label">이후 변경사항 업로드 (2회차부터)</div>
+            <div class="detail-value">
+              <code>git add .</code> →
+              <code>git commit -m "변경 내용"</code> →
+              <code>git push</code> (간단해짐)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 10 -->
+    <div class="phase">
+      <div class="timeline">
+        <div class="step-number success">10</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Vercel 배포</div>
+          <div class="step-badge badge-deploy">배포</div>
+        </div>
+        <div class="step-desc">
+          Vercel에서 GitHub 저장소를 연결하면, 이후 코드를 push할 때마다 자동으로 배포된다.
+          환경 변수를 Vercel 대시보드에도 동일하게 등록해야 한다.
+        </div>
+        <div class="step-detail">
+          <div class="detail-card">
+            <div class="detail-label">초기 설정 (1회)</div>
+            <div class="detail-value">Vercel 가입 → GitHub 저장소 Import → 환경 변수 등록 → Deploy</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">이후</div>
+            <div class="detail-value"><code>git push</code>만 하면 자동 배포. 별도 작업 없음.</div>
+          </div>
+        </div>
+        <div class="step-detail" style="margin-top:10px;">
+          <div class="detail-card full" style="border-color:#fecdd3; background:#fdf2f4;">
+            <div class="detail-label" style="color:#971B2F;">⚠ 배포 후 필수 — Supabase Site URL 등록</div>
+            <div class="detail-value">
+              배포 완료 후 생성된 URL (예: <code>https://프로젝트.vercel.app</code>)을
+              Supabase 대시보드 → <strong>Authentication → URL Configuration → Site URL</strong>에 등록한다.
+              Supabase Auth(로그인, OAuth 등)를 사용하는 경우 이 설정이 없으면 인증 리다이렉트가 실패한다.
+              또한 <strong>Redirect URLs</strong>에도 동일 URL을 추가해 둔다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /flow -->
+
+  <!-- Tool Map -->
+  <div class="tool-map">
+    <h2>사용 도구 한눈에 보기</h2>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-icon">🤖</div>
+        <div class="tool-name">Claude</div>
+        <div class="tool-role">기획, 문서 작성<br>프롬프트 생성</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">⌨️</div>
+        <div class="tool-name">Claude Code</div>
+        <div class="tool-role">코드 자동 생성<br>버그 수정</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🗄️</div>
+        <div class="tool-name">Supabase</div>
+        <div class="tool-role">데이터베이스<br>데이터 저장/조회</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">▲</div>
+        <div class="tool-name">Vercel</div>
+        <div class="tool-role">배포/호스팅<br>HTTPS 자동 적용</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🐙</div>
+        <div class="tool-name">GitHub</div>
+        <div class="tool-role">코드 저장소<br>버전 관리</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📦</div>
+        <div class="tool-name">Node.js</div>
+        <div class="tool-role">로컬 실행 환경<br>사전 설치 필요</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🖥️</div>
+        <div class="tool-name">VS Code</div>
+        <div class="tool-role">코드 편집기<br>터미널 내장</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📱</div>
+        <div class="tool-name">브라우저</div>
+        <div class="tool-role">테스트 및 확인<br>모바일 시뮬레이션</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips">
+    <h3>💡 비개발자를 위한 핵심 팁</h3>
+    <ul>
+      <li>가장 중요한 단계는 <strong>Step 2 (플랜 문서)</strong>이다. AI에게 주는 지시가 구체적일수록 결과물의 품질이 올라간다.</li>
+      <li><strong>프롬프트는 한국어</strong>로 작성해도 된다. 기술 용어만 영문으로 유지하면 충분하다.</li>
+      <li>한 번에 완성되는 경우는 드물다. <strong>수정 요청은 자연어로</strong> — "이 버튼 색상을 빨간색으로 바꿔줘" 처럼.</li>
+      <li><code>.env.local</code> 파일에는 비밀키가 들어있다. <strong>절대 외부에 공유하지 않는다.</strong></li>
+      <li>Vercel 배포 후 문제가 생기면 Vercel 대시보드 > Deployments > Logs에서 에러를 확인할 수 있다.</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    AI-Powered Web App Development Workflow Guide · v1.0 · 2026.03
+  </div>
+
+</div>
+</body>
+</html>

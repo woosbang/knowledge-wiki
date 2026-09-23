@@ -1,0 +1,75 @@
+{
+  "slug": "bash-guide",
+  "title": "Bash 입문 가이드",
+  "headings": [
+    {
+      "level": 2,
+      "text": "파일/디렉토리 관리",
+      "id": "파일-디렉토리-관리"
+    },
+    {
+      "level": 3,
+      "text": "현재 위치 확인과 이동",
+      "id": "현재-위치-확인과-이동"
+    },
+    {
+      "level": 3,
+      "text": "디렉토리 내용 보기",
+      "id": "디렉토리-내용-보기"
+    },
+    {
+      "level": 3,
+      "text": "파일/디렉토리 생성",
+      "id": "파일-디렉토리-생성"
+    },
+    {
+      "level": 3,
+      "text": "복사, 이동, 삭제",
+      "id": "복사-이동-삭제"
+    },
+    {
+      "level": 3,
+      "text": "파일 내용 확인",
+      "id": "파일-내용-확인"
+    },
+    {
+      "level": 2,
+      "text": "셸 스크립트 기초",
+      "id": "셸-스크립트-기초"
+    },
+    {
+      "level": 3,
+      "text": "첫 스크립트 만들기",
+      "id": "첫-스크립트-만들기"
+    },
+    {
+      "level": 3,
+      "text": "변수",
+      "id": "변수"
+    },
+    {
+      "level": 3,
+      "text": "조건문",
+      "id": "조건문"
+    },
+    {
+      "level": 3,
+      "text": "반복문",
+      "id": "반복문"
+    },
+    {
+      "level": 3,
+      "text": "사용자 입력 받기",
+      "id": "사용자-입력-받기"
+    },
+    {
+      "level": 3,
+      "text": "실전 예시 — 백업 스크립트",
+      "id": "실전-예시-백업-스크립트"
+    }
+  ],
+  "html": "\n\n\n<p class=\"kicker\">Reference Guide</p>\n\n<p>파일/디렉토리 관리와 셸 스크립트 작성을 위한 핵심 명령어 모음</p>\n\n\n\n\n\n<p class=\"kicker\">PART 01</p>\n<h2 id=\"파일-디렉토리-관리\">파일/디렉토리 관리</h2>\n\n<h3 id=\"현재-위치-확인과-이동\">현재 위치 확인과 이동</h3>\n<p>pwd는 현재 내가 어디에 있는지 보여주고, cd는 이동하는 명령어입니다.</p>\n\n<p class=\"kicker\">bash</p>\n<pre><code>pwd                  # 현재 디렉토리 경로 출력\ncd /home/user        # 절대경로로 이동\ncd Documents         # 현재 위치 기준 하위 폴더로 이동\ncd ..                # 상위 디렉토리로 이동\ncd ~                 # 홈 디렉토리로 이동\ncd -                 # 직전 디렉토리로 돌아가기</code></pre>\n\n\n<h3 id=\"디렉토리-내용-보기\">디렉토리 내용 보기</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>ls                   # 현재 디렉토리 파일 목록\nls -l                # 상세 정보 (권한, 크기, 수정일 등)\nls -a                # 숨김 파일 포함 (.으로 시작하는 파일)\nls -la               # 옵션 조합 가능\nls -lh               # 파일 크기를 읽기 쉬운 단위로 표시</code></pre>\n\n\n<h3 id=\"파일-디렉토리-생성\">파일/디렉토리 생성</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>touch memo.txt       # 빈 파일 생성 (이미 있으면 수정 시간만 갱신)\nmkdir projects       # 디렉토리 생성\nmkdir -p a/b/c       # 중간 경로까지 한번에 생성</code></pre>\n\n\n<h3 id=\"복사-이동-삭제\">복사, 이동, 삭제</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>cp file.txt backup.txt        # 파일 복사\ncp -r mydir mydir_backup      # 디렉토리 복사 (-r: 재귀)\n\nmv file.txt newname.txt       # 이름 변경\nmv file.txt /tmp/             # 파일 이동\n\nrm file.txt                   # 파일 삭제 (휴지통 없이 즉시 삭제)\nrm -r mydir                   # 디렉토리와 내용 전체 삭제\nrm -i file.txt                # 삭제 전 확인 물어봄</code></pre>\n\n<blockquote>\n<p>⚠\nrm은 복구가 안 되므로, 익숙해지기 전까지는 rm -i를 습관으로 쓰는 게 안전합니다.\n</p></blockquote>\n\n<h3 id=\"파일-내용-확인\">파일 내용 확인</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>cat file.txt         # 파일 전체 출력\nhead -n 5 file.txt   # 처음 5줄만 출력\ntail -n 5 file.txt   # 마지막 5줄만 출력\nless file.txt        # 스크롤하며 읽기 (q로 종료)\nwc -l file.txt       # 줄 수 세기</code></pre>\n\n\n\n\n<p class=\"kicker\">PART 02</p>\n<h2 id=\"셸-스크립트-기초\">셸 스크립트 기초</h2>\n<p>셸 스크립트는 여러 명령어를 파일에 저장해서 한번에 실행하는 것입니다.</p>\n\n<h3 id=\"첫-스크립트-만들기\">첫 스크립트 만들기</h3>\n\n<p class=\"kicker\">hello.sh</p>\n<pre><code>#!/bin/bash\n# 첫 줄(shebang)은 이 파일을 bash로 실행하라는 의미\n\necho \"Hello, World!\"</code></pre>\n\n<p>저장한 뒤 실행하려면:</p>\n\n<p class=\"kicker\">bash</p>\n<pre><code>chmod +x hello.sh    # 실행 권한 부여 (최초 1회)\n./hello.sh           # 실행</code></pre>\n\n\n<h3 id=\"변수\">변수</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>name=\"홍길동\"           # = 앞뒤에 공백 없어야 함\necho \"이름: $name\"\n\ntoday=$(date +%Y-%m-%d)  # 명령어 결과를 변수에 저장\necho \"오늘: $today\"</code></pre>\n\n\n<h3 id=\"조건문\">조건문</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>#!/bin/bash\nfile=\"data.txt\"\n\nif [ -f \"$file\" ]; then\n    echo \"$file 이 존재합니다.\"\nelse\n    echo \"$file 이 없습니다.\"\nfi</code></pre>\n\n<p>자주 쓰는 조건 플래그: -f 파일 존재 여부, -d 디렉토리 존재 여부, -z 문자열이 비어있는지</p>\n\n<h3 id=\"반복문\">반복문</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code># 특정 파일들에 대해 반복\nfor f in *.txt; do\n    echo \"처리 중: $f\"\n    cp \"$f\" \"backup_$f\"\ndone\n\n# 숫자 반복\nfor i in {1..5}; do\n    echo \"번호: $i\"\ndone</code></pre>\n\n\n<h3 id=\"사용자-입력-받기\">사용자 입력 받기</h3>\n\n<p class=\"kicker\">bash</p>\n<pre><code>#!/bin/bash\nread -p \"이름을 입력하세요: \" username\necho \"안녕하세요, $username 님\"</code></pre>\n\n\n<h3 id=\"실전-예시-백업-스크립트\">실전 예시 — 백업 스크립트</h3>\n<p>위 내용을 조합한 간단한 실용 스크립트입니다.</p>\n\n<p class=\"kicker\">backup.sh</p>\n<pre><code>#!/bin/bash\nbackup_dir=\"backup_$(date +%Y%m%d)\"\n\nif [ -d \"$backup_dir\" ]; then\n    echo \"이미 오늘 백업이 존재합니다.\"\nelse\n    mkdir \"$backup_dir\"\n    cp *.txt \"$backup_dir/\" 2&gt;/dev/null\n    echo \"$backup_dir 에 백업 완료\"\nfi</code></pre>\n\n<blockquote>\n<p>💡\n2&gt;/dev/null은 에러 메시지를 숨기는 표현입니다. 여기서는 .txt 파일이 없을 때 나오는 에러를 무시하기 위한 것입니다.\n</p></blockquote>\n\n\n",
+  "text": "Reference Guide 파일/디렉토리 관리와 셸 스크립트 작성을 위한 핵심 명령어 모음 PART 01 파일/디렉토리 관리 현재 위치 확인과 이동 pwd 는 현재 내가 어디에 있는지 보여주고, cd 는 이동하는 명령어입니다. bash pwd # 현재 디렉토리 경로 출력 cd /home/user # 절대경로로 이동 cd Documents # 현재 위치 기준 하위 폴더로 이동 cd .. # 상위 디렉토리로 이동 cd ~ # 홈 디렉토리로 이동 cd - # 직전 디렉토리로 돌아가기 디렉토리 내용 보기 bash ls # 현재 디렉토리 파일 목록 ls -l # 상세 정보 (권한, 크기, 수정일 등) ls -a # 숨김 파일 포함 (.으로 시작하는 파일) ls -la # 옵션 조합 가능 ls -lh # 파일 크기를 읽기 쉬운 단위로 표시 파일/디렉토리 생성 bash touch memo.txt # 빈 파일 생성 (이미 있으면 수정 시간만 갱신) mkdir projects # 디렉토리 생성 mkdir -p a/b/c # 중간 경로까지 한번에 생성 복사, 이동, 삭제 bash cp file.txt backup.txt # 파일 복사 cp -r mydir mydir_backup # 디렉토리 복사 (-r: 재귀) mv file.txt newname.txt # 이름 변경 mv file.txt /tmp/ # 파일 이동 rm file.txt # 파일 삭제 (휴지통 없이 즉시 삭제) rm -r mydir # 디렉토리와 내용 전체 삭제 rm -i file.txt # 삭제 전 확인 물어봄 ⚠ rm 은 복구가 안 되므로, 익숙해지기 전까지는 rm -i 를 습관으로 쓰는 게 안전합니다. 파일 내용 확인 bash cat file.txt # 파일 전체 출력 head -n 5 file.txt # 처음 5줄만 출력 tail -n 5 file.txt # 마지막 5줄만 출력 less file.txt # 스크롤하며 읽기 (q로 종료) wc -l file.txt # 줄 수 세기 PART 02 셸 스크립트 기초 셸 스크립트는 여러 명령어를 파일에 저장해서 한번에 실행하는 것입니다. 첫 스크립트 만들기 hello.sh #!/bin/bash # 첫 줄(shebang)은 이 파일을 bash로 실행하라는 의미 echo \"Hello, World!\" 저장한 뒤 실행하려면: bash chmod +x hello.sh # 실행 권한 부여 (최초 1회) ./hello.sh # 실행 변수 bash name = \"홍길동\" # = 앞뒤에 공백 없어야 함 echo \"이름: $name \" today =$( date +%Y-%m-%d) # 명령어 결과를 변수에 저장 echo \"오늘: $today \" 조건문 bash #!/bin/bash file = \"data.txt\" if [ -f \" $file \" ]; then echo \" $file 이 존재합니다.\" else echo \" $file 이 없습니다.\" fi 자주 쓰는 조건 플래그: -f 파일 존재 여부, -d 디렉토리 존재 여부, -z 문자열이 비어있는지 반복문 bash # 특정 파일들에 대해 반복 for f in *.txt; do echo \"처리 중: $f \" cp \" $f \" \"backup_ $f \" done # 숫자 반복 for i in {1..5}; do echo \"번호: $i \" done 사용자 입력 받기 bash #!/bin/bash read -p \"이름을 입력하세요: \" username echo \"안녕하세요, $username 님\" 실전 예시 — 백업 스크립트 위 내용을 조합한 간단한 실용 스크립트입니다. backup.sh #!/bin/bash backup_dir = \"backup_$( date +%Y%m%d)\" if [ -d \" $backup_dir \" ]; then echo \"이미 오늘 백업이 존재합니다.\" else mkdir \" $backup_dir \" cp *.txt \" $backup_dir /\" 2>/dev/null echo \" $backup_dir 에 백업 완료\" fi 💡 2>/dev/null 은 에러 메시지를 숨기는 표현입니다. 여기서는 .txt 파일이 없을 때 나오는 에러를 무시하기 위한 것입니다.",
+  "word_count": 484,
+  "char_count": 2048
+}

@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+.env
+.DS_Store
+Thumbs.db
+
+# 빌드 산출물 — GitHub Actions 가 생성하므로 커밋하지 않음
+/site/
+
+# 로컬 캐시
+/wiki/.cache/

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude 에이전트 제품 관계도 | Claude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF6F1;
+    --bg-warm: #F5F0E8;
+    --surface: #FFFFFF;
+    --border: #E8E0D4;
+    --border-light: #EDE7DD;
+    --text: #1A1410;
+    --text-secondary: #6B5E50;
+    --text-tertiary: #9B8E7E;
+    --accent: #C96442;
+    --link: #1A6B52;
+    --tag-bg: #F0EBE3;
+    --code-bg: #F3EDE5;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,246,241,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    padding: 0 32px;
+  }
+
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+
+  .nav-logo {
+    font-family: var(--sans); font-weight: 600; font-size: 15px;
+    color: var(--text); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  .article-header { max-width: 720px; margin: 0 auto; padding: 64px 24px 0; }
+
+  .article-meta { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-tertiary); font-weight: 600; }
+  .meta-value { font-size: 14px; color: var(--text-secondary); }
+  .meta-value a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 2px; }
+
+  .article-header h1 {
+    font-family: var(--serif); font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 400; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 20px;
+  }
+
+  .article-header .subtitle { font-size: 18px; color: var(--text-secondary); font-weight: 400; line-height: 1.6; margin-bottom: 40px; }
+
+  .article-divider { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  .article-divider hr { border: none; border-top: 1px solid var(--border); }
+
+  .content { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .content h2 { font-family: var(--serif); font-size: 1.6rem; font-weight: 500; margin: 56px 0 16px; letter-spacing: -0.3px; line-height: 1.3; }
+  .content h3 { font-family: var(--serif); font-size: 1.2rem; font-weight: 500; margin: 40px 0 12px; }
+  .content p { margin-bottom: 20px; line-height: 1.75; }
+  .content strong { font-weight: 600; }
+  .content a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(26,107,82,0.3); }
+  .content a:hover { text-decoration-color: var(--link); }
+
+  .diagram-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 36px 28px; margin: 28px 0; overflow-x: auto;
+  }
+  .diagram-card svg { display: block; margin: 0 auto; }
+  .diagram-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-tertiary); font-weight: 600; margin-bottom: 20px; text-align: center; }
+
+  .product-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+  .product-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-tertiary); font-weight: 600; padding: 10px 12px; border-bottom: 2px solid var(--border); }
+  .product-table td { padding: 14px 12px; border-bottom: 1px solid var(--border-light); vertical-align: top; line-height: 1.5; }
+  .product-table tr:last-child td { border-bottom: none; }
+  .product-table .name { font-weight: 600; white-space: nowrap; }
+  .product-table .desc { color: var(--text-secondary); font-size: 13px; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .tag-local { background: #E8F5E8; color: #2D6A2E; }
+  .tag-cloud { background: #E3F0F8; color: #1A5276; }
+  .tag-app { background: #F3E8F5; color: #6A2D80; }
+
+  .callout { background: var(--bg-warm); border-left: 3px solid var(--accent); padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; }
+  .callout p { margin-bottom: 0; font-size: 15px; color: var(--text-secondary); }
+  .callout strong { color: var(--text); }
+  .callout code { font-family: var(--mono); font-size: 13px; background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 3px; }
+
+  .flow-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 36px 24px; margin: 28px 0; }
+  .flow-container h3 { margin-top: 0; text-align: center; font-family: var(--serif); margin-bottom: 28px; }
+  .flow-step { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+  .flow-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--tag-bg); border: 1px solid var(--border); font-weight: 600; color: var(--text-secondary); }
+  .flow-text { padding-top: 4px; font-size: 15px; line-height: 1.6; }
+  .flow-text .q { font-weight: 600; }
+  .flow-result { display: inline-block; padding: 3px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; margin-top: 4px; }
+  .fr-yes { background: #E8F5E8; color: #2D6A2E; }
+  .fr-no { background: #FDE8E8; color: #8B2020; }
+  .flow-indent { margin-left: 48px; padding-left: 16px; border-left: 1px solid var(--border-light); margin-bottom: 16px; }
+
+  .trio-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0; }
+  @media (max-width: 640px) { .trio-strip { grid-template-columns: 1fr; } }
+  .trio-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 20px; }
+  .trio-card h4 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .trio-card ul { list-style: none; font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+  .trio-card li { padding: 3px 0 3px 16px; position: relative; }
+  .trio-card li::before { content: '–'; position: absolute; left: 0; color: var(--text-tertiary); }
+
+  .faq-item { border-bottom: 1px solid var(--border-light); }
+  .faq-q { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; cursor: pointer; font-family: var(--serif); font-size: 17px; font-weight: 500; user-select: none; gap: 16px; }
+  .faq-q:hover { color: var(--accent); }
+  .faq-chevron { font-size: 18px; color: var(--text-tertiary); transition: transform 0.3s; flex-shrink: 0; }
+  .faq-item.open .faq-chevron { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .faq-item.open .faq-a { max-height: 500px; }
+  .faq-a-inner { padding: 0 0 24px; font-size: 15px; color: var(--text-secondary); line-height: 1.75; }
+
+  .related-section { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
+  .related-section h2 { font-family: var(--serif); font-size: 1.4rem; font-weight: 500; margin-bottom: 24px; }
+  .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 768px) { .related-grid { grid-template-columns: 1fr; } }
+  .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px 24px; transition: box-shadow 0.2s, transform 0.2s; }
+  .related-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+  .related-card .rc-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-tertiary); font-weight: 600; margin-bottom: 10px; }
+  .related-card h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; margin-bottom: 8px; line-height: 1.4; }
+  .related-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="https://claude.com">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Claude
+    </a>
+    <ul class="nav-links">
+      <li><a href="https://claude.com/product/claude-code">Claude Code</a></li>
+      <li><a href="https://claude.com/product/cowork">Cowork</a></li>
+      <li><a href="https://claude.com/blog">Blog</a></li>
+      <li><a href="https://claude.com/pricing">Pricing</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="article-header">
+  <div class="article-meta">
+    <div class="meta-item"><span class="meta-label">Category</span><span class="meta-value"><a href="#">Product Guide</a></span></div>
+    <div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">March 9, 2026</span></div>
+    <div class="meta-item"><span class="meta-label">Reading time</span><span class="meta-value">8 min</span></div>
+  </div>
+  <h1>Claude 에이전트 제품 관계도</h1>
+  <p class="subtitle">하나의 AI 엔진 위에 구축된 11개 제품의 관계를 이해하기 위한 가이드. 어떤 상황에서 어떤 Claude를 써야 하는지 한눈에 파악할 수 있습니다.</p>
+</header>
+
+<div class="article-divider"><hr></div>
+
+<main class="content">
+
+<h2>하나의 두뇌, 여러 개의 몸</h2>
+<p>Claude의 모든 제품은 <strong>하나의 AI 엔진</strong>(Claude Agent SDK)을 공유합니다. Opus 4.6, Sonnet 4.6, Haiku 4.5 모델이 모든 인터페이스에서 동일하게 작동합니다. 제품 간의 차이는 "어디서 실행되느냐"와 "무엇에 접근할 수 있느냐"에 있습니다.</p>
+<p>비유하자면, 같은 요리사(Claude)가 <strong>주방 종류에 따라 다른 도구</strong>를 사용하는 것과 같습니다. 전문 주방에서는 모든 장비에 접근할 수 있고, 집 주방에서는 지정된 공간만 쓰고, 레스토랑 테이블에서는 눈앞의 접시만 다룹니다.</p>
+
+<div class="diagram-card">
+  <div class="diagram-label">Architecture Overview</div>
+  <svg viewBox="0 0 680 320" width="100%" style="max-width:680px">
+    <rect x="170" y="16" width="340" height="56" rx="28" fill="#F5F0E8" stroke="#D4CAB8" stroke-width="1.5"/>
+    <text x="340" y="40" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#6B5E50" font-weight="500">Claude Agent SDK</text>
+    <text x="340" y="56" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">Opus 4.6 · Sonnet 4.6 · Haiku 4.5</text>
+
+    <line x1="230" y1="72" x2="120" y2="120" stroke="#D4CAB8" stroke-width="1.2"/>
+    <line x1="340" y1="72" x2="340" y2="120" stroke="#D4CAB8" stroke-width="1.2"/>
+    <line x1="450" y1="72" x2="560" y2="120" stroke="#D4CAB8" stroke-width="1.2"/>
+
+    <rect x="20" y="120" width="200" height="185" rx="10" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="120" y="146" text-anchor="middle" font-family="Source Serif 4,Georgia,serif" font-size="14" fill="#1A1410" font-weight="500">🔧 코드를 짠다</text>
+    <text x="120" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">개발자 도구 6종</text>
+    <line x1="40" y1="174" x2="200" y2="174" stroke="#EDE7DD"/>
+    <text x="40" y="194" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">⌨️ CLI</text>
+    <text x="40" y="212" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">🖥️ VS Code Extension</text>
+    <text x="40" y="230" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">🧩 JetBrains Plugin</text>
+    <text x="40" y="248" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">☁️ Code on the Web</text>
+    <text x="40" y="266" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">🪟 Desktop App (Code)</text>
+    <text x="40" y="284" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">📱 Remote Control</text>
+
+    <rect x="240" y="120" width="200" height="185" rx="10" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="340" y="146" text-anchor="middle" font-family="Source Serif 4,Georgia,serif" font-size="14" fill="#1A1410" font-weight="500">💼 일을 대신한다</text>
+    <text x="340" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">범용 에이전트</text>
+    <line x1="260" y1="174" x2="420" y2="174" stroke="#EDE7DD"/>
+    <text x="260" y="196" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">💼 Cowork</text>
+    <text x="270" y="216" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">· 폴더 기반 자율 실행</text>
+    <text x="270" y="232" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">· 예약 작업</text>
+    <text x="270" y="248" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">· 커넥터 (Drive, Gmail …)</text>
+    <text x="270" y="264" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">· 플러그인 (금융, HR …)</text>
+    <text x="270" y="280" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">· 샌드박스 보안</text>
+
+    <rect x="460" y="120" width="200" height="185" rx="10" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="560" y="146" text-anchor="middle" font-family="Source Serif 4,Georgia,serif" font-size="14" fill="#1A1410" font-weight="500">📎 앱 안에서 돕는다</text>
+    <text x="560" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">앱 통합 4종</text>
+    <line x1="480" y1="174" x2="640" y2="174" stroke="#EDE7DD"/>
+    <text x="480" y="194" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">🌐 Claude in Chrome</text>
+    <text x="480" y="212" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">📊 Claude in Excel</text>
+    <text x="480" y="230" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">📊 Claude in PowerPoint</text>
+    <text x="480" y="248" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">💬 Claude in Slack</text>
+    <text x="490" y="278" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">↔ Cowork와 연동 시</text>
+    <text x="490" y="292" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">  더욱 강력</text>
+  </svg>
+</div>
+
+<h2>세계 1 — 코드를 짠다</h2>
+<p>소프트웨어를 만들고, 디버깅하고, PR을 올리는 세계입니다. 6개의 인터페이스가 하나의 코딩 에이전트를 서로 다른 환경에서 제공합니다.</p>
+
+<table class="product-table">
+  <thead><tr><th>제품</th><th>설명</th><th>실행 환경</th></tr></thead>
+  <tbody>
+    <tr><td class="name">CLI</td><td>터미널에서 직접 명령하는 원본 도구. 시스템 전체 접근, 완전 자율 실행 가능.<br><span class="desc">Context rewind, 서브에이전트, 훅, Vim 모드 등 모든 기능 지원</span></td><td><span class="tag tag-local">로컬</span></td></tr>
+    <tr><td class="name">VS Code Extension</td><td>VS Code 사이드바에서 시각적으로 작업. 인라인 diff, 체크포인트, Plan 모드.<br><span class="desc">CLI와 설정 파일 공유. Cursor, Windsurf 등 포크도 지원</span></td><td><span class="tag tag-local">로컬</span></td></tr>
+    <tr><td class="name">JetBrains Plugin</td><td>IntelliJ, PyCharm, WebStorm 등에서 사용. CLI 래퍼 방식으로 IDE 통합.<br><span class="desc">네이티브 diff 뷰어, 자동 코드 컨텍스트 인식</span></td><td><span class="tag tag-local">로컬</span></td></tr>
+    <tr><td class="name">Code on the Web</td><td>Anthropic 클라우드 VM에서 실행. 여러 작업 병렬 처리, 자동 PR 생성.<br><span class="desc">Teleport로 클라우드→로컬 세션 이동 가능. GitHub만 지원</span></td><td><span class="tag tag-cloud">클라우드</span></td></tr>
+    <tr><td class="name">Desktop App</td><td>Claude Desktop 앱의 Code 탭. 시각적 diff 리뷰, 서버 프리뷰.<br><span class="desc">터미널 없이 GUI로 로컬 코딩</span></td><td><span class="tag tag-local">로컬</span></td></tr>
+    <tr><td class="name">Remote Control</td><td>로컬 CLI 세션을 폰/브라우저에서 이어서 작업. 코드는 내 컴퓨터에 유지.<br><span class="desc">자동 재연결, QR 코드 연결. 로컬 MCP 서버/환경변수 완전 유지</span></td><td><span class="tag tag-local">로컬 실행</span> <span class="tag tag-cloud">원격 뷰</span></td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p><strong>핵심 관계:</strong> 로컬 도구들(CLI, VS Code, JetBrains, Desktop)은 <code>~/.claude/settings.json</code>을 공유하며 자유롭게 전환할 수 있습니다. Code on the Web은 클라우드 독립 실행이라 로컬 환경에 접근할 수 없지만, Teleport로 세션을 로컬로 가져올 수 있습니다. Remote Control은 이 둘의 장점을 결합합니다.</p>
+</div>
+
+<h2>세계 2 — 일을 대신한다</h2>
+<p>코딩이 아닌 <strong>일반 업무</strong>를 자동화하는 범용 데스크톱 에이전트입니다.</p>
+
+<div class="diagram-card">
+  <div class="diagram-label">Cowork 작업 흐름</div>
+  <svg viewBox="0 0 680 150" width="100%" style="max-width:680px">
+    <rect x="10" y="40" width="100" height="70" rx="10" fill="#F5F0E8" stroke="#D4CAB8"/>
+    <text x="60" y="68" text-anchor="middle" font-size="20">🙋</text>
+    <text x="60" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">사용자</text>
+
+    <line x1="110" y1="75" x2="150" y2="75" stroke="#D4CAB8" stroke-width="1.5" marker-end="url(#at)"/>
+
+    <rect x="150" y="16" width="320" height="118" rx="10" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="166" y="38" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E" font-weight="600" letter-spacing="1">COWORK</text>
+    <rect x="168" y="50" width="76" height="30" rx="6" fill="#F5F0E8" stroke="#E8E0D4"/>
+    <text x="206" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6B5E50">📋 계획</text>
+    <line x1="244" y1="60" x2="268" y2="55" stroke="#D4CAB8"/>
+    <line x1="244" y1="70" x2="268" y2="78" stroke="#D4CAB8"/>
+    <rect x="268" y="40" width="80" height="26" rx="6" fill="#E8F5E8" stroke="#C5DFC5"/>
+    <text x="308" y="58" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#2D6A2E">에이전트 A</text>
+    <rect x="268" y="72" width="80" height="26" rx="6" fill="#E3F0F8" stroke="#B8D8E8"/>
+    <text x="308" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#1A5276">에이전트 B</text>
+    <line x1="348" y1="55" x2="376" y2="65" stroke="#D4CAB8"/>
+    <line x1="348" y1="85" x2="376" y2="75" stroke="#D4CAB8"/>
+    <rect x="376" y="56" width="70" height="30" rx="6" fill="#F5F0E8" stroke="#E8E0D4"/>
+    <text x="411" y="76" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6B5E50">🔨 조립</text>
+    <text x="200" y="118" font-family="Inter,sans-serif" font-size="9" fill="#9B8E7E">🔌 커넥터 · ⏰ 예약 작업 · 🧩 플러그인</text>
+
+    <line x1="470" y1="75" x2="510" y2="75" stroke="#D4CAB8" stroke-width="1.5" marker-end="url(#at)"/>
+
+    <rect x="510" y="40" width="150" height="70" rx="10" fill="#F5F0E8" stroke="#D4CAB8"/>
+    <text x="585" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#1A1410" font-weight="500">📄 결과물</text>
+    <text x="585" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#9B8E7E">.docx .xlsx .pptx .pdf</text>
+
+    <defs><marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#C4B8A8"/></marker></defs>
+  </svg>
+</div>
+
+<div class="callout">
+  <p><strong>CLI와의 관계:</strong> Cowork는 CLI와 같은 엔진을 사용하지만, <strong>샌드박스</strong>(지정 폴더만 접근) 안에서 실행됩니다. CLI에서 할 수 없는 것(예약 작업, 커넥터, 플러그인)이 있고, Cowork에서 할 수 없는 것(시스템 전체 접근, git, 서버 실행)이 있습니다. 서로 다른 시나리오에 최적화된 형제 제품입니다.</p>
+</div>
+
+<h2>세계 3 — 앱 안에서 돕는다</h2>
+<p>이미 사용 중인 앱 안에서 Claude가 직접 작동합니다. Cowork와 조합하면 연속 워크플로우를 만들 수 있습니다.</p>
+
+<table class="product-table">
+  <thead><tr><th>제품</th><th>설명</th><th>환경</th></tr></thead>
+  <tbody>
+    <tr><td class="name">Chrome</td><td>브라우저에서 웹페이지 탐색, 클릭, 폼 작성, 정보 추출. 사용자 로그인 세션 공유.<br><span class="desc">Cowork 연동: Chrome이 리서치 → Cowork가 보고서 생성</span></td><td><span class="tag tag-app">브라우저</span></td></tr>
+    <tr><td class="name">Excel</td><td>워크북 전체(모든 탭, 수식, 셀 의존성) 인식. 셀 수준 인용으로 검증 가능.<br><span class="desc">수식 생성, 차트, 피벗 테이블 자동화</span></td><td><span class="tag tag-app">앱 내</span></td></tr>
+    <tr><td class="name">PowerPoint</td><td>슬라이드 마스터(템플릿, 폰트, 색상) 자동 인식. 브랜드 가이드라인 준수.<br><span class="desc">Excel→PPT 연동으로 분석 결과를 바로 발표자료로 전환</span></td><td><span class="tag tag-app">앱 내</span></td></tr>
+    <tr><td class="name">Slack</td><td>Slack 내에서 대화, 메시지 초안/미리보기/게시. 워크스페이스 검색 연동.<br><span class="desc">Interactive Apps(MCP Apps)로 Slack을 떠나지 않고 작업</span></td><td><span class="tag tag-app">Slack 앱</span></td></tr>
+  </tbody>
+</table>
+
+<div class="diagram-card">
+  <div class="diagram-label">제품 간 연동 워크플로우</div>
+  <svg viewBox="0 0 680 100" width="100%" style="max-width:680px">
+    <rect x="10" y="20" width="120" height="60" rx="8" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="70" y="46" text-anchor="middle" font-size="16">🌐</text>
+    <text x="70" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">Chrome 리서치</text>
+    <line x1="130" y1="50" x2="170" y2="50" stroke="#D4CAB8" stroke-width="1.2" marker-end="url(#at)"/>
+    <rect x="170" y="10" width="140" height="80" rx="8" fill="#F5F0E8" stroke="#D4CAB8"/>
+    <text x="240" y="40" text-anchor="middle" font-size="16">💼</text>
+    <text x="240" y="58" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#1A1410" font-weight="500">Cowork</text>
+    <text x="240" y="74" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#9B8E7E">데이터 가공 · 파일 생성</text>
+    <line x1="310" y1="38" x2="360" y2="38" stroke="#D4CAB8" stroke-width="1.2" marker-end="url(#at)"/>
+    <line x1="310" y1="62" x2="360" y2="62" stroke="#D4CAB8" stroke-width="1.2" marker-end="url(#at)"/>
+    <rect x="360" y="14" width="100" height="40" rx="7" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="410" y="39" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">📊 Excel 분석</text>
+    <rect x="360" y="56" width="100" height="40" rx="7" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="410" y="81" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">📊 PPT 발표</text>
+    <line x1="460" y1="50" x2="510" y2="50" stroke="#D4CAB8" stroke-width="1.2" marker-end="url(#at)"/>
+    <rect x="510" y="20" width="120" height="60" rx="8" fill="#FFF" stroke="#D4CAB8"/>
+    <text x="570" y="46" text-anchor="middle" font-size="16">💬</text>
+    <text x="570" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6B5E50">Slack 공유</text>
+  </svg>
+</div>
+
+<h2>나는 어떤 Claude를 써야 할까?</h2>
+
+<div class="flow-container">
+  <h3>의사결정 가이드</h3>
+  <div class="flow-step">
+    <div class="flow-icon">1</div>
+    <div class="flow-text">
+      <span class="q">코딩 / 소프트웨어 개발 작업인가요?</span>
+      <div class="flow-indent">
+        <span class="flow-result fr-yes">예 →</span> 로컬 환경이 필요한가요?
+        <div class="flow-indent">
+          <span class="flow-result fr-yes">예 →</span> 이동 중 작업?
+          <div class="flow-indent">
+            <span class="flow-result fr-yes">예 →</span> <strong>📱 Remote Control</strong><br>
+            <span class="flow-result fr-no">아니오 →</span> <strong>⌨️ CLI</strong> 또는 <strong>🖥️ IDE Extension</strong>
+          </div>
+          <span class="flow-result fr-no">아니오 →</span> <strong>☁️ Code on the Web</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-icon">2</div>
+    <div class="flow-text">
+      <span class="q">파일 생성/정리/분석 등 업무 자동화인가요?</span>
+      <div class="flow-indent"><span class="flow-result fr-yes">예 →</span> <strong>💼 Cowork</strong></div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-icon">3</div>
+    <div class="flow-text">
+      <span class="q">특정 앱에서 작업하나요?</span>
+      <div class="flow-indent">브라우저 → <strong>🌐 Chrome</strong> · 스프레드시트 → <strong>📊 Excel</strong> · 발표자료 → <strong>📊 PPT</strong> · 팀 소통 → <strong>💬 Slack</strong></div>
+    </div>
+  </div>
+</div>
+
+<h2>세 가지 세계, 핵심 비교</h2>
+
+<div class="trio-strip">
+  <div class="trio-card">
+    <h4>🔧 개발자 도구</h4>
+    <ul>
+      <li>시스템 전체 접근 (파일, 터미널, git)</li>
+      <li>코드 작성, 디버깅, 테스트, PR 생성</li>
+      <li>가장 높은 자유도와 제어력</li>
+      <li>터미널/IDE 사용 능력 필요</li>
+      <li>6개 인터페이스</li>
+    </ul>
+  </div>
+  <div class="trio-card">
+    <h4>💼 Cowork</h4>
+    <ul>
+      <li>지정 폴더만 접근 (샌드박스)</li>
+      <li>파일 정리, 리서치, 보고서, 분석</li>
+      <li>예약 작업으로 자동 반복 실행</li>
+      <li>커넥터 (Drive, Gmail 등)</li>
+      <li>기술 지식 불필요</li>
+    </ul>
+  </div>
+  <div class="trio-card">
+    <h4>📎 앱 통합</h4>
+    <ul>
+      <li>해당 앱/문서 범위에서만 작동</li>
+      <li>이미 쓰는 앱에서 바로 사용</li>
+      <li>Cowork와 조합 시 연속 워크플로우</li>
+      <li>Chrome, Excel, PowerPoint, Slack</li>
+      <li>설치 후 즉시 사용</li>
+    </ul>
+  </div>
+</div>
+
+<h2>자주 묻는 질문</h2>
+
+<div class="faq-item">
+  <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">CLI를 쓰고 있는데 VS Code Extension도 써야 하나요?<span class="faq-chevron">▾</span></div>
+  <div class="faq-a"><div class="faq-a-inner">둘 다 쓸 수 있고, 실제로 많은 개발자가 그렇게 합니다. 설정 파일을 공유하므로 전환이 자연스럽습니다. 시각적 diff가 필요하면 Extension, 세밀한 제어가 필요하면 CLI를 쓰세요.</div></div>
+</div>
+<div class="faq-item">
+  <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Cowork와 일반 Claude Chat은 뭐가 다른가요?<span class="faq-chevron">▾</span></div>
+  <div class="faq-a"><div class="faq-a-inner">일반 Chat은 대화만 합니다. Cowork는 실제로 실행합니다 — 파일을 만들고, 수정하고, 외부 서비스에서 데이터를 가져오고, 결과물을 전달합니다. 예약 작업으로 자동 실행도 가능합니다.</div></div>
+</div>
+<div class="faq-item">
+  <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Code on the Web과 Remote Control은 언제 뭘 쓰나요?<span class="faq-chevron">▾</span></div>
+  <div class="faq-a"><div class="faq-a-inner"><strong>Code on the Web</strong>은 로컬에 레포가 없거나 여러 작업을 병렬로 돌리고 싶을 때. <strong>Remote Control</strong>은 이미 로컬에서 작업 중이고 자리를 비우면서 폰으로 모니터링하고 싶을 때 사용합니다.</div></div>
+</div>
+<div class="faq-item">
+  <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">비개발자인데 뭘 써야 하나요?<span class="faq-chevron">▾</span></div>
+  <div class="faq-a"><div class="faq-a-inner">대부분 Cowork만으로 충분합니다. 여기에 Chrome, Excel, PowerPoint 통합을 조합하면 더욱 강력해집니다. 코딩 도구는 소프트웨어 개발 작업에만 필요합니다.</div></div>
+</div>
+<div class="faq-item" style="border-bottom:none">
+  <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Cowork로 CLI의 모든 작업을 할 수 있나요?<span class="faq-chevron">▾</span></div>
+  <div class="faq-a"><div class="faq-a-inner">아닙니다. Cowork는 샌드박스에서 실행되므로 시스템 전체 제어가 불가합니다. 반면 Cowork에만 있는 기능(예약 작업, 커넥터, 플러그인)도 있습니다. 서로 다른 시나리오에 최적화된 형제 제품입니다.</div></div>
+</div>
+
+</main>
+
+<div class="article-divider" style="max-width:1200px"><hr></div>
+
+<section class="related-section">
+  <h2>Related</h2>
+  <div class="related-grid">
+    <a class="related-card" href="https://claude.com/blog/cowork-research-preview" style="text-decoration:none;color:inherit">
+      <div class="rc-label">Product Announcements</div>
+      <h3>Cowork: Claude Code for the rest of your work</h3>
+      <p>Claude Code의 에이전트 아키텍처를 비개발자에게 제공하는 Cowork 소개.</p>
+    </a>
+    <a class="related-card" href="https://code.claude.com/docs/en/vs-code" style="text-decoration:none;color:inherit">
+      <div class="rc-label">Documentation</div>
+      <h3>Use Claude Code in VS Code</h3>
+      <p>VS Code Extension의 설치, 설정, 기능에 대한 공식 문서.</p>
+    </a>
+    <a class="related-card" href="https://code.claude.com/docs/en/remote-control" style="text-decoration:none;color:inherit">
+      <div class="rc-label">Documentation</div>
+      <h3>Continue local sessions from any device</h3>
+      <p>로컬 세션을 모바일/브라우저에서 제어하는 Remote Control 가이드.</p>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Anthropic PBC · 2026년 3월 기준 작성. 모든 제품은 Research Preview 또는 Beta 상태일 수 있습니다.</p>
+</footer>
+
+</body>
+</html>

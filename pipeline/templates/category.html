@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% set active_category = group.id %}
+{% block title %}{{ group.name }} · {{ site_title }}{% endblock %}
+{% block shell_class %}{% endblock %}
+{% block sidebar %}{% include "_nav.html" %}{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ root }}index.html">홈</a> <span>/</span> {{ group.name }}</nav>
+<h1>{{ group.name }}</h1>
+<p class="lede">{{ group.blurb }}</p>
+
+{% if group.undefined %}
+<div class="callout callout-warn">
+  이 카테고리는 <code>wiki/taxonomy.yaml</code> 에 정의되어 있지 않습니다. 체계에 추가하거나 문서를 재분류하세요.
+</div>
+{% endif %}
+
+{% for sub in subgroups %}
+<section class="subgroup">
+  {% if subgroups|length > 1 or sub.id != '_' %}<h2 class="section-title">{{ sub.name }}</h2>{% endif %}
+  <ul class="doc-list">
+  {% for d in sub.documents %}
+    <li>
+      <a href="{{ root }}{{ 'd/' ~ d.slug ~ '.html' }}">
+        <span class="doc-title">{{ d.title }}
+          {% if d.status != 'active' %}<span class="badge badge-{{ d.status }}">{{ d.status }}</span>{% endif %}
+        </span>
+        <span class="doc-summary">{{ d.summary }}</span>
+        <span class="doc-meta">{{ d.doc_date }}{% for t in d.tags[:5] %} · {{ t }}{% endfor %}</span>
+      </a>
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% endblock %}
