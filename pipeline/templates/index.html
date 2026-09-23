@@ -3,7 +3,7 @@
 <section class="hero">
   <h1>{{ site_title }}</h1>
   <p class="lede">{{ site_description }}</p>
-  <p class="stat">{{ total }}개 문서 · {{ groups|length }}개 카테고리</p>
+  <p class="stat">{{ total_topics }}개 토픽 · {{ total_docs }}개 원본 문서 · {{ groups|length }}개 카테고리</p>
 </section>
 
 <section>
@@ -20,16 +20,16 @@
 </section>
 
 <section>
-  <h2 class="section-title">최근 문서</h2>
+  <h2 class="section-title">최근 토픽</h2>
   <ul class="doc-list">
-  {% for d in recent %}
+  {% for t in recent %}
     <li>
-      <a href="{{ root }}{{ 'd/' ~ d.slug ~ '.html' }}">
-        <span class="doc-title">{{ d.title }}
-          {% if d.status != 'active' %}<span class="badge badge-{{ d.status }}">{{ d.status }}</span>{% endif %}
+      <a href="{{ root }}{{ 't/' ~ t.id ~ '.html' }}">
+        <span class="doc-title">{{ t.title }}
+          {% if t.mode == 'synthesized' %}<span class="badge badge-synth">정돈본 · 근거 {{ t.sources|length }}</span>{% endif %}
         </span>
-        <span class="doc-summary">{{ d.summary or '아직 요약이 없습니다 — /wiki-sync 를 실행하세요.' }}</span>
-        <span class="doc-meta">{{ d.doc_date }}{% for t in d.tags[:4] %} · {{ t }}{% endfor %}</span>
+        <span class="doc-summary">{{ t.summary or '아직 요약이 없습니다 — /wiki-sync 를 실행하세요.' }}</span>
+        <span class="doc-meta">{{ t.updated }}{% for tag in t.tags[:4] %} · {{ tag }}{% endfor %}</span>
       </a>
     </li>
   {% endfor %}

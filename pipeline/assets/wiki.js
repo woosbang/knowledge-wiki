@@ -83,11 +83,21 @@
       return;
     }
 
+    // 같은 점수면 토픽(정돈본)이 원본 문서보다 앞에 온다
+    hits.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return (a.doc.kind === "topic" ? 0 : 1) - (b.doc.kind === "topic" ? 0 : 1);
+    });
+
     panel.innerHTML = hits.map(function (h) {
       var d = h.doc;
+      var isTopic = d.kind === "topic";
+      var dir = isTopic ? "t/" : "d/";
       var meta = [d.category, (d.tags || []).slice(0, 3).join(", ")].filter(Boolean).join(" · ");
-      return '<a href="' + base + "d/" + encodeURIComponent(d.slug) + '.html">' +
-             '<span class="r-title">' + escapeHtml(d.title) + "</span>" +
+      return '<a href="' + base + dir + encodeURIComponent(d.slug) + '.html">' +
+             '<span class="r-title">' +
+               '<span class="r-kind' + (isTopic ? " is-topic" : "") + '">' + (isTopic ? "토픽" : "원본") + "</span>" +
+               escapeHtml(d.title) + "</span>" +
              '<span class="r-meta">' + escapeHtml(meta) + "</span></a>";
     }).join("");
     panel.hidden = false;

@@ -273,6 +273,58 @@ Chrome 확장은 여전히 `127.0.0.1`, `localhost` 모두 "Frame with ID 0 is s
 
 `audit.py` 의 미분류 안내 문구를 `/wiki-sync` 로 고쳤다.
 
+### 배포 (Phase 2 완료)
+
+사용자 결정: 사내 문서 가이드 2건 삭제, **공개 저장소**, GitHub Pages.
+첫 커밋을 amend 해 삭제한 문서가 git 이력에 남지 않게 했다.
+`gh repo create --public --source=. --push` → Pages 를 `build_type=workflow` 로 API 활성화 → 첫 Actions 31초 성공.
+Edge 헤드리스로 라이브 URL 을 캡처해 코드블록까지 확인했다.
+
+### 토픽 층 구현 (Phase 5a·5b)
+
+CLAUDE.md 규칙 1에 "wiki 문서에는 중복·수정 문제가 해결된 정돈된 최신 정보"라는 요구가 추가되어
+PRD 8절로 설계하고, 사용자가 세 결정(규칙 5 문구 수정 / 토픽 자동 생성 / 단일 원본은 합성 생략)을 승인해 바로 구현했다.
+
+만든 것:
+
+- `models.Topic`, `Entry.topic`, `pipeline/topics.py` (해시·모드·렌더링·검사), `prompts/synthesize.md`
+- CLI: `topic-init`, `topic-add`, `synth-done`, `synthesize`(API, 미검증). `status --json` 은 `classify / assign_topic / synthesize` 세 목록을 낸다
+- 빌드: `t/<id>.html` 토픽 페이지, 홈·카테고리는 토픽 우선, 원본 페이지 상단에 토픽 배너, 검색 색인은 토픽 → 원본 순
+- audit 7절: 재합성 필요 / 잠김 / 미배정 / 근거 과다 / 근거 소실 / 신뢰 검사
+- 슬래시 커맨드 두 개를 토픽 절차로 갱신. 의존성 `markdown-it-py` 추가
+- 이 세션이 AI 역할로 토픽 7개를 배정하고 정돈본 3편을 썼다. 셋 다 `synth-done` 검사 통과.
+  음성 테스트(근거 미인용 + 원문에 없는 코드)로 검사기가 실제로 잡는 것도 확인했다
+
+#### 12. 출처 줄 정규식의 `\s*` 가 빈 줄을 삼켜 다음 제목이 날것으로 찍혔다 ★
+
+`출처: …` 줄을 `<p class="cite">` HTML 블록으로 바꾸는데, 정규식 끝의 `\s*$` 가 뒤따르는 빈 줄까지 먹었다.
+CommonMark 의 HTML 블록(type 6)은 빈 줄에서만 끝나므로 다음 `## 제목` 줄이 HTML 블록 안에 들어가
+`## 최초 세팅…` 이 그대로 보였다. 목차에서도 그 제목들이 빠졌다.
+
+**해결**: 줄 안의 공백만 허용하도록 `[ \t]*` 로 바꿨다.
+**검증 방법**: `site/t/*.html` 에 `<p>## ` 가 0건이어야 한다 (세션 2 검증 스크립트의 `raw-heading-lines`).
+
+#### 13. 출처 구분자에 `·` 를 넣어 원문 절 제목이 쪼개졌다
+
+`출처: dev-workflow-guide §RLS · Functions · Triggers 복제` 에서 `·` 를 구분자로 보고 `Functions` 를
+문서 slug 로 찾았다. 구분자를 `,` `;` 로 한정했다. 지침(synthesize.md)도 "쉼표로 잇는다"고 되어 있다.
+
+#### 14. 미리보기 서버가 `wiki.exe` 를 잡고 있으면 `uv add` 가 실패한다
+
+`uv run wiki serve` 를 띄운 채 `uv add markdown-it-py` → `failed to remove file .../Scripts/wiki.exe: 액세스가 거부되었습니다`.
+서버를 내리고(taskkill) 다시 실행하면 된다. 스크린샷용 임시 서버는 `uv run python -m http.server 8765 -d site` 가 낫다.
+
+### 검증 결과 (Phase 5 후)
+
+| 항목 | 결과 |
+|---|---|
+| 내부 링크 + 앵커 | 260개 중 깨짐 0 (출처 링크의 `#앵커` 까지 대상 페이지에 존재하는지 확인) |
+| 토픽 페이지 날것 제목 | 0 |
+| 미해결 출처 slug | 0 |
+| 정돈본 분량 | 근거 합계의 45~50% |
+| 검색 색인 | 17행 (토픽 7 → 원본 10) |
+| 화면 | 홈, 카테고리(근거 접힘 목록), 정돈본 토픽, 원본 그대로 토픽, 원본 페이지 배너 — Edge 헤드리스로 확인 |
+
 ### 남겨둔 것 (판단만 하고 손대지 않음)
 
 - `related` 가 한쪽만 걸린 쌍 4개: `dev-workflow-guide → git-guide`,
@@ -319,6 +371,9 @@ uv run wiki sync # 현재 상태 재확인 (scan → audit → build)
 | `site/raw/` 동시 배포와 "원본 보기" 링크 | 내용 보존의 마지막 안전장치 |
 | `classifier_hash` 갱신 | 빠뜨리면 매 실행마다 전체 문서를 다시 분류한다 |
 | `docs/` 의 원본 HTML | 사용자 자산. 읽기 전용 |
+| `topics.CITE_LINE_RE` 의 `[ \t]*` | `\s*` 로 되돌리면 출처 뒤 제목이 날것으로 찍힌다 (12번) |
+| `synth-done` 으로만 `synth_hash` 기록 | 손으로 쓰면 검사가 빠지고 값도 틀린다 |
+| 토픽 `locked` 와 `<!-- memo -->` | 사람이 손본 정돈본 보호 장치 |
 
 ### 분류 기준을 바꾸고 싶다면
 

@@ -1,0 +1,23 @@
+{
+  "id": "claude-product-map",
+  "title": "Claude 제품 관계도",
+  "category": "ai-ml",
+  "subcategory": "tooling",
+  "summary": "Claude 의 여러 제품이 하나의 엔진을 공유하면서 실행 환경과 접근 범위로 갈라진다는 관점의 전체 지도.",
+  "tags": [
+    "claude",
+    "ai-도구",
+    "에이전트",
+    "제품비교"
+  ],
+  "sources": [
+    "claude-제품-관계도"
+  ],
+  "primary": "claude-제품-관계도",
+  "mode": "mirror",
+  "synth_hash": "",
+  "synthesized_at": "",
+  "synthesized_by": "",
+  "locked": false,
+  "notes": ""
+}

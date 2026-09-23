@@ -1,0 +1,25 @@
+{
+  "id": "git-undo-recovery",
+  "title": "Git 되돌리기와 갈라짐(diverge) 복구",
+  "category": "version-control",
+  "subcategory": "recovery",
+  "summary": "실수를 되돌리는 방법을 상황별로 정리했다. 커밋 전·로컬 커밋 후·푸시 후 시나리오, stash, 그리고 로컬과 원격이 갈라졌을 때 merge 와 rebase 중 무엇을 고를지.",
+  "tags": [
+    "git",
+    "되돌리기",
+    "reset",
+    "stash",
+    "rebase"
+  ],
+  "sources": [
+    "git-revert-guide",
+    "git-diverge-guide"
+  ],
+  "primary": "git-revert-guide",
+  "mode": "synthesized",
+  "synth_hash": "b2a75195767819cd",
+  "synthesized_at": "2026-09-24",
+  "synthesized_by": "claude-code",
+  "locked": false,
+  "notes": ""
+}

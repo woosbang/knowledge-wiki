@@ -1,0 +1,23 @@
+{
+  "id": "confusion-matrix",
+  "title": "혼동 행렬과 분류 평가 지표",
+  "category": "ai-ml",
+  "subcategory": "fundamentals",
+  "summary": "분류 모델 평가에서 정확도만으로 부족한 이유와 혼동 행렬에서 파생되는 지표들을 체계화했다.",
+  "tags": [
+    "머신러닝",
+    "분류",
+    "평가지표",
+    "통계"
+  ],
+  "sources": [
+    "confusion-matrix-guide"
+  ],
+  "primary": "confusion-matrix-guide",
+  "mode": "mirror",
+  "synth_hash": "",
+  "synthesized_at": "",
+  "synthesized_by": "",
+  "locked": false,
+  "notes": ""
+}

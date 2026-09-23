@@ -129,6 +129,7 @@ def write_index(entries: list[Entry]) -> Path:
                 "subcategory": e.subcategory,
                 "tags": e.tags,
                 "status": e.status,
+                "topic": e.topic,
                 "summary": e.summary,
                 "doc_date": e.doc_date,
                 "needs_classification": e.needs_classification,

@@ -11,6 +11,7 @@ WIKI_DIR = ROOT / "wiki"                  # AI/파이프라인이 만든 메타�
 ENTRIES_DIR = WIKI_DIR / "entries"        # 문서 1개 = entries/<slug>.json
 EXTRACTED_DIR = WIKI_DIR / "extracted"    # 추출된 본문 캐시 (재분류 시 AI 가 읽는 원천)
 REPORTS_DIR = WIKI_DIR / "reports"        # 중복/노후 리포트 (사람이 읽는 마크다운)
+TOPICS_DIR = WIKI_DIR / "topics"          # 토픽 = 정돈된 위키 본문 (<id>.json + <id>.md)
 TAXONOMY_PATH = WIKI_DIR / "taxonomy.yaml"
 INDEX_PATH = WIKI_DIR / "index.json"
 

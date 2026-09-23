@@ -33,6 +33,13 @@
     {% if entry.summary %}<p class="lede">{{ entry.summary }}</p>{% endif %}
   </header>
 
+  {% if topic %}
+  <div class="callout callout-note">
+    이 문서는 토픽 〈<a href="{{ root }}{{ 't/' ~ topic.id ~ '.html' }}">{{ topic.title }}</a>〉 의 근거 문서입니다.
+    {% if topic.mode == 'synthesized' %}같은 주제의 다른 문서와 합쳐 정돈한 최신 내용은 토픽 페이지에서 보세요.{% endif %}
+  </div>
+  {% endif %}
+
   {% if entry.status == 'outdated' %}
   <div class="callout callout-warn">이 문서는 내용이 오래되었을 수 있습니다. 확인 후 갱신하세요.</div>
   {% elif entry.status == 'superseded' %}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T00:49:59",
+  "generated_at": "2026-09-24T01:20:38",
   "count": 10,
   "documents": [
     {
@@ -14,6 +14,7 @@
         "스크립트"
       ],
       "status": "active",
+      "topic": "bash-basics",
       "summary": "파일·디렉토리 조작 명령어와 셸 스크립트 문법을 한 번에 훑는 입문 레퍼런스. 터미널을 처음 쓰는 상태에서 백업 스크립트 한 편을 직접 작성하는 수준까지 데려간다.",
       "doc_date": "2026-03-15",
       "needs_classification": false
@@ -30,6 +31,7 @@
         "제품비교"
       ],
       "status": "active",
+      "topic": "claude-product-map",
       "summary": "Claude의 여러 제품이 하나의 엔진(Agent SDK)을 공유하면서 실행 환경과 접근 범위로 갈라진다는 관점에서 전체 지도를 그린다. '어떤 Claude를 써야 하는가'를 결정할 때 보는 문서.",
       "doc_date": "2026-03-10",
       "needs_classification": false
@@ -46,6 +48,7 @@
         "통계"
       ],
       "status": "active",
+      "topic": "confusion-matrix",
       "summary": "분류 모델 평가에서 정확도만으로 부족한 이유를 클래스 불균형 사례로 짚고, 혼동 행렬에서 파생되는 지표들을 분모 기준으로 체계화한다. 가설검정의 1종·2종 오류와 연결해 외우지 않고 이해하게 만든다.",
       "doc_date": "2026-03-15",
       "needs_classification": false
@@ -63,6 +66,7 @@
         "브랜치"
       ],
       "status": "active",
+      "topic": "ai-webapp-workflow",
       "summary": "이미 운영 중인 서비스를 건드리지 않으면서 기능을 수정·배포하는 절차를 다룬다. 개발용 Supabase 프로젝트를 따로 두고 feature 브랜치 → Vercel Preview → PR 머지 순으로 위험을 단계적으로 줄인다.",
       "doc_date": "2026-03-08",
       "needs_classification": false
@@ -80,6 +84,7 @@
         "충돌"
       ],
       "status": "active",
+      "topic": "git-undo-recovery",
       "summary": "로컬과 원격이 갈라진(diverged) 상태가 왜 생기고 어떻게 푸는지를 behind 상태와 대비해 설명한다. git status 메시지를 읽고 merge 와 rebase 중 무엇을 쓸지 판단하는 기준을 준다.",
       "doc_date": "2026-03-08",
       "needs_classification": false
@@ -97,6 +102,7 @@
         "협업"
       ],
       "status": "active",
+      "topic": "git-getting-started",
       "summary": "여러 PC를 오가며 작업하는 상황을 전제로 Git·GitHub 사용법을 처음부터 끝까지 묶은 종합 가이드. 최초 세팅, 일상 동기화, .gitignore, 브랜치, 실수 복구, 치트시트까지 한 문서에 들어 있다.",
       "doc_date": "2026-02-18",
       "needs_classification": false
@@ -113,6 +119,7 @@
         "저장소설정"
       ],
       "status": "active",
+      "topic": "git-getting-started",
       "summary": "GitHub 저장소와 로컬을 연결하는 두 가지 시작점 — 원격에서 먼저 만들고 clone 하는 방식과 로컬에서 시작해 나중에 연결하는 방식 — 을 단계 수까지 비교한다. 새 프로젝트를 어느 쪽으로 시작할지 정할 때 읽는다.",
       "doc_date": "2026-02-18",
       "needs_classification": false
@@ -130,6 +137,7 @@
         "vercel"
       ],
       "status": "active",
+      "topic": "git-undo-recovery",
       "summary": "무엇을 되돌릴지부터 판단하게 한 뒤, 커밋 전 / 로컬 커밋 후 / 푸시 완료 세 시나리오로 나눠 복구 절차를 제시한다. Vercel 자동 배포가 걸려 있을 때 무엇이 달라지는지와 git stash 사용법도 함께 다룬다.",
       "doc_date": "2026-03-08",
       "needs_classification": false
@@ -146,6 +154,7 @@
         "패키지관리"
       ],
       "status": "active",
+      "topic": "uv-python-env",
       "summary": "uv 하나로 Python 버전 관리·가상환경·패키지 설치를 모두 처리하는 방법을 '창고와 작업실' 비유로 풀어낸다. 설치부터 프로젝트 생성, VS Code 연결, 기존 환경 정리까지 실습 순서대로 이어진다.",
       "doc_date": "2026-01-28",
       "needs_classification": false
@@ -163,6 +172,7 @@
         "기획"
       ],
       "status": "active",
+      "topic": "ai-webapp-workflow",
       "summary": "비개발자가 AI 코딩 도구로 웹 앱을 기획부터 배포까지 끌고 가는 10단계 절차를 정리한다. 핵심은 '좋은 기획 문서 → AI에게 정확한 지시 → 반복 수정'이라는 순서를 지키는 것이다.",
       "doc_date": "2026-03-15",
       "needs_classification": false

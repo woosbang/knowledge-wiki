@@ -1,0 +1,23 @@
+{
+  "id": "uv-python-env",
+  "title": "uv 로 Python 환경 관리",
+  "category": "dev-environment",
+  "subcategory": "python",
+  "summary": "uv 로 Python 프로젝트 환경을 만들고 재현하는 방법.",
+  "tags": [
+    "uv",
+    "python",
+    "가상환경",
+    "pyproject"
+  ],
+  "sources": [
+    "uv-환경-guidebook"
+  ],
+  "primary": "uv-환경-guidebook",
+  "mode": "mirror",
+  "synth_hash": "",
+  "synthesized_at": "",
+  "synthesized_by": "",
+  "locked": false,
+  "notes": ""
+}

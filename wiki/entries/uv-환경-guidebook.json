@@ -172,6 +172,7 @@
   "superseded_by": "",
   "overlaps": [],
   "status": "active",
+  "topic": "uv-python-env",
   "notes": "",
   "classified_at": "2026-09-23",
   "classified_by": "claude-code",

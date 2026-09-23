@@ -1,0 +1,23 @@
+{
+  "id": "bash-basics",
+  "title": "Bash 입문",
+  "category": "dev-environment",
+  "subcategory": "shell",
+  "summary": "파일·디렉토리 조작 명령어와 셸 스크립트 문법을 한 번에 훑는 입문 레퍼런스.",
+  "tags": [
+    "bash",
+    "셸",
+    "커맨드라인",
+    "스크립트"
+  ],
+  "sources": [
+    "bash-guide"
+  ],
+  "primary": "bash-guide",
+  "mode": "mirror",
+  "synth_hash": "",
+  "synthesized_at": "",
+  "synthesized_by": "",
+  "locked": false,
+  "notes": ""
+}

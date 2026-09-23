@@ -261,6 +261,29 @@ h1 { font-size: 30px; font-weight: 700; line-height: 1.3; letter-spacing: -.02em
 }
 .prose summary { cursor: pointer; font-weight: 500; }
 
+/* ── 토픽 층 (정돈된 본문) ── */
+.callout-note { border-left-color: var(--accent-2); background: var(--surface-2); color: var(--text-2); }
+.callout-note a { color: var(--accent); }
+.badge-synth { background: var(--accent-bg); color: var(--accent); }
+.badge-locked { background: var(--surface-2); color: var(--text-3); }
+.src-list {
+  list-style: none; margin: -2px 0 10px 4px; padding-left: 12px;
+  border-left: 2px solid var(--border); font-size: 13px; color: var(--text-3);
+}
+.src-list li { margin: 3px 0; }
+.src-list a:hover { color: var(--accent); }
+.prose p.cite { font-size: 12.5px; color: var(--text-3); margin: 4px 0 26px; }
+.prose p.cite a { color: var(--text-2); border-bottom: 1px dotted var(--border); }
+.prose p.cite a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.cite-missing { color: var(--warn); }
+.muted { color: var(--text-3); }
+.results .r-kind {
+  display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 4px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .05em; vertical-align: middle;
+  background: var(--surface-2); color: var(--text-3);
+}
+.results .r-kind.is-topic { background: var(--accent-bg); color: var(--accent); }
+
 .related { margin-top: 56px; }
 .source-note {
   margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border);

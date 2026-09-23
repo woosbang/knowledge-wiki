@@ -11,6 +11,7 @@ from datetime import date, datetime
 from typing import Any
 
 from . import config, extract, scan
+from . import topics as topics_mod
 from .build import load_taxonomy
 from .models import Entry
 
@@ -84,7 +85,35 @@ def run() -> dict[str, Any]:
         if not (config.ROOT / Entry.load(p).source).exists()
     ]
 
+    # 토픽 층 (PRD 8절)
+    by_slug = {e.slug: e for e in entries}
+    all_topics = topics_mod.load_topics()
+    topics_mod.sync_modes(all_topics, by_slug)
+    topic_ids = {t.id for t in all_topics}
+    topics_pending = [t.id for t in all_topics if topics_mod.needs_synthesis(t, by_slug)]
+    topics_locked_stale = [t.id for t in all_topics if topics_mod.is_stale_locked(t, by_slug)]
+    topics_oversized = [
+        (t.id, len(t.sources)) for t in all_topics if len(t.sources) >= topics_mod.SPLIT_SOURCES
+    ]
+    topic_orphans = [
+        (t.id, [s for s in t.sources if s not in by_slug])
+        for t in all_topics if any(s not in by_slug for s in t.sources)
+    ]
+    unassigned = [e.slug for e in entries if not e.topic or e.topic not in topic_ids]
+    topic_problems = {
+        t.id: probs for t in all_topics
+        if t.mode == "synthesized" and not topics_mod.needs_synthesis(t, by_slug)
+        for probs in [topics_mod.check_topic(t, by_slug)] if probs
+    }
+
     report = {
+        "topics_total": len(all_topics),
+        "topics_pending": topics_pending,
+        "topics_locked_stale": topics_locked_stale,
+        "topics_oversized": topics_oversized,
+        "topic_orphans": topic_orphans,
+        "unassigned": unassigned,
+        "topic_problems": topic_problems,
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "total": len(entries),
         "unclassified": [e.slug for e in unclassified],
@@ -174,6 +203,37 @@ def _write_markdown(r: dict[str, Any], entries: list[Entry]) -> None:
         lines += ["", "## 6. 고아 entry (원본 HTML 이 사라짐)", ""]
         lines += [f"- `{s}`" for s in r["orphans"]]
         lines += ["", "→ 의도한 삭제라면 해당 entry json 을 지운다."]
+
+    lines += ["", f"## 7. 토픽 층 (토픽 {r['topics_total']}개)", ""]
+    if r["topics_pending"]:
+        lines += ["### 다시 정리해야 할 토픽 (근거가 바뀌었거나 본문이 아직 없음)", ""]
+        lines += [f"- [ ] `{t}`" for t in r["topics_pending"]]
+        lines += ["", "→ `/wiki-sync` 3단계 또는 `uv run wiki synthesize` 로 처리.", ""]
+    if r["topics_locked_stale"]:
+        lines += ["### 잠긴 토픽인데 근거가 바뀜 (AI 는 손대지 않는다)", ""]
+        lines += [f"- `{t}` — 사람이 직접 고치거나 `locked` 를 풀 것" for t in r["topics_locked_stale"]]
+        lines.append("")
+    if r["unassigned"]:
+        lines += ["### 토픽에 배정되지 않은 문서", ""]
+        lines += [f"- `{s}` — {title(s)}" for s in r["unassigned"]]
+        lines += ["", "→ `/wiki-sync` 2단계에서 기존 토픽에 넣거나 새 토픽을 만든다.", ""]
+    if r["topics_oversized"]:
+        lines += ["### 근거가 너무 많은 토픽 (분할 검토)", ""]
+        lines += [f"- `{t}` — 근거 {n}개" for t, n in r["topics_oversized"]]
+        lines.append("")
+    if r["topic_orphans"]:
+        lines += ["### 근거 문서가 사라진 토픽", ""]
+        lines += [f"- `{t}` — 없는 근거: {', '.join(f'`{s}`' for s in missing)}" for t, missing in r["topic_orphans"]]
+        lines.append("")
+    if r["topic_problems"]:
+        lines += ["### 정돈본 신뢰 검사에 걸린 토픽", ""]
+        for t, probs in r["topic_problems"].items():
+            lines.append(f"- `{t}`")
+            lines += [f"  - {p}" for p in probs]
+        lines.append("")
+    if not any([r["topics_pending"], r["topics_locked_stale"], r["unassigned"],
+                r["topics_oversized"], r["topic_orphans"], r["topic_problems"]]):
+        lines.append("문제 없음. 모든 토픽이 최신이고 검사를 통과했다.")
 
     config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     (config.REPORTS_DIR / "health.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

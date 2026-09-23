@@ -1,0 +1,25 @@
+{
+  "id": "git-getting-started",
+  "title": "Git 시작하기와 멀티 PC 동기화",
+  "category": "version-control",
+  "subcategory": "basics",
+  "summary": "GitHub 저장소를 처음 만들고 여러 PC 에서 같은 프로젝트를 동기화하는 방법. 저장소 연결의 두 방식(Remote-First / Local-First), 일상 사이클, .gitignore, 브랜치를 한 페이지로 정리했다.",
+  "tags": [
+    "git",
+    "github",
+    "clone",
+    "브랜치",
+    "gitignore"
+  ],
+  "sources": [
+    "git-guide",
+    "git-methods-comparison"
+  ],
+  "primary": "git-guide",
+  "mode": "synthesized",
+  "synth_hash": "8f8aecebcbec0ac2",
+  "synthesized_at": "2026-09-24",
+  "synthesized_by": "claude-code",
+  "locked": false,
+  "notes": ""
+}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% set active_category = topic.category %}
+{% block title %}{{ topic.title }} · {{ site_title }}{% endblock %}
+{% block description %}{{ topic.summary }}{% endblock %}
+{% block shell_class %}{% endblock %}
+{% block sidebar %}
+<nav class="sidebar" aria-label="목차">
+  <p class="sidebar-label">이 토픽</p>
+  <ul class="toc">
+  {% for h in headings %}
+    <li class="toc-h{{ h.level }}"><a href="#{{ h.id }}">{{ h.text }}</a></li>
+  {% endfor %}
+  </ul>
+  <p class="sidebar-label">근거 문서 {{ topic.sources|length }}</p>
+  <ul class="nav-list">
+  {% for s in topic.sources %}
+    <li><a href="{{ root }}{{ 'd/' ~ s.slug ~ '.html' }}">{{ s.title }}</a></li>
+  {% endfor %}
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+<nav class="crumbs">
+  <a href="{{ root }}index.html">홈</a> <span>/</span>
+  {% if category %}<a href="{{ root }}{{ 'c/' ~ category.id ~ '.html' }}">{{ category.name }}</a>{% else %}미분류{% endif %}
+</nav>
+
+<article class="doc topic">
+  <header class="doc-head">
+    <h1>{{ topic.title }}</h1>
+    <p class="doc-meta">
+      {% if topic.mode == 'synthesized' %}
+        정돈본 · 근거 {{ topic.sources|length }}건 · {{ topic.synthesized_at }}
+        {% if topic.locked %}<span class="badge badge-locked">잠김</span>{% endif %}
+      {% else %}
+        원본 그대로 · {{ topic.updated }}
+      {% endif %}
+      {% for t in topic.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+    </p>
+    {% if topic.summary %}<p class="lede">{{ topic.summary }}</p>{% endif %}
+  </header>
+
+  {% if topic.stale %}
+  <div class="callout callout-warn">
+    근거 문서가 바뀐 뒤 아직 다시 정리되지 않았습니다. 최신 내용은 아래 근거 문서를 확인하세요.
+  </div>
+  {% endif %}
+
+  {% if topic.mode == 'synthesized' %}
+  <div class="callout callout-note">
+    이 페이지는 근거 문서 {{ topic.sources|length }}건을 AI 가 한 편으로 정돈한 것입니다.
+    원문과 달라진 부분은 본문 끝 <a href="#원문과-다른-점">원문과 다른 점</a> 에 적혀 있고,
+    각 절의 <em>출처</em> 링크로 원문의 해당 위치를 바로 볼 수 있습니다.
+  </div>
+  {% elif topic.sources|length == 1 %}
+  <div class="callout callout-note">
+    이 토픽의 근거는 문서 1건이라 원본을 그대로 보여줍니다.
+    <a href="{{ root }}{{ 'raw/' ~ topic.sources[0].slug ~ '.html' }}" target="_blank" rel="noopener">원본 HTML 그대로 보기 ↗</a>
+  </div>
+  {% endif %}
+
+  <div class="prose">
+    {{ body|safe }}
+  </div>
+
+  <section class="related">
+    <h2 class="section-title">근거 문서</h2>
+    <ul class="doc-list compact">
+    {% for s in topic.sources %}
+      <li><a href="{{ root }}{{ 'd/' ~ s.slug ~ '.html' }}">
+        <span class="doc-title">{{ s.title }}
+          {% if s.status != 'active' %}<span class="badge badge-{{ s.status }}">{{ s.status }}</span>{% endif %}
+        </span>
+        <span class="doc-summary">{{ s.summary }}</span>
+        <span class="doc-meta">{{ s.doc_date }} · <span class="muted">원본 파일 {{ s.source }}</span></span>
+      </a></li>
+    {% endfor %}
+    </ul>
+  </section>
+
+  <p class="source-note">
+    토픽 데이터: <code>wiki/topics/{{ topic.id }}.json</code>
+    {% if topic.mode == 'synthesized' %} · 본문: <code>wiki/topics/{{ topic.id }}.md</code>{% endif %}
+  </p>
+</article>
+{% endblock %}

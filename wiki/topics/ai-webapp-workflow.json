@@ -1,0 +1,25 @@
+{
+  "id": "ai-webapp-workflow",
+  "title": "AI 코딩 도구로 웹 앱 개발·배포하기",
+  "category": "dev-workflow",
+  "subcategory": "web",
+  "summary": "비개발자가 Claude Code 같은 AI 코딩 도구로 Next.js · Supabase · Vercel 웹 앱을 기획부터 배포까지 끌고 가는 절차와, 이미 운영 중인 서비스를 안전하게 수정·배포하는 절차를 한 페이지로 정리했다.",
+  "tags": [
+    "claude-code",
+    "nextjs",
+    "supabase",
+    "vercel",
+    "배포"
+  ],
+  "sources": [
+    "dev-workflow-guide",
+    "webapp-development-workflow-guide"
+  ],
+  "primary": "dev-workflow-guide",
+  "mode": "synthesized",
+  "synth_hash": "3b67e618eee7b5fc",
+  "synthesized_at": "2026-09-24",
+  "synthesized_by": "claude-code",
+  "locked": false,
+  "notes": ""
+}
