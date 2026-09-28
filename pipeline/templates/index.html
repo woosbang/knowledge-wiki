@@ -40,21 +40,27 @@
     <thead><tr><th class="num">#</th><th>자료명</th><th class="src">근거</th><th class="view">원본</th></tr></thead>
     <tbody>
     {% for t in g.topics %}
-      <tr class="lib-row" id="lib-{{ t.id }}" data-text="{{ t.title }} {{ t.tags|join(' ') }} {{ g.name }}">
+      <tr class="lib-row" id="lib-{{ t.id }}" data-group="{{ t.id }}" data-text="{{ t.title }} {{ t.tags|join(' ') }} {{ g.name }}">
         <td class="num">{{ loop.index }}</td>
         <td class="name">
           <span class="type type-{{ t.mode }}">{{ '정돈본' if t.mode == 'synthesized' else '원본' }}</span>
           <a href="{{ root }}{{ 't/' ~ t.id ~ '.html' }}">{{ t.title }}</a>
           {% if t.stale %}<span class="badge badge-outdated">재정리 필요</span>{% endif %}
         </td>
-        <td class="src">{{ t.sources|length }}편</td>
+        <td class="src">
+          {% if t.sources|length > 1 %}
+          <button class="src-toggle" type="button" data-toggle="{{ t.id }}" aria-expanded="false" aria-label="근거 원본 {{ t.sources|length }}편 펼치기">
+            <span class="src-caret">▸</span> {{ t.sources|length }}편
+          </button>
+          {% else %}{{ t.sources|length }}편{% endif %}
+        </td>
         <td class="view">
           {% if t.sources|length == 1 %}<a href="{{ root }}{{ 'raw/' ~ t.sources[0].slug ~ '.html' }}" target="_blank" rel="noopener">보기</a>{% endif %}
         </td>
       </tr>
       {% if t.sources|length > 1 %}
       {% for s in t.sources %}
-      <tr class="lib-row is-sub" data-text="{{ s.title }} {{ s.tags|join(' ') }} {{ g.name }} {{ t.title }}">
+      <tr class="lib-row is-sub" data-parent="{{ t.id }}" data-text="{{ s.title }} {{ s.tags|join(' ') }} {{ g.name }} {{ t.title }}">
         <td class="num"></td>
         <td class="name">
           <span class="type type-doc">원본</span>

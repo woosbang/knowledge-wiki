@@ -30,11 +30,22 @@
     var sections = Array.prototype.slice.call(document.querySelectorAll(".lib-section"));
     var empty = document.getElementById("lib-empty");
     var activeCat = "";
+    var opened = {};   // 사용자가 직접 펼친 그룹 (검색어를 지워도 유지)
+
+    function setOpen(groupId, open) {
+      Array.prototype.forEach.call(
+        document.querySelectorAll('.lib-row.is-sub[data-parent="' + groupId + '"]'),
+        function (row) { row.classList.toggle("is-open", open); }
+      );
+      var btn = document.querySelector('.src-toggle[data-toggle="' + groupId + '"]');
+      if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
 
     function applyLib() {
       var q = libQ.value.trim().toLowerCase();
       var terms = q ? q.split(/\s+/) : [];
       var anyVisible = false;
+      var autoOpen = {};   // 검색어가 원본 제목에 걸리면 그 그룹은 펼친다
       sections.forEach(function (sec) {
         var catOk = !activeCat || sec.dataset.cat === activeCat;
         var visibleRows = 0;
@@ -42,13 +53,28 @@
           var text = (row.dataset.text || "").toLowerCase();
           var ok = catOk && terms.every(function (t) { return text.indexOf(t) !== -1; });
           row.classList.toggle("is-hidden", !ok);
-          if (ok) visibleRows++;
+          if (ok) {
+            visibleRows++;
+            if (terms.length && row.dataset.parent) autoOpen[row.dataset.parent] = true;
+          }
         });
         sec.classList.toggle("is-hidden", !catOk || visibleRows === 0);
         if (catOk && visibleRows) anyVisible = true;
       });
+      Array.prototype.forEach.call(document.querySelectorAll(".src-toggle"), function (btn) {
+        var id = btn.dataset.toggle;
+        setOpen(id, !!(opened[id] || autoOpen[id]));
+      });
       if (empty) empty.hidden = anyVisible;
     }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".src-toggle"), function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.dataset.toggle;
+        opened[id] = btn.getAttribute("aria-expanded") !== "true";
+        setOpen(id, opened[id]);
+      });
+    });
 
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () {
