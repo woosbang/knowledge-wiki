@@ -23,6 +23,48 @@
     });
   }
 
+  // ── 홈 카탈로그: 카테고리 칩 + 표 안 필터 (페이지 이동 없이) ──
+  var libQ = document.getElementById("lib-q");
+  if (libQ) {
+    var chips = Array.prototype.slice.call(document.querySelectorAll(".lib-chips .chip"));
+    var sections = Array.prototype.slice.call(document.querySelectorAll(".lib-section"));
+    var empty = document.getElementById("lib-empty");
+    var activeCat = "";
+
+    function applyLib() {
+      var q = libQ.value.trim().toLowerCase();
+      var terms = q ? q.split(/\s+/) : [];
+      var anyVisible = false;
+      sections.forEach(function (sec) {
+        var catOk = !activeCat || sec.dataset.cat === activeCat;
+        var visibleRows = 0;
+        Array.prototype.forEach.call(sec.querySelectorAll(".lib-row"), function (row) {
+          var text = (row.dataset.text || "").toLowerCase();
+          var ok = catOk && terms.every(function (t) { return text.indexOf(t) !== -1; });
+          row.classList.toggle("is-hidden", !ok);
+          if (ok) visibleRows++;
+        });
+        sec.classList.toggle("is-hidden", !catOk || visibleRows === 0);
+        if (catOk && visibleRows) anyVisible = true;
+      });
+      if (empty) empty.hidden = anyVisible;
+    }
+
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        activeCat = chip.dataset.cat || "";
+        chips.forEach(function (c) { c.classList.toggle("is-active", c === chip); });
+        applyLib();
+        var target = activeCat && document.getElementById("lib-cat-" + activeCat);
+        if (target) target.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    });
+    libQ.addEventListener("input", applyLib);
+    libQ.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { libQ.value = ""; applyLib(); libQ.blur(); }
+    });
+  }
+
   // ── 검색 ──
   var input = document.getElementById("q");
   var panel = document.getElementById("results");

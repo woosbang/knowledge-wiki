@@ -284,6 +284,74 @@ h1 { font-size: 30px; font-weight: 700; line-height: 1.3; letter-spacing: -.02em
 }
 .results .r-kind.is-topic { background: var(--accent-bg); color: var(--accent); }
 
+/* ── 홈 = 자료 카탈로그 ── */
+.main.lib-main { max-width: none; }
+.lib-total { font-size: 12px; color: var(--text-3); margin: -4px 0 12px; }
+.lib-toc-group { margin-bottom: 6px; }
+.lib-toc-group summary {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none;
+  padding: 6px 10px; margin-left: -10px; border-radius: 7px;
+  font-size: 13.5px; font-weight: 600; color: var(--text);
+}
+.lib-toc-group summary::-webkit-details-marker { display: none; }
+.lib-toc-group summary::before { content: "▾"; font-size: 10px; color: var(--text-3); }
+.lib-toc-group:not([open]) summary::before { content: "▸"; }
+.lib-toc-group summary:hover { background: var(--surface-2); }
+.lib-toc-group summary .count { margin-left: auto; padding: 0 6px; border-radius: 4px; background: var(--surface-2); }
+.lib-toc-group ul { list-style: none; margin: 2px 0 8px 4px; }
+.lib-toc-group li a {
+  display: block; padding: 3px 10px; border-radius: 6px; font-size: 12.5px; color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lib-toc-group li a:hover { background: var(--surface-2); color: var(--text); }
+
+.lib-search input {
+  width: 100%; padding: 10px 14px 10px 38px; font: inherit; font-size: 14px;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2397918a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center;
+}
+.lib-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.lib-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 30px; }
+.chip {
+  font: inherit; font-size: 12.5px; padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+}
+.chip span { color: var(--text-3); margin-left: 2px; }
+.chip:hover { border-color: var(--accent-2); color: var(--text); }
+.chip.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip.is-active span { color: rgba(255,255,255,.75); }
+
+.lib-section { margin-bottom: 48px; scroll-margin-top: 80px; }
+.lib-section h2 { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+.lib-count { font-size: 12.5px; color: var(--text-3); margin-top: 4px; }
+.lib-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14.5px; }
+.lib-table th {
+  text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3);
+}
+.lib-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.lib-table .num { width: 36px; color: var(--text-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.lib-table .name a { font-weight: 500; }
+.lib-table .name a:hover { color: var(--accent); }
+.lib-table .src { width: 84px; color: var(--text-3); font-size: 12.5px; white-space: nowrap; }
+.lib-table .view { width: 56px; text-align: right; }
+.lib-table .view a { color: var(--accent); font-size: 13px; }
+.lib-row { scroll-margin-top: 80px; }
+.lib-row.is-sub td { padding: 8px 10px; background: var(--surface-2); }
+.lib-row.is-sub .name { padding-left: 30px; }
+.lib-row.is-sub .name a { font-weight: 400; font-size: 13.5px; color: var(--text-2); }
+.lib-row.is-hidden, .lib-section.is-hidden { display: none; }
+.lib-empty { color: var(--text-3); font-size: 14px; padding: 24px 0; }
+.type {
+  display: inline-block; min-width: 56px; text-align: center; margin-right: 12px; padding: 3px 10px;
+  border-radius: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: .02em;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+}
+.type-synthesized { color: var(--accent); border-color: var(--accent-2); background: var(--accent-bg); }
+.type-mirror { color: var(--text-2); }
+.type-doc { color: var(--text-3); }
+
 .related { margin-top: 56px; }
 .source-note {
   margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border);

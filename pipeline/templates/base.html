@@ -28,7 +28,7 @@
 
 <div class="shell {% block shell_class %}no-sidebar{% endblock %}">
   {% block sidebar %}{% endblock %}
-  <main id="main" class="main">
+  <main id="main" class="main{% block main_class %}{% endblock %}">
     {% block content %}{% endblock %}
   </main>
 </div>

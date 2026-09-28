@@ -1,38 +1,87 @@
 {% extends "base.html" %}
-{% block content %}
-<section class="hero">
-  <h1>{{ site_title }}</h1>
-  <p class="lede">{{ site_description }}</p>
-  <p class="stat">{{ total_topics }}개 토픽 · {{ total_docs }}개 원본 문서 · {{ groups|length }}개 카테고리</p>
-</section>
-
-<section>
-  <h2 class="section-title">카테고리</h2>
-  <div class="card-grid">
+{# 홈 = 자료 카탈로그. 왼쪽 전체 목차, 위에 검색·카테고리 칩, 카테고리별 번호 표. #}
+{% block shell_class %}{% endblock %}
+{% block main_class %} lib-main{% endblock %}
+{% block sidebar %}
+<nav class="sidebar lib-toc" aria-label="목차">
+  <p class="sidebar-label">목차</p>
+  <p class="lib-total">토픽 {{ total_topics }}개 · 원본 {{ total_docs }}편</p>
   {% for g in groups %}
-    <a class="cat-card{{ ' is-undefined' if g.undefined else '' }}" href="{{ root }}{{ 'c/' ~ g.id ~ '.html' }}">
-      <h3>{{ g.name }}</h3>
-      <p>{{ g.blurb }}</p>
-      <span class="count">{{ g.count }}</span>
-    </a>
+  <details class="lib-toc-group" open>
+    <summary><span>{{ g.name }}</span><span class="count">{{ g.count }}</span></summary>
+    <ul>
+    {% for t in g.topics %}
+      <li><a href="#lib-{{ t.id }}" title="{{ t.title }}">{{ t.title }}</a></li>
+    {% endfor %}
+    {% for d in g.loose %}
+      <li><a href="{{ root }}{{ 'd/' ~ d.slug ~ '.html' }}" title="{{ d.title }}">{{ d.title }}</a></li>
+    {% endfor %}
+    </ul>
+  </details>
   {% endfor %}
-  </div>
-</section>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="lib-search">
+  <input type="search" id="lib-q" placeholder="자료 검색 (자료명 · 태그 · 카테고리)" autocomplete="off" aria-label="자료 필터">
+</div>
+<div class="lib-chips" role="tablist">
+  <button class="chip is-active" data-cat="">전체 <span>{{ total_topics }}</span></button>
+  {% for g in groups %}
+  <button class="chip" data-cat="{{ g.id }}">{{ g.name }} <span>{{ g.count }}</span></button>
+  {% endfor %}
+</div>
 
-<section>
-  <h2 class="section-title">최근 토픽</h2>
-  <ul class="doc-list">
-  {% for t in recent %}
-    <li>
-      <a href="{{ root }}{{ 't/' ~ t.id ~ '.html' }}">
-        <span class="doc-title">{{ t.title }}
-          {% if t.mode == 'synthesized' %}<span class="badge badge-synth">정돈본 · 근거 {{ t.sources|length }}</span>{% endif %}
-        </span>
-        <span class="doc-summary">{{ t.summary or '아직 요약이 없습니다 — /wiki-sync 를 실행하세요.' }}</span>
-        <span class="doc-meta">{{ t.updated }}{% for tag in t.tags[:4] %} · {{ tag }}{% endfor %}</span>
-      </a>
-    </li>
-  {% endfor %}
-  </ul>
+{% for g in groups %}
+<section class="lib-section" id="lib-cat-{{ g.id }}" data-cat="{{ g.id }}">
+  <h2>{{ g.name }}</h2>
+  <p class="lib-count">{{ g.count }}개 자료 · {{ g.blurb }}</p>
+  <table class="lib-table">
+    <thead><tr><th class="num">#</th><th>자료명</th><th class="src">근거</th><th class="view">원본</th></tr></thead>
+    <tbody>
+    {% for t in g.topics %}
+      <tr class="lib-row" id="lib-{{ t.id }}" data-text="{{ t.title }} {{ t.tags|join(' ') }} {{ g.name }}">
+        <td class="num">{{ loop.index }}</td>
+        <td class="name">
+          <span class="type type-{{ t.mode }}">{{ '정돈본' if t.mode == 'synthesized' else '원본' }}</span>
+          <a href="{{ root }}{{ 't/' ~ t.id ~ '.html' }}">{{ t.title }}</a>
+          {% if t.stale %}<span class="badge badge-outdated">재정리 필요</span>{% endif %}
+        </td>
+        <td class="src">{{ t.sources|length }}편</td>
+        <td class="view">
+          {% if t.sources|length == 1 %}<a href="{{ root }}{{ 'raw/' ~ t.sources[0].slug ~ '.html' }}" target="_blank" rel="noopener">보기</a>{% endif %}
+        </td>
+      </tr>
+      {% if t.sources|length > 1 %}
+      {% for s in t.sources %}
+      <tr class="lib-row is-sub" data-text="{{ s.title }} {{ s.tags|join(' ') }} {{ g.name }} {{ t.title }}">
+        <td class="num"></td>
+        <td class="name">
+          <span class="type type-doc">원본</span>
+          <a href="{{ root }}{{ 'd/' ~ s.slug ~ '.html' }}">{{ s.title }}</a>
+          {% if s.status != 'active' %}<span class="badge badge-{{ s.status }}">{{ s.status }}</span>{% endif %}
+        </td>
+        <td class="src">{{ s.doc_date }}</td>
+        <td class="view"><a href="{{ root }}{{ 'raw/' ~ s.slug ~ '.html' }}" target="_blank" rel="noopener">보기</a></td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% for d in g.loose %}
+      <tr class="lib-row" data-text="{{ d.title }} {{ d.tags|join(' ') }} {{ g.name }}">
+        <td class="num">{{ g.topics|length + loop.index }}</td>
+        <td class="name">
+          <span class="type type-doc">원본</span>
+          <a href="{{ root }}{{ 'd/' ~ d.slug ~ '.html' }}">{{ d.title }}</a>
+          <span class="badge badge-draft">토픽 미배정</span>
+        </td>
+        <td class="src">{{ d.doc_date }}</td>
+        <td class="view"><a href="{{ root }}{{ 'raw/' ~ d.slug ~ '.html' }}" target="_blank" rel="noopener">보기</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 </section>
+{% endfor %}
+<p class="lib-empty" id="lib-empty" hidden>일치하는 자료가 없습니다.</p>
 {% endblock %}
